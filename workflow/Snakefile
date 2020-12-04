@@ -1,5 +1,6 @@
 from os.path import realpath
 from os.path import split as pathsplit
+from os.path import basename
 import subprocess
 from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
@@ -26,14 +27,15 @@ def determine_resource(path):
     if "ftp://" in path:
          return FTP.remote(path, immediate_close = True)
     elif "http://" in path:
-         return HTTP.remote(path.replace("http://",""))
+         return HTTP.remote(path)
     elif "https://" in path:
-         return HTTP.remote(path.replace("https://",""))
+         return HTTP.remote(path)
     else:
         return path
 
 singularity: "docker://continuumio/miniconda3"
 configfile: "config/config.yaml"
+pepfile: "config/pep.yaml"
 
 rule all:
     input:
@@ -46,5 +48,9 @@ rule all_custom_genome:
         "results/custom-genome/combined.fixed.gtf",
         "results/custom-genome/combined.fasta"
 
+rule all_cellranger:
+    input:
+        expand("results/cellranger/counts/{s}", s=[x.sample_name for x in pep.samples if x.assay == "10X"])
 
 include: "rules/custom-genome.smk"
+include: "rules/cellranger.smk"

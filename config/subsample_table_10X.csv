@@ -1,4 +1,4 @@
-﻿sample_name,sra,doublet_threshold
+sample_name,sra_accession,doublet_threshold
 larval-testes-01,https://sra-download.ncbi.nlm.nih.gov/traces/sra77/SRR/008314/SRR8513906,0.35
 larval-testes-02,https://sra-download.ncbi.nlm.nih.gov/traces/sra77/SRR/008314/SRR8513907,0.3
 larval-testes-03,https://sra-download.ncbi.nlm.nih.gov/traces/sra77/SRR/008314/SRR8513908,0.35
