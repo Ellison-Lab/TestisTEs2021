@@ -1,0 +1,4 @@
+GENOME_FASTA: /Users/mlawlor/Downloads/dmel-all-chromosome-r6.22.fasta.masked
+TRANSPOSON_FASTA: /Users/mlawlor/Downloads/dmel_repbase_lib.fasta
+GENE_GTF: ftp://ftp.flybase.net/releases/FB2018_03/dmel_r6.22/gtf/dmel-all-r6.22.gtf.gz
+DISALLOW_GENE_TYPES: [tRNA, rRNA]
