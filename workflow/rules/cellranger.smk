@@ -6,7 +6,7 @@ rule get_sra_10x:
         temp(directory("results/get-sra-10x/{sample}"))
     shell:
         """
-        wget -P {params.dir} {params.url}
+        wget -P {params.dir}/{wildcards.sample} {params.url}
         """
 
 checkpoint fastq_dump_10x:
@@ -31,9 +31,9 @@ checkpoint fastq_dump_10x:
        fasterq-dump -s -S --include-technical -e {threads} -O {output} {input}/{params.run_id} 2> {log}
        """
 
-def determine_layout(wildcards, dir = "results/fastq-dump-10x/"):
+def determine_layout(wildcards, dir = "results/fastq-dump-10x"):
     checkpoint_output = checkpoints.fastq_dump_10x.get(**wildcards).output[0]
-    run_id = basename(pep.get_sample(wildcards.sample).sra_accession)
+    run_id = basename(pep.get_sample(wildcards.sample).sra_accession[0])
     base = "{d}/{s}/{r}".format(d=dir,s=wildcards.sample, r=run_id)
     glc = glob_wildcards(base + "_{i}.fastq")
     op = expand("{b}_{i}.fastq", b=base,i=glc.i)
@@ -43,13 +43,11 @@ rule rename_fqs_10x:
     input:
         determine_layout
     output:
-        "results/fastq-rename-10x/{sample}_S1_R1_001.fastq",
-        "results/fastq-rename-10x/{sample}_S1_R2_001.fastq",
+        "results/fastq-rename-10x/{sample}/{sample}_S1_L001_R1_001.fastq",
+        "results/fastq-rename-10x/{sample}/{sample}_S1_L001_R2_001.fastq",
     log:
         "logs/fastq-rename-10x/{sample}.log"
     run:
-        s = wildcards.sample
-        run_id = basename(pep.get_sample(wc.sample).sra_accession)
         if (len(input) == 2):
             shell("cp {s} {o}".format(s=input[0], o=output[0])),
             shell("cp {s} {o}".format(s=input[1], o=output[1]))
@@ -63,16 +61,19 @@ rule cellranger_mkref:
         gtf = rules.fix_strand_gtf.output
     output:
         directory("results/cellranger/idx")
+    params:
+        mem=int(config.get("CELLRANGER_MKREF_MEM",16000)/1000.0)
     resources:
         time="18:00:00",
-        mem=int(config.get("CELLRANGER_MEM",16000)/1000.0),
+        mem=config.get("CELLRANGER_MKREF_MEM",16000),
         cpus=1
     shell:
         """
-        ~/cellranger-3.1.0/cellranger mkref --genome={output} \
-            --fasta={input.fa} \
-	    --genes={input.gtf} \
-	    --memgb=16
+        cd results/cellranger
+        ~/cellranger-3.1.0/cellranger mkref --genome=idx \
+            --fasta=../../{input.fa} \
+	    --genes=../../{input.gtf} \
+	    --memgb={params.mem}
         """
 
 rule cellranger_count:
@@ -80,21 +81,23 @@ rule cellranger_count:
         idx = rules.cellranger_mkref.output,
         fqs = rules.rename_fqs_10x.output,
     output:
-        directory("results/cellranger/counts/{sample}")
+        touch("results/cellranger/{sample}.done")
     threads:
         config.get("CELLRANGER_COUNT_CPUS",32)
     params:
-        ver = config.get("CELLRANGER_VERSION",'3.1.0')
+        ver = config.get("CELLRANGER_VERSION",'3.1.0'),
+        mem = int(config.get("CELLRANGER_COUNT_MEM",128000)/1000.0)
     resources:
         time="18:00:00",
-        mem=int(config.get("CELLRANGER_MEM",128000)/1000.0),
+        mem=config.get("CELLRANGER_COUNT_MEM",128000),
         cpus=config.get("CELLRANGER_CPUS",32),
     shell:
         """
-        ~/cellranger-{params.ver}/cellranger count --id={output} \
-            --sample={wildcards.sample} \
-            --fastqs=results/fastq-rename-10x/{wildcards.sample} \
-	    --transcriptome={input.idx} \
+        cd results/cellranger
+        ~/cellranger-{params.ver}/cellranger count --id=counts-{wildcards.sample} \
+        --sample={wildcards.sample} \
+        --fastqs=../fastq-rename-10x/{wildcards.sample} \
+	    --transcriptome=idx \
 	    --localcores={threads} \
-	    --localmem={resources.mem}
+	    --localmem={params.mem}
         """

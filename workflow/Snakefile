@@ -50,7 +50,7 @@ rule all_custom_genome:
 
 rule all_cellranger:
     input:
-        expand("results/cellranger/counts/{s}", s=[x.sample_name for x in pep.samples if x.assay == "10X"])
+        expand("results/cellranger/{s}.done", s=[x.sample_name for x in pep.samples if x.assay == "10X"])
 
 include: "rules/custom-genome.smk"
 include: "rules/cellranger.smk"
