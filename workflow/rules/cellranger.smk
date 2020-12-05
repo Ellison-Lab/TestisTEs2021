@@ -92,7 +92,7 @@ rule cellranger_count:
     resources:
         time="18:00:00",
         mem=config.get("CELLRANGER_COUNT_MEM",128000),
-        cpus=config.get("CELLRANGER_CPUS",32),
+        cpus=config.get("CELLRANGER_COUNT_CPUS",32),
     shell:
         """
         cd results/cellranger
