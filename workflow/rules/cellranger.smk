@@ -17,18 +17,18 @@ checkpoint fastq_dump_10x:
     params:
         run_id = lambda wc: basename(pep.get_sample(wc.sample).sra_accession[0])
     threads:
-        4
+        16
     resources:
         time=60,
-        mem=8000,
-        cpus=4
+        mem=config.get("FASTERQDUMP_MEM", 8000),
+        cpus=16
     log:
         "results/logs/fastq-dump-10x/{sample}.log"
     conda:
         "../envs/sratools.yaml"
     shell:
        """
-       fasterq-dump -s -S --include-technical -e {threads} -O {output} {input}/{params.run_id} 2> {log}
+       fasterq-dump --mem {resources.mem}MB -s -S --include-technical -e {threads} -O {output} {input}/{params.run_id} 2> {log}
        """
 
 def determine_layout(wildcards, dir = "results/fastq-dump-10x"):
@@ -43,17 +43,19 @@ rule rename_fqs_10x:
     input:
         determine_layout
     output:
-        "results/fastq-rename-10x/{sample}/{sample}_S1_L001_R1_001.fastq",
-        "results/fastq-rename-10x/{sample}/{sample}_S1_L001_R2_001.fastq",
+        r1="results/fastq-rename-10x/{sample}/{sample}_S1_L001_R1_001.fastq",
+        r2="results/fastq-rename-10x/{sample}/{sample}_S1_L001_R2_001.fastq",
     log:
         "logs/fastq-rename-10x/{sample}.log"
     run:
+        s = wildcards.sample
+        run_id = basename(pep.get_sample(s).sra_accession[0])
         if (len(input) == 2):
-            shell("cp {s} {o}".format(s=input[0], o=output[0])),
-            shell("cp {s} {o}".format(s=input[1], o=output[1]))
+            shell("cp results/fastq-dump-10x/{s}/{r}_1.fastq {o}".format(s=s, r=run_id, o=output.r1)),
+            shell("cp results/fastq-dump-10x/{s}/{r}_2.fastq {o}".format(s=s, r=run_id, o=output.r2))
         elif (len(input) == 3):
-            shell("cp {s} {o}".format(s=input[1], o=output[0])),
-            shell("cp {s} {o}".format(s=input[2], o=output[1]))
+            shell("cp results/fastq-dump-10x/{s}/{r}_2.fastq {o}".format(s=s, r=run_id, o=output.r1)),
+            shell("cp results/fastq-dump-10x/{s}/{r}_3.fastq {o}".format(s=s, r=run_id, o=output.r2))
 
 rule cellranger_mkref:
     input:
