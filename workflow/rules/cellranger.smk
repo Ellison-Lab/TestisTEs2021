@@ -18,6 +18,10 @@ checkpoint fastq_dump_10x:
         run_id = lambda wc: basename(pep.get_sample(wc.sample).sra_accession[0])
     threads:
         4
+    resources:
+        time=60,
+        mem=8000,
+        cpus=4
     log:
         "results/logs/fastq-dump-10x/{sample}.log"
     conda:
@@ -34,7 +38,6 @@ def determine_layout(wildcards, dir = "results/fastq-dump-10x/"):
     glc = glob_wildcards(base + "_{i}.fastq")
     op = expand("{b}_{i}.fastq", b=base,i=glc.i)
     return(op)
-
 
 rule rename_fqs_10x:
     input:
@@ -60,6 +63,10 @@ rule cellranger_mkref:
         gtf = rules.fix_strand_gtf.output
     output:
         directory("results/cellranger/idx")
+    resources:
+        time="18:00:00",
+        mem=int(config.get("CELLRANGER_MEM",16000)/1000.0),
+        cpus=1
     shell:
         """
         ~/cellranger-3.1.0/cellranger mkref --genome={output} \
@@ -75,9 +82,13 @@ rule cellranger_count:
     output:
         directory("results/cellranger/counts/{sample}")
     threads:
-        32
+        config.get("CELLRANGER_COUNT_CPUS",32)
     params:
         ver = config.get("CELLRANGER_VERSION",'3.1.0')
+    resources:
+        time="18:00:00",
+        mem=int(config.get("CELLRANGER_MEM",128000)/1000.0),
+        cpus=config.get("CELLRANGER_CPUS",32),
     shell:
         """
         ~/cellranger-{params.ver}/cellranger count --id={output} \
@@ -85,5 +96,5 @@ rule cellranger_count:
             --fastqs=results/fastq-rename-10x/{wildcards.sample} \
 	    --transcriptome={input.idx} \
 	    --localcores={threads} \
-	    --localmem=128
+	    --localmem={resources.mem}
         """

@@ -5,6 +5,8 @@ rule remove_hashtags_from_te_fa:
         "results/custom-genome/consensus_te.fasta"
     conda:
         "../envs/bioc-general.yaml"
+    group:
+        "custom-genome"
     log:
         "results/logs/remove_hashtags_from_te_fa/remove_hashtags_from_te_fa.log"
     script:
@@ -17,6 +19,8 @@ rule idx_consensus_te_fa:
         "results/custom-genome/consensus_te.fasta.fai"
     conda:
         "../envs/samtools.yaml"
+    group:
+        "custom-genome"
     log:
         "results/logs/idx_consensus_te_fa/idx_consensus_te_fa.log"
     shell:
@@ -31,6 +35,8 @@ rule consensus_te_fa_2_gtf:
         "../envs/bioc-general.yaml"
     output:
         temp("results/custom-genome/consensus_te_fa.gtf")
+    group:
+        "custom-genome"
     log:
         "results/logs/consensus_te_fa_2_gtf/consensus_te_fa_2_gtf.log"
     script:
@@ -42,6 +48,8 @@ rule combine_fas:
         g   = determine_resource(config.get("GENOME_FASTA"))
     output:
         "results/custom-genome/combined.fasta",
+    group:
+        "custom-genome"
     log:
         "results/logs/combine_fas/combine_fas.log"
     shell:
@@ -55,6 +63,8 @@ rule combine_gtfs:
         genes = determine_resource(config.get("GENE_GTF"))
     output:
         temp("results/custom-genome/combined.gtf")
+    group:
+        "custom-genome"
     log:
         "results/logs/combine_gtfs/combine_gtfs.log"
     shell:
@@ -71,6 +81,8 @@ rule fix_strand_gtf:
         disallow = config.get("DISALLOW_GENE_TYPES")
     conda:
         "../envs/bioc-general.yaml"
+    group:
+        "custom-genome"
     log:
         "results/logs/fix_strand_gtf/fix_strand_gtf.log"
     script:

@@ -3,3 +3,6 @@ TRANSPOSON_FASTA: /Users/mlawlor/Downloads/dmel_repbase_lib.fasta
 GENE_GTF: ftp://ftp.flybase.net/releases/FB2018_03/dmel_r6.22/gtf/dmel-all-r6.22.gtf.gz
 DISALLOW_GENE_TYPES: [tRNA, rRNA]
 CELLRANGER_VERSION: 3.1.0
+CELLRANGER_MKREF_MEM: 16000
+CELLRANGER_COUNT_MEM: 128000
+CELLRANGER_COUNT_CPUS: 32
