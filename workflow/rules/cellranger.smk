@@ -3,7 +3,7 @@ rule get_sra_10x:
         url = lambda wc: pep.get_sample(wc.sample).sra_accession,
         dir = "results/get-sra-10x/"
     output:
-        temp(directory("results/get-sra/{sample}"))
+        temp(directory("results/get-sra-10x/{sample}"))
     shell:
         """
         wget -P {params.dir} {params.url}
