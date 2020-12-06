@@ -43,10 +43,10 @@ rule rename_fqs_10x:
     input:
         determine_layout
     output:
-        r1="results/fastq-rename-10x/{sample}/{sample}_S1_L001_R1_001.fastq",
-        r2="results/fastq-rename-10x/{sample}/{sample}_S1_L001_R2_001.fastq",
+        r1=temp("results/fastq-rename-10x/{sample}/{sample}_S1_L001_R1_001.fastq"),
+        r2=temp("results/fastq-rename-10x/{sample}/{sample}_S1_L001_R2_001.fastq"),
     log:
-        "logs/fastq-rename-10x/{sample}.log"
+        "results/logs/fastq-rename-10x/{sample}.log"
     run:
         s = wildcards.sample
         run_id = basename(pep.get_sample(s).sra_accession[0])
