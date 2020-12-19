@@ -53,5 +53,41 @@ rule all_cellranger:
         expand("results/cellranger/{s}.done", s=[x.sample_name for x in pep.samples if x.assay == "10X"]),
         #expand("results/fastq-dump-10x/{s}/", s=[x.sample_name for x in pep.samples if x.assay == "10X"])
 
+rule all_scanpy:
+    input:
+        expand("results/scanpy/{g}/clusters-to-celltypes.csv",g = config.get('SCRNA_GROUPS'))
+        #"results/umap.csv.gz",
+        #expand("results/ica/{k}/consensus-ica-modules.json",k=COMPS_ICA),
+        #expand("results/ica/{k}/consensus-ica-enrichment-{ont}.csv.gz",k=COMPS_ICA,ont=ONTS),
+        #expand("results/ica/{k}/consensus-ica-modules-te-types.tsv",k=COMPS_ICA)
+
+
+rule all_isoseq_1:
+    input:
+        #expand("results/fastq-dump/{s}/",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
+        #expand("results/isoseq-1/mm2/{s}.{z}", z=['sam'],s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
+        #expand("results/isoseq-1/flnc/{s}.bam",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
+        #expand("results/fastqc/{s}",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"])
+        #expand("results/isoseq-1/pbmm2/{s}/{s}.bam",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
+        expand("results/isoseq-1/isoseq_collapse/{s}.gff",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
+        #expand("results/isoseq-1/cupcake-fusion/{s}/{s}.fusion.gff",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
+
+rule all_chipseq:
+    input:
+        expand("results/chipseq/aln/{s}/{s}.rmdup.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "CHIPseq"]),
+        #expand("results/chipseq/aln/{s}/{s}_input.bam",s=[x.sample_name for x in pep.samples if x.assay == "CHIPseq"]),
+
+rule all_srnaseq:
+    input:
+        #expand("results/srna/trimmed/{s}/{s}.srt.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
+        #expand("results/fastqc/{s}",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
+        expand("results/small-rna/shortstack-clean/{s}/{s}.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
+
+
 include: "rules/custom-genome.smk"
 include: "rules/cellranger.smk"
+include: "rules/common.smk"
+include: "rules/isoseq-1.smk"
+include: "rules/chipseq.smk"
+include: "rules/small-rnas.smk"
+include: "rules/process-with-scanpy.smk"

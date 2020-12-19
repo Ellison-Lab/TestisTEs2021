@@ -1,0 +1,5 @@
+sample_name,replicate,sra_accession,,,,,,,adapter
+bam_mutant_srna,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos1/sra-pub-run-5/SRR2046459/SRR2046459.1,,,,,,,NA
+can_mutant_srna,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos1/sra-pub-run-5/SRR2046461/SRR2046461.1,,,,,,,NA
+sa_mutant_srna,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos1/sra-pub-run-5/SRR2046462/SRR2046462.1,,,,,,,NA
+w1118_srna,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos2/sra-pub-run-11/SRR5687219/SRR5687219.1,,,,,,,TGGAATTCTCGGGTGCCAAG

@@ -1,3 +1,4 @@
+# alignment options
 GENOME_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel-all-chromosome-r6.22.fasta.masked
 TRANSPOSON_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel_repbase_lib.fasta
 GENE_GTF: ftp://ftp.flybase.net/releases/FB2018_03/dmel_r6.22/gtf/dmel-all-r6.22.gtf.gz
@@ -7,3 +8,41 @@ CELLRANGER_MKREF_MEM: 16000
 CELLRANGER_COUNT_MEM: 128000
 CELLRANGER_COUNT_CPUS: 64
 FASTERQDUMP_MEM: 16000
+SHORTSTACK_MEM: 24000
+
+# scanpy options
+FBGNS: 'ftp://ftp.flybase.org/releases/FB2020_01/precomputed_files/genes/fbgn_annotation_ID_fb_2020_01.tsv.gz'
+LARVAL_TESTIS_MARKERS: 'resources/larval-testis-markers.txt'
+RANDOM_SEED: 2020 #2020
+MITO_CUTOFF: 0.05 # 0.05
+MAX_GENES: 5000 # 5000
+GENE_MIN: 250 # 250
+GENE_MIN_COUNT: 1 # 3
+GENE_MIN_CELLS: 3 # 3
+MAX_SCALE: 100 # set to arbitrarily huge number for no capping
+N_NEIGHBORS: 15 # 15
+N_PCS_FOR_NEIGHBORS: 15 # 15
+UMAP_SPREAD: 0.9
+UMAP_MIN_DIST: 0.2
+LEIDEN_RESOLUTION: 0.4
+REGRESS_OUT:
+  - S_score
+  - G2M_score
+  - percent_mito
+
+# GEP option
+MAX_SCALE_ICA: 10
+QVAL_ICA: 0.005
+COMPS_ICA: 100
+REPS_ICA: 100
+CUTOFF_APPROACH_ICA: 1 # 1 for keeping component together, 2 for splitting genes by above/below median signal
+OUTLIER_FILT_KNN_ICA: 5 # robust to this
+OUTLIER_MAX_DIST_ICA: 200
+ONTS: [BP,MF,CC]
+
+# sample assignments
+SCRNA_GROUPS:
+  larval-w1118-testes:
+    - larval-testes-01
+    - larval-testes-02
+    - larval-testes-03

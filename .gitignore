@@ -3,7 +3,7 @@ analysis
 analysis/*
 !analysis/README.md
 !config
-#!config/*
+!config/*
 !resources
 !resources/*
 !workflow
@@ -16,3 +16,5 @@ analysis/*
 !LICENSE
 !README.md
 ftp*
+__pycache__
+.~lock*

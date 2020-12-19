@@ -1,0 +1,4 @@
+sample_name,replicate,sra_accession,sra_accession_input
+ChIP_AlyHA_w1118_rep1,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos2/sra-pub-run-9/SRR4896347/SRR4896347.1,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos2/sra-pub-run-9/SRR4896344/SRR4896344.1
+ChIP_AlyHA_AlyHA_rep1,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos1/sra-pub-run-2/SRR4896346/SRR4896346.1,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos1/sra-pub-run-1/SRR4896343/SRR4896343.1
+ChIP_AlyHA_AlyHA_rep2,a,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos1/sra-pub-run-1/SRR4896351/SRR4896351.1,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos2/sra-pub-run-9/SRR4896349/SRR4896349.1

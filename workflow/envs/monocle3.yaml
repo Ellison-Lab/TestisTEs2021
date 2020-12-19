@@ -1,0 +1,11 @@
+channels:
+- conda-forge
+- bioconda
+- defaults
+dependencies:
+- r-tidyverse=1.3.0
+- bioconductor-loomexperiment=1.2.0
+- r-monocle3=0.2.0
+- bioconductor-org.Dm.eg.db
+- r-garnett=0.2.8
+- r-gt

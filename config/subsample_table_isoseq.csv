@@ -1,0 +1,14 @@
+sample_name,replicate,sra_accession
+ARL0005_L3_testes_08_2kb_a,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra47/SRR/012338/SRR12634504
+ARL0005_L3_testes_2_4kb_a,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra58/SRR/012338/SRR12634505
+ARL0006_L3_ovaries_08_2kb_a,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra53/SRR/012338/SRR12634508
+ARL0006_L3_ovaries_2_4kb_a,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra51/SRR/012338/SRR12634509
+ARL0010_adult_testes_08_2kb,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra20/SRR/012338/SRR12634518
+ARL0010_adult_testes_2_4kb,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra77/SRR/012338/SRR12634519
+ARL0004_adult_testes_08_2kb,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra47/SRR/012338/SRR12634501
+ARL0004_adult_testes_2_3kb,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra48/SRR/012338/SRR12634502
+ARL0004_adult_testes_3_5kb,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra50/SRR/012338/SRR12634503
+ARL0005_L3_testes_08_2kb_b,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra58/SRR/012338/SRR12634506
+ARL0005_L3_testes_2_4kb_b,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra39/SRR/012338/SRR12634507
+ARL0006_L3_ovaries_08_2kb_b,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra52/SRR/012338/SRR12634510
+ARL0006_L3_ovaries_2_4kb_b,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra5/SRR/012338/SRR12634511
