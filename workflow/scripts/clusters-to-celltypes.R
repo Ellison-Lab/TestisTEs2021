@@ -1,5 +1,6 @@
 library(LoomExperiment)
 library(monocle3)
+library(monocle)
 library(tidyverse)
 library(org.Dm.eg.db)
 library(garnett)
@@ -18,9 +19,9 @@ var_fl <- paste0(snakemake@input[['csvs']],'/var.csv')
 
 markers_fl <- snakemake@input[['markers']]
 ofl <- snakemake@output[["ofl"]]
-g_marker_check_ofl <- snakemake@output[["g_marker_check"]]
-g_table_ofl <- snakemake@output[["g_table"]]
-g_garnett_results_ofl <- snakemake@output[["g_garnett_results"]]
+#g_marker_check_ofl <- snakemake@output[["g_marker_check"]]
+#g_table_ofl <- snakemake@output[["g_table"]]
+#g_garnett_results_ofl <- snakemake@output[["g_garnett_results"]]
 
 cores <- snakemake@threads[[1]]
 
@@ -37,6 +38,7 @@ var <- read_csv(var_fl) %>%
 scle <- import(fl, type="SingleCellLoomExperiment")
 
 X <- assay(scle,'matrix')
+X <- as.matrix(X)
 colnames(X) <- rownames(obs)
 
 rownames(X) <- rownames(var)
@@ -44,12 +46,21 @@ rownames(X) <- rownames(var)
 pd <- new("AnnotatedDataFrame", data = obs)
 fd <- new("AnnotatedDataFrame", data = var)
 
+message('make cds')
+message(class(X))
+
 cds <- newCellDataSet(as(X, "dgCMatrix"),
                              phenoData = pd,
                              featureData = fd)
 
+#cds <- new_cell_data_set(X,
+#                             cell_metadata = obs,
+#                             gene_metadata = var)
+
+message('size factors')
 cds <- estimateSizeFactors(cds)
 
+message('marker check')
 marker_check <- check_markers(cds, markers_fl,
                               db=org.Dm.eg.db,
                               cds_gene_id_type = "SYMBOL",
@@ -129,6 +140,6 @@ res %>%
   write_csv(ofl)
 
 # output plots
-ggsave(g_marker_check_ofl, g_marker_check)
-gtsave(g_table, g_table_ofl)
-ggsave(g_garnett_results_ofl, g_garnett_results)
+#ggsave(g_marker_check_ofl, g_marker_check)
+#gtsave(g_table, g_table_ofl)
+#ggsave(g_garnett_results_ofl, g_garnett_results)

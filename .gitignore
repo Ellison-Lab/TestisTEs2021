@@ -18,3 +18,4 @@ analysis/*
 ftp*
 __pycache__
 .~lock*
+.Rproj.user

@@ -55,11 +55,17 @@ rule all_cellranger:
 
 rule all_scanpy:
     input:
-        expand("results/scanpy/{g}/clusters-to-celltypes.csv",g = config.get('SCRNA_GROUPS'))
+        expand("results/scanpy/{g}/celltypes.h5ad",g = config.get('SCRNA_GROUPS'))
         #"results/umap.csv.gz",
         #expand("results/ica/{k}/consensus-ica-modules.json",k=COMPS_ICA),
         #expand("results/ica/{k}/consensus-ica-enrichment-{ont}.csv.gz",k=COMPS_ICA,ont=ONTS),
         #expand("results/ica/{k}/consensus-ica-modules-te-types.tsv",k=COMPS_ICA)
+
+rule all_ica:
+    input:
+        expand("results/gep/{g}/{k}/consensus-ica-modules.json",g = config.get('SCRNA_GROUPS'), k = config.get("COMPS_ICA")),
+        expand("results/gep/{g}/{k}/consensus-ica-enrichment-{o}.csv.gz",g = config.get('SCRNA_GROUPS'), k = config.get("COMPS_ICA"), o=config.get('ONTS'))
+
 
 
 rule all_isoseq_1:
@@ -91,3 +97,4 @@ include: "rules/isoseq-1.smk"
 include: "rules/chipseq.smk"
 include: "rules/small-rnas.smk"
 include: "rules/process-with-scanpy.smk"
+include: "rules/gep.smk"

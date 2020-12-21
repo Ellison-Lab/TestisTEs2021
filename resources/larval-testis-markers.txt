@@ -2,7 +2,7 @@
 expressed: aly, sa, tbrd-1, tbrd-2, bol, fzo, twe, spir, Ance, dj, ocn, CycB, twin, bb8
 
 >Spermatogonia
-expressed: AGO3, vas, bam, aub, p53, Dek, e(y)3, osa, CycA
+expressed: AGO3, vas, bam, aub, p53, Dek, osa, CycA
 
 >Cyst
 expressed: tj, eya, piwi, bnb, Nrt, Wnt4

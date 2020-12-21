@@ -136,25 +136,25 @@ rule larval_testis_community_to_celltypes:
         cpus=8
     output:
         ofl = "results/scanpy/{group}/clusters-to-celltypes.csv",
-        g_table = "results/scanpy/{group}/figs/community-to-celltype-table.pdf",
-        g_garnett_results = "results/scanpy/{group}/figs/community-to-celltype-barchart.pdf",
-        g_marker_check = "results/scanpy/{group}/figs/celltype-marker-check.pdf",
+        #g_table = "results/scanpy/{group}/figs/community-to-celltype-table.pdf",
+        #g_garnett_results = "results/scanpy/{group}/figs/community-to-celltype-barchart.pdf",
+        #g_marker_check = "results/scanpy/{group}/figs/celltype-marker-check.pdf",
     conda:
         "../envs/monocle3.yaml"
     script:
         "../scripts/clusters-to-celltypes.R"
 
-# rule add_larval_celltype:
-#     """
-#     Add larval cell types to testis anndata.
-#     """
-#     input:
-#         ad = "results/tmp.h5ad",
-#         ct = "results/clusters-to-celltypes.csv"
-#     output:
-#         ad = "results/celltypes.h5ad",
-#         clusters = 'results/figs/clusters.pdf'
-#     conda:
-#         "envs/scanpy.yaml"
-#     script:
-#         "scripts/add-larval-celltypes.py"
+rule add_larval_celltype:
+    """
+    Add larval cell types to testis anndata.
+    """
+    input:
+        ad = "results/scanpy/{group}/tmp.h5ad",
+        ct = "results/scanpy/{group}/clusters-to-celltypes.csv"
+    output:
+        ad = "results/scanpy/{group}/celltypes.h5ad",
+        clusters = 'results/scanpy/{group}/figs/clusters.pdf'
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        "../scripts/add-larval-celltypes.py"
