@@ -129,20 +129,20 @@ rule larval_testis_community_to_celltypes:
         markers = config.get('LARVAL_TESTIS_MARKERS'),
         csvs = 'results/scanpy/{group}/anno/',
     threads:
-        8
+        24
     resources:
         time=60,
         mem=12000,
-        cpus=8
+        cpus=24
     output:
         ofl = "results/scanpy/{group}/clusters-to-celltypes.csv",
         #g_table = "results/scanpy/{group}/figs/community-to-celltype-table.pdf",
         #g_garnett_results = "results/scanpy/{group}/figs/community-to-celltype-barchart.pdf",
         #g_marker_check = "results/scanpy/{group}/figs/celltype-marker-check.pdf",
-    conda:
-        "../envs/monocle3.yaml"
-    script:
-        "../scripts/clusters-to-celltypes.R"
+    #conda:
+    #    "../envs/monocle3.yaml"
+    shell:
+        "Rscript workflow/scripts/clusters-to-celltypes.R {input.larval} {input.markers} {input.csvs} {output.ofl} {threads}"
 
 rule add_larval_celltype:
     """

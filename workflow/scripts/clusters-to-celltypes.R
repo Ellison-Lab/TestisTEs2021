@@ -1,29 +1,32 @@
+.libPaths(
+	c("/cache/home/mal456/miniconda3/lib/R/library",
+	"/cache/home/mal456/R/4.0.2/lib64/R/library")
+)
+
 library(LoomExperiment)
 library(monocle3)
-library(monocle)
 library(tidyverse)
 library(org.Dm.eg.db)
 library(garnett)
-library(gt)
 
-set.seed(snakemake@params[['seed']])
+args = commandArgs(trailingOnly=TRUE)
+fl = args[1]
+markers_fl = args[2]
+obs_fl = paste0(args[3],'/obs.csv')
+var_fl = paste0(args[3],'/var.csv')
+ofl = args[4]
+cores = args[5]
 
-fl <- "wf/preproc-testis/out/larval-testes.ingest-integrated.raw-layer.loom"
-fl <- snakemake@input[['larval']]
-
-obs_fl <- "wf/preproc-testis/out/larval-testes.anno/obs.csv"
-obs_fl <- paste0(snakemake@input[['csvs']],'/obs.csv')
-
-var_fl <- "wf/preproc-testis/out/larval-testes.anno/var.csv"
-var_fl <- paste0(snakemake@input[['csvs']],'/var.csv')
-
-markers_fl <- snakemake@input[['markers']]
-ofl <- snakemake@output[["ofl"]]
-#g_marker_check_ofl <- snakemake@output[["g_marker_check"]]
-#g_table_ofl <- snakemake@output[["g_table"]]
-#g_garnett_results_ofl <- snakemake@output[["g_garnett_results"]]
-
-cores <- snakemake@threads[[1]]
+sessionInfo()
+set.seed(2020)
+#set.seed(snakemake@params[['seed']])
+# fl <- "~/amarel-scratch/TestisTEs2021/results/scanpy/larval-w1118-testes/raw.loom"; obs_fl <- "~/amarel-scratch/TestisTEs2021/results/scanpy/larval-w1118-testes/anno/obs.csv"; markers_fl <- "~/amarel-scratch/TestisTEs2021/resources/larval-testis-markers.txt"; var_fl <- "~/amarel-scratch/TestisTEs2021/results/scanpy/larval-w1118-testes/anno/var.csv";cores <- 8
+#fl <- snakemake@input[['larval']]
+#obs_fl <- paste0(snakemake@input[['csvs']],'/obs.csv')
+#var_fl <- paste0(snakemake@input[['csvs']],'/var.csv')
+#markers_fl <- snakemake@input[['markers']]
+#ofl <- snakemake@output[["ofl"]]
+#cores <- snakemake@threads[[1]]
 
 obs <- read_csv(obs_fl) %>%
 	mutate_if(is.character,~str_extract(.,regex("(?<=b').+(?=')"))) %>%
@@ -39,26 +42,25 @@ scle <- import(fl, type="SingleCellLoomExperiment")
 
 X <- assay(scle,'matrix')
 X <- as.matrix(X)
-colnames(X) <- rownames(obs)
 
+colnames(X) <- rownames(obs)
 rownames(X) <- rownames(var)
 
-pd <- new("AnnotatedDataFrame", data = obs)
-fd <- new("AnnotatedDataFrame", data = var)
+#pd <- new("AnnotatedDataFrame", data = obs)
+#fd <- new("AnnotatedDataFrame", data = var)
 
 message('make cds')
 message(class(X))
 
-cds <- newCellDataSet(as(X, "dgCMatrix"),
-                             phenoData = pd,
-                             featureData = fd)
-
-#cds <- new_cell_data_set(X,
-#                             cell_metadata = obs,
-#                             gene_metadata = var)
+#cds <- newCellDataSet(as(X, "dgCMatrix"),
+#                             phenoData = pd,
+#                             featureData = fd)
+cds <- new_cell_data_set(X,
+                             cell_metadata = obs,
+                             gene_metadata = var)
 
 message('size factors')
-cds <- estimateSizeFactors(cds)
+cds <- estimate_size_factors(cds)
 
 message('marker check')
 marker_check <- check_markers(cds, markers_fl,
@@ -80,55 +82,19 @@ cds <- classify_cells(cds, classifier,
                            cluster_extend = TRUE,
                            cds_gene_id_type = "SYMBOL")
 
-res <- cds@phenoData@data %>%
+saveRDS(cds, '~/test.rds')
+
+message('printing result')
+cds@colData
+
+
+res <- cds@colData %>%
   as_tibble(rownames = 'X1') %>%
   dplyr::select(X1,clusters, garnett_cluster,cell_type, cluster_ext_type) %>%
   mutate_at(vars('clusters','garnett_cluster'), as.character)
 
-g_garnett_results <- res %>%
-  ggplot(aes(clusters, fill=cell_type)) +
-  geom_bar(position='fill', width=1, color='black') +
-  theme_minimal() +
-  scale_fill_viridis_d(option = 5, direction=-1) +
-  theme(aspect.ratio = 1) +
-  ylab("Percentage") +
-  xlab("Clusters")
-
-# create table in the final form i will visualize
-res2show <- res %>%
-	group_by(clusters,cell_type) %>%
-	summarize(n=n()) %>%
-	ungroup() %>%
-	mutate(clusters = paste0(" ",clusters)) %>%
-	spread(clusters,n) %>%
-	mutate_at(vars(-cell_type),replace_na,0)
-
-# create initial gt object
-g_table <-  res2show %>%
-  gt(rowname_col = 'cell_type') %>%
-  tab_header("Cell type assignments",
-             subtitle = md("Predicted cell type counts in each Leiden community")) %>%
-  tab_stubhead(md("Cell type")) %>%
-  tab_spanner(columns = everything(), label=md("`Leiden`"))
-
-# color cells in gt object by top 2 represented cell types per
-# community
-for (l in paste0(" ",unique(res$clusters))) {
-  print(sym(l))
-  g_table <- g_table %>%
-    #tab_style(style=cell_fill(color="gold"), locations = cells_body(columns = vars(l)))
-    tab_style(style=cell_fill(color="goldenrod"),
-              locations = cells_body(columns=vars(l),
-                                     rows= res2show[[l]] %in% sort(res2show[[l]],T)[1:2]))
-}
-
-# color the unknown row light gray
-g_table <- g_table %>%
-  tab_style(style=cell_fill(color="lightgray"),
-            locations = cells_body(columns=everything(), rows=cell_type == "Unknown"))
-
 # output final summary table
-res %>%
+res2 <- res %>%
   group_by(clusters,cell_type) %>%
   summarize(n=n()) %>%
   group_by(clusters) %>%
@@ -136,10 +102,9 @@ res %>%
   filter(cell_type != "Unknown") %>%
   top_n(1,n) %>%
   ungroup() %>%
-  mutate(clusters2 = paste(clusters,cell_type,sep="/")) %>%
-  write_csv(ofl)
+  mutate(clusters2 = paste(clusters,cell_type,sep="/"))
 
-# output plots
-#ggsave(g_marker_check_ofl, g_marker_check)
-#gtsave(g_table, g_table_ofl)
-#ggsave(g_garnett_results_ofl, g_garnett_results)
+message('printing res2')
+message(res2)
+
+write_csv(res2, ofl)
