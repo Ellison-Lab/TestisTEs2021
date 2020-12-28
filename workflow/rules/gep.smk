@@ -3,8 +3,6 @@ QVAL_ICA = config.get("QVAL_ICA",0.005)
 COMPS_ICA = config.get("COMPS_ICA", 140)
 REPS_ICA = config.get("REPS_ICA",10)
 INDIV_RANDOM_SEEDS_ICA = random.sample(range(0,100000,1),k=REPS_ICA)
-OUTLIER_FILT_KNN_ICA = config.get("OUTLIER_FILT_KNN_ICA",5)
-OUTLIER_MAX_DIST_ICA = config.get("OUTLIER_MAX_DIST_ICA",250)
 MAX_SCALE_ICA = config.get("MAX_SCALE_ICA")
 
 ONTS = config.get("ONTS",["BP","MF","CC"])
