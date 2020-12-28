@@ -71,8 +71,7 @@ if config.get("is_test",False):
 
 rule all:
     input:
-        # The first rule should define the default target files
-        # Subsequent target rules can be specified below. They should start with all_*.
+        expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=['obs','var','expr'])
 
 rule all_scanpy:
     input:
@@ -113,6 +112,7 @@ rule all_srnaseq:
         expand("results/small-rna/shortstack-clean/{s}/{s}.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
 
 
+include: "rules/finalize.smk"
 include: "rules/custom-genome.smk"
 include: "rules/cellranger.smk"
 include: "rules/common.smk"
