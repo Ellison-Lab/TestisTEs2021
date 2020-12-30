@@ -44,7 +44,7 @@ rule grid_combine_ica_metrics:
     input:
         lambda wc: expand("results/gep-grid-search/{g}/ica/{k}/{ovr}/consensus-{im}.csv.gz",g=wc.group, k=COMPONENTS,ovr=OVERALL_REPS, im=wc.ica_metric)
     output:
-        csv = "results/gep-grid-search/{group}/ica/{ica_metric}.csv"
+        csv = "results/gep-grid-search/{group}/{ica_metric}.csv"
     resources:
         time=60,
         mem=12000,
@@ -108,9 +108,9 @@ rule grid_combine_reps_enr:
 
 rule grid_combine_enr_metrics:
     input:
-      rules.grid_combine_reps_enr.output
+        rules.grid_combine_reps_enr.output
     output:
-      "results/gep-grid-search/{group}/enr/enr-metrics.csv"
+        "results/gep-grid-search/{group}/enr-metrics.csv"
     params:
         ont = ONT
     conda:

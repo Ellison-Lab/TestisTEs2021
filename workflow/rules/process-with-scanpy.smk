@@ -41,15 +41,15 @@ rule export_expression:
         "../scripts/export-expression.py"
 
 
-rule export_umap_coords:
-    input:
-        larv_final = "results/scanpy/{group}/celltypes.h5ad",
-    output:
-        umap = "results/scanpy/{group}/umap.csv.gz",
-    conda:
-        "../envs/scanpy.yaml"
-    script:
-        "../scripts/export-coords.py"
+# rule export_umap_coords:
+#     input:
+#         larv_final = "results/scanpy/{group}/celltypes.h5ad",
+#     output:
+#         umap = "results/scanpy/{group}/umap.csv.gz",
+#     conda:
+#         "../envs/scanpy.yaml"
+#     script:
+#         "../scripts/export-coords.py"
 
 rule export_hi_var_genes:
     input:
@@ -78,7 +78,9 @@ rule ingest:
     resources:
         time=20,
         mem=12000,
-        cpus=4
+        cpus=8
+    threads:
+        8
     output:
         h5ad = temp("results/scanpy/{group}/tmp.h5ad"),
         clusters = 'results/scanpy/{group}/figs/communities.pdf'

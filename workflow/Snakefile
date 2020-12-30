@@ -71,7 +71,7 @@ if config.get("is_test",False):
 
 rule all:
     input:
-        expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=['obs','var','expr'])
+        expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=['obs','var','expr','scaled','grid_enr','grid_silhouette']),
 
 rule all_scanpy:
     input:
@@ -81,7 +81,8 @@ rule all_gep_grid:
     input:
         expand("results/gep-grid-search/{g}/ica/{c}/{ovr}/consensus-ica.csv.gz", g=config.get('SCRNA_GROUPS'),c=COMPONENTS, ovr=OVERALL_REPS),
         expand("results/gep-grid-search/{g}/ica/{c}/{ovr}/consensus-usage.csv.gz", g=config.get('SCRNA_GROUPS'), c=COMPONENTS, ovr=OVERALL_REPS),
-        expand("results/gep-grid-search/{g}/enr/enr-metrics.csv", g=config.get('SCRNA_GROUPS'))
+        expand("results/gep-grid-search/{g}/enr-metrics.csv", g=config.get('SCRNA_GROUPS')),
+        expand("results/gep-grid-search/{g}/{im}.csv", g=config.get('SCRNA_GROUPS'),im=['dists','silhouette'])
 
 rule all_gep:
     input:

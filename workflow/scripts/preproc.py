@@ -13,6 +13,9 @@ np.random.seed(snakemake.params['seed'])
 
 rand_state=snakemake.params['seed']
 
+THREADS = snakemake.threads
+print('AAAA')
+print(THREADS)
 sys.path.append('scripts')
 from funcs import *
 
@@ -61,7 +64,7 @@ ads = [call_doublets(a,st) for a,st in zip(ads,scrub_thresh)]
 
 ads = [qc_and_lognorm(a, mito_f, cc_f, mito_cutoff=mito_cutoff, gene_cut=gene_cut, gene_min=gene_min, gene_min_count=gene_min_count, gene_min_cells=gene_min_cells) for a in ads]
 
-ads = [regress_out(a, mito_f, cc_f, max_value, vars_to_regress) for a in ads]
+ads = [regress_out(a, mito_f, cc_f, max_value, vars_to_regress, n_jobs=THREADS) for a in ads]
 
 var_names = ads[0].var_names.intersection(ads[1].var_names).intersection(ads[2].var_names)
 

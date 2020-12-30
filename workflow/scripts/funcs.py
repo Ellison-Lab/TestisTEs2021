@@ -146,7 +146,7 @@ def qc_and_lognorm(ad, mito_f, cc_f, mito_cutoff, gene_cut, gene_min, gene_min_c
     return adata
 
 
-def regress_out(ad, mito_f, cc_f, max_value, vars_to_regress=None, rand_state=2020):
+def regress_out(ad, mito_f, cc_f, max_value, vars_to_regress=None, rand_state=2020,n_jobs=1):
     adata = ad.copy()
 
     # DEBUG mito_genes = [x.strip() for x in open("out/external/mito.tsv")]
@@ -162,7 +162,7 @@ def regress_out(ad, mito_f, cc_f, max_value, vars_to_regress=None, rand_state=20
 
     adata.raw = adata
 
-    sc.pp.scale(adata, max_value = max_value)
+    sc.pp.scale(adata)
 
     # ----
     # Get scores for cell cycle
@@ -173,7 +173,7 @@ def regress_out(ad, mito_f, cc_f, max_value, vars_to_regress=None, rand_state=20
     # regress out
     # ----
     if vars_to_regress:
-        sc.pp.regress_out(adata, vars_to_regress)
+        sc.pp.regress_out(adata, vars_to_regress, n_jobs=n_jobs)
         sc.pp.scale(adata, max_value = max_value) # rescale per vignette
 
     return adata

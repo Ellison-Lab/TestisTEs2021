@@ -5,7 +5,7 @@ rule collect_var:
         directory("results/finalized/{group}/var")
     resources:
         time=40,
-        mem=12000,
+        mem=24000,
     conda:
         "../envs/r_arrow.yaml"
     script:
@@ -20,7 +20,7 @@ rule collect_obs:
         directory("results/finalized/{group}/obs")
     resources:
         time=40,
-        mem=12000,
+        mem=24000,
     conda:
         "../envs/r_arrow.yaml"
     script:
@@ -28,14 +28,56 @@ rule collect_obs:
 
 rule collect_scrna_expr:
     input:
-        var= "results/scanpy/{group}/anno/var.csv",
-        expr = "results/scanpy/{group}/lognorm-expression.csv.gz"
+        var= rules.collect_var.output,
+        expr = "results/scanpy/{group}/lognorm-expression.csv.gz",
+        obs = rules.collect_obs.output
     output:
         directory("results/finalized/{group}/expr")
     resources:
         time=40,
-        mem=12000,
+        mem=128000,
     conda:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-scrna-expr.R"
+
+rule collect_scrna_scaled:
+    input:
+        var= rules.collect_var.output,
+        expr = "results/scanpy/{group}/scaled-expression.csv.gz",
+        obs = rules.collect_obs.output
+    output:
+        directory("results/finalized/{group}/scaled")
+    resources:
+        time=40,
+        mem=128000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-scrna-expr.R"
+
+rule collect_grid_enr_metrics:
+    input:
+        "results/gep-grid-search/{group}/enr-metrics.csv"
+    output:
+        directory("results/finalized/{group}/grid_enr")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
+
+rule collect_grid_cica_silhouette:
+    input:
+        "results/gep-grid-search/{group}/silhouette.csv"
+    output:
+        directory("results/finalized/{group}/grid_silhouette")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
