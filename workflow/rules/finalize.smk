@@ -81,3 +81,42 @@ rule collect_grid_cica_silhouette:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule collect_optimal_enr:
+    input:
+        lambda wc: expand("results/gep/{g}/optimal/consensus-ica-enrichment-{o}.csv.gz",g = wc.group, o=config.get('ONTS'))
+    output:
+        directory("results/finalized/{group}/optimal_gep_enr/")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-gep-enr.R"
+
+rule collect_optimal_usage:
+    input:
+        lambda wc: expand("results/gep/{g}/optimal/consensus-usage.csv.gz",g = wc.group, o=config.get('ONTS'))
+    output:
+        directory("results/finalized/{group}/optimal_gep_usage/")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
+
+rule collect_optimal_gep_membership:
+    input:
+        lambda wc: expand("results/gep/{g}/optimal/consensus-ica-qvalues.csv.gz",g = wc.group, o=config.get('ONTS'))
+    output:
+        directory("results/finalized/{group}/optimal_gep_membership/")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"

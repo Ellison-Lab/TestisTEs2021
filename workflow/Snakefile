@@ -6,6 +6,7 @@ from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 import sys
 import random
+import json
 
 
 # Block annoying warnings
@@ -69,26 +70,11 @@ if config.get("is_test",False):
     QVALS = [0.001,0.01,0.1]
     ONT = "CC"
 
+FINAL_DATASETS = ['obs','var','expr','scaled','grid_enr','grid_silhouette','optimal_gep_enr','optimal_gep_usage','optimal_gep_membership']
+
 rule all:
     input:
-        expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=['obs','var','expr','scaled','grid_enr','grid_silhouette']),
-
-rule all_scanpy:
-    input:
-        expand("results/scanpy/{g}/celltypes.h5ad",g = config.get('SCRNA_GROUPS'))
-
-rule all_gep_grid:
-    input:
-        expand("results/gep-grid-search/{g}/ica/{c}/{ovr}/consensus-ica.csv.gz", g=config.get('SCRNA_GROUPS'),c=COMPONENTS, ovr=OVERALL_REPS),
-        expand("results/gep-grid-search/{g}/ica/{c}/{ovr}/consensus-usage.csv.gz", g=config.get('SCRNA_GROUPS'), c=COMPONENTS, ovr=OVERALL_REPS),
-        expand("results/gep-grid-search/{g}/enr-metrics.csv", g=config.get('SCRNA_GROUPS')),
-        expand("results/gep-grid-search/{g}/{im}.csv", g=config.get('SCRNA_GROUPS'),im=['dists','silhouette'])
-
-rule all_gep:
-    input:
-        expand("results/gep/{g}/{k}/consensus-ica-modules.json",g = config.get('SCRNA_GROUPS'), k = config.get("COMPS_ICA")),
-        expand("results/gep/{g}/{k}/consensus-ica-enrichment-{o}.csv.gz",g = config.get('SCRNA_GROUPS'), k = config.get("COMPS_ICA"), o=config.get('ONTS'))
-
+        expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
 
 
 rule all_isoseq_1:
@@ -121,5 +107,5 @@ include: "rules/isoseq-1.smk"
 include: "rules/chipseq.smk"
 include: "rules/small-rnas.smk"
 include: "rules/process-with-scanpy.smk"
-include: "rules/gep.smk"
 include: "rules/gep-grid-search.smk"
+include: "rules/gep.smk"

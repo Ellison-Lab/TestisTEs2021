@@ -1,3 +1,20 @@
+MAX_SCALE_ICA = config.get("MAX_SCALE_ICA")
+
+rule standardize:
+    input:
+        expr = "results/scanpy/{group}/lognorm-expression.csv.gz",
+        genes = "results/scanpy/{group}/hivar-and-tes.csv",
+    output:
+        "results/gep/{group}/standardized.csv.gz"
+    params:
+        maxval = MAX_SCALE_ICA
+    resources:
+        time=40,
+        mem=12000,
+    conda:
+        "../envs/gep.yaml"
+    script:
+        "../scripts/standardize.py"
 
 # ------------------------------------------------------------------------------
 # ICA itself
@@ -117,3 +134,13 @@ rule grid_combine_enr_metrics:
         "../envs/topgo.yaml"
     script:
       "../scripts/gather_supp_enr_metrics.R"
+
+rule find_optimal_cica_params:
+    input:
+        rules.grid_combine_enr_metrics.output
+    output:
+        "results/gep-grid-search/{group}/optimal.json"
+    conda:
+        "../envs/topgo.yaml"
+    script:
+        "../scripts/find-optimal-cica-params.R"
