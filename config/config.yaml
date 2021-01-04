@@ -2,6 +2,8 @@
 GENOME_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel-all-chromosome-r6.22.fasta.masked
 TRANSPOSON_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel_repbase_lib.fasta
 GENE_GTF: ftp://ftp.flybase.net/releases/FB2018_03/dmel_r6.22/gtf/dmel-all-r6.22.gtf.gz
+TIDAL: http://www.bio.brandeis.edu/laulab/Tidal_Fly/Tidal_Fly_v1Archive20150930.zip
+TIDAL_ANNO: https://github.com/laulabbrandeis/TIDAL/raw/master/annotation.tar.gz
 DISALLOW_GENE_TYPES: [tRNA, rRNA]
 CELLRANGER_VERSION: 3.1.0
 CELLRANGER_MKREF_MEM: 16000
