@@ -19,3 +19,4 @@ ftp*
 __pycache__
 .~lock*
 .Rproj.user
+RM_*/

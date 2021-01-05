@@ -63,6 +63,9 @@ ONT = config.get('ONT_GRID','BP')
 ICA_VERSION = 1
 GRID_INDIV_RANDOM_SEEDS_ICA = [random.sample(range(0,100000,1),k=max(REPS)) for x in OVERALL_REPS]
 
+N_INS_SHUFFLES =config.get('N_INS_SHUFFLES',1000)
+INDIV_RANDOM_SEEDS_SHUF = random.sample(range(0,N_INS_SHUFFLES,1),k=N_INS_SHUFFLES)
+
 if config.get("is_test",False):
     REPS = [1,2]
     OVERALL_REPS = [1,2]
@@ -70,11 +73,15 @@ if config.get("is_test",False):
     QVALS = [0.001,0.01,0.1]
     ONT = "CC"
 
-FINAL_DATASETS = ['obs','var','expr','scaled','grid_enr','grid_silhouette','optimal_gep_enr','optimal_gep_usage','optimal_gep_membership']
+FINAL_DATASETS = ['obs','var','expr','scaled','grid_enr','grid_silhouette',
+                    'optimal_gep_enr','optimal_gep_usage',
+                    'optimal_gep_membership']
 
 rule all:
     input:
         expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
+        "results/finalized/hetchrom_assembly_insertions/"
+
 
 
 rule all_isoseq_1:
@@ -110,3 +117,4 @@ include: "rules/process-with-scanpy.smk"
 include: "rules/gep-grid-search.smk"
 include: "rules/gep.smk"
 include: "rules/tidal.smk"
+include: "rules/hetchrom-ins.smk"

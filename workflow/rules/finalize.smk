@@ -120,3 +120,16 @@ rule collect_optimal_gep_membership:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule collect_hetchrom_assembly_ins:
+    input:
+        "results/hetchrom-ins/insertions.csv"
+    output:
+        directory("results/finalized/hetchrom_assembly_insertions/")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
