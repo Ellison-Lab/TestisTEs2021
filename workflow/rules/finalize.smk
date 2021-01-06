@@ -133,3 +133,16 @@ rule collect_hetchrom_assembly_ins:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule collect_tidal:
+    input:
+        "results/tidal/ratio/{group}/xa-ratio.csv"
+    output:
+        directory("results/finalized/{group}/xa_ratio/")
+    resources:
+        time=10,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"

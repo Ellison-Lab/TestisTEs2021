@@ -75,12 +75,12 @@ if config.get("is_test",False):
 
 FINAL_DATASETS = ['obs','var','expr','scaled','grid_enr','grid_silhouette',
                     'optimal_gep_enr','optimal_gep_usage',
-                    'optimal_gep_membership']
+                    'optimal_gep_membership','xa_ratio']
 
 rule all:
     input:
         expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
-        "results/finalized/hetchrom_assembly_insertions/"
+        "results/finalized/hetchrom_assembly_insertions/",
 
 
 
