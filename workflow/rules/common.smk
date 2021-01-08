@@ -64,27 +64,6 @@ rule fastq_dump_input:
        fasterq-dump --mem {resources.mem}MB -s -S --include-technical -e {threads} -O {output} {input}/{params.run_id} 2> {log}
        """
 
-
-rule fastqc:
-    input:
-        rules.fastq_dump.output
-    output:
-        directory("results/fastqc/{sample}")
-    conda:
-        "../envs/fastqc.yaml"
-    threads:
-        16
-    log:
-        "results/logs/fastqc/{sample}.log"
-    resources:
-        time=20,
-        cpus=16
-    shell:
-        """
-        mkdir -p {output} &&
-        fastqc -o {output} -t {threads} {input}/* 2> {log}
-        """
-
 rule bam_collate:
     input:
         "results/{file}.bam"

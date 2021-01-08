@@ -62,3 +62,14 @@ SCRNA_GROUPS:
     - larval-testes-01
     - larval-testes-02
     - larval-testes-03
+
+RNASEQ_GROUPS:
+  hsBam-rna:
+    - RNA_seq_bam_mutant_rep1
+    - RNA_seq_bam_mutant_rep2
+    - RNA_seq_48hrPHS_rep1
+    - RNA_seq_48hrPHS_rep2
+    - RNA_seq_72hrPHS_rep1
+    - RNA_seq_72hrPHS_rep2
+    - RNA_seq_aly_mutant_rep1
+    - RNA_seq_aly_mutant_rep2

@@ -1,0 +1,9 @@
+sample_name,replicate,sra_accession
+RNA_seq_bam_mutant_rep1,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra40/SRR/010924/SRR11186376
+RNA_seq_bam_mutant_rep2,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra13/SRR/010924/SRR11186377
+RNA_seq_48hrPHS_rep1,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra40/SRR/010924/SRR11186378
+RNA_seq_48hrPHS_rep2,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra45/SRR/010924/SRR11186379
+RNA_seq_72hrPHS_rep1,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra31/SRR/010924/SRR11186380
+RNA_seq_72hrPHS_rep2,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra19/SRR/010924/SRR11186381
+RNA_seq_aly_mutant_rep1,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra11/SRR/010924/SRR11186382
+RNA_seq_aly_mutant_rep2,a,https://sra-download.ncbi.nlm.nih.gov/traces/sra35/SRR/010924/SRR11186383
