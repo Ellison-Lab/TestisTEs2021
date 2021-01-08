@@ -81,6 +81,7 @@ rule all:
     input:
         expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
         "results/finalized/hetchrom_assembly_insertions/",
+        "results/finalized/rnaseq_pe/",
 
 rule all_rnaseq:
     input:
@@ -121,4 +122,4 @@ include: "rules/gep-grid-search.smk"
 include: "rules/gep.smk"
 include: "rules/tidal.smk"
 include: "rules/hetchrom-ins.smk"
-include: "rules/rnaseq.smk"
+include: "rules/rnaseq-pe.smk"

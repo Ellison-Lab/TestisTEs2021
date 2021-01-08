@@ -73,7 +73,7 @@ rule generate_star_idx:
         "--sjdbGTFfile {input.gtf} "
         "--genomeSAindexNbases 11"
 
-rule rnaseq_star_align:
+rule rnaseq_star_align_pe:
     input:
         rules.generate_star_idx.output,
         reads1 = rules.trim_pe.output.r1,
@@ -121,6 +121,18 @@ rule rnaseq_star_align:
           --alignSplicedMateMapLmin 30 \
         --chimOutType Junctions
         """
+
+rule collect_rnaseq:
+    input:
+        star=expand("results/rnaseq/star/{s}/",s=[x.sample_name for x in pep.samples if x.assay == "RNAseq"])
+    output:
+        directory("results/finalized/rnaseq_pe/")
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/parse_star_counts.R"
+
+
 #
 #
 # rule index_bam:
