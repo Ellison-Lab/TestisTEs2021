@@ -1,0 +1,245 @@
+---
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies: ["float"]
+  html_document: default
+mainfont: Times New Roman
+header-includes:
+- \usepackage{caption}
+- \usepackage{float}
+- \captionsetup[figure]{labelformat=empty}
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.pos="H", echo = F, message = F, warning = F, error = F, fig.path = './figures/', dev = c('pdf','png'), dpi=300,  out.extra="", fig.align='center')
+```
+
+```{r libraries}
+library(tidyverse)
+library(jsonlite)
+library(arrow)
+library(ComplexHeatmap)
+library(pheatmap)
+library(rtracklayer)
+library(ggforce)
+library(gt)
+```
+
+```{r data-01, cache=F}
+w1118.obs <- open_dataset("~/finalized/larval-w1118-testes/obs", format='arrow')
+w1118.var <- open_dataset("~/finalized/larval-w1118-testes/var", format='arrow')
+w1118.expr <- open_dataset("~/finalized/larval-w1118-testes/expr", format='arrow')
+w1118.scaled <- open_dataset("~/finalized/larval-w1118-testes/scaled", format='arrow')
+w1118.grid <- open_dataset("~/finalized/larval-w1118-testes/grid_enr", format='arrow')
+w1118.gep_enr <- open_dataset("~/finalized/larval-w1118-testes/optimal_gep_enr", format='arrow')
+w1118.gep_usage <- open_dataset("~/finalized/larval-w1118-testes/optimal_gep_usage", format='arrow')
+w1118.gep_membership <- open_dataset("~/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
+xa.ratio.w1118 <- open_dataset("~/finalized/larval-w1118-testes/xa_ratio/", format='arrow') %>% collect()
+hetchrom.ins <- open_dataset("~/finalized/hetchrom_assembly_insertions/", format='arrow')
+rnaseq_pe <- open_dataset("~/finalized/rnaseq_pe/", format='arrow')
+
+mods_all <- w1118.gep_membership %>% 
+  collect() %>%
+  filter(qval < 0.005)
+```
+
+
+```{r data-02}
+te.lookup <- read_tsv('../resources/te_id_lookup.curated.tsv.txt')
+
+gtf <- import('../results/custom-genome/combined.fixed.gtf') %>%
+  as_tibble()
+
+tep.name <- w1118.gep_membership %>%
+  filter(qval < 0.005) %>%
+  collect() %>%
+  left_join(te.lookup, by=c(X1='merged_te')) %>%
+  filter(!str_detect(X1,'FBgn')) %>%
+  dplyr::select(module, X1, repClass, repFamily) %>%
+  distinct() %>%
+  group_by(module) %>%
+  summarize(n_tes=n()) %>%
+  arrange(-n_tes) %>%
+  head(1) %>%
+  pull(module) %>% as.character()
+
+tep.members <- w1118.gep_membership %>%
+  filter(qval < 0.005) %>%
+  collect() %>%
+  filter(as.character(module)==tep.name) %>%
+  pull(X1)
+```
+
+
+```{r child= c('figure-01.Rmd','figure-02.Rmd','figure-03.Rmd','figure-04.Rmd','figure-05.Rmd')}
+```
+
+
+```{r grid-search-trend, eval=F}
+metrics.grid <- w1118.grid %>%
+  collect() %>%
+  mutate_at(vars('cov','pct_unique_term','pct_enr'), scales::rescale) %>%
+  mutate(score = cov * pct_unique_term)
+
+metrics.grid %>%
+  dplyr::rename(coverage='cov', uniqueness='pct_unique_term') %>%
+  gather(metric, value, -rep:-comps) %>%
+  filter(metric %in% c("coverage","uniqueness")) %>%
+ggplot() +
+  geom_smooth(aes(comps, value, color=metric)) +
+  geom_point(aes(comps, value)) +
+  facet_grid(qval~rep) +
+  theme_classic() +
+  scale_color_viridis_d(direction=-1, ) +
+  theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
+  xlab("k") + ylab('score') +
+  labs(caption = "Relationship between k and enrichment metrics.")
+```
+
+
+```{r grid-search-heat, eval=F }
+ggplot(metrics.grid,aes(as.factor(comps),as.factor(qval),fill=score)) +
+  geom_raster(interpolate = F) +
+  theme_minimal() +
+  xlab("k") + ylab("qval") +
+  scale_fill_viridis_c() +
+  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0)) +
+  labs(caption = "Joint score displayed by FDR cutoff and k.") +
+  facet_wrap(~rep)
+```
+
+
+
+```{r mod-sizes, eval=F}
+fls <- Sys.glob(paste0("../results/gep-grid-search/larval-w1118-testes/ica/",optimal['comps'],"/*/consensus-ica.qvalues.csv.gz"))
+grid.mods <- map_df(fls,read_csv, .id = 'rep')
+
+grid.mods %>% 
+  filter(qval < optimal['qval']) %>% group_by(module,rep) %>% tally() %>%
+  ggplot(aes(n)) +
+  geom_histogram(aes(fill=..count..), color='black') +
+  theme_classic() +
+  scale_y_continuous(expand = c(0,0)) +
+  facet_wrap(~rep) +
+  scale_fill_fermenter(direction = 1, palette = 13) +
+  theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
+  xlab('module size') +
+  labs(caption = 'Distribution of module sizes for each replicate at optimal params.')
+```
+
+```{r optimal-k-dups-1, eval=F}
+grid.dups <- Sys.glob(paste0("../results/gep-grid-search/larval-w1118-testes/ica/*/*/consensus-ica.csv.gz")) %>%
+  tibble(file=.) %>%
+  mutate(k=str_extract(file,"(?<=ica\\/)\\d+(?=\\/)")) %>%
+  mutate(rep=str_extract(file,"(?<=\\/)\\d+(?=\\/consensus)")) %>%
+  mutate(data = map(file, read_csv)) %>%
+  mutate(data = map(data,column_to_rownames,'index')) %>%
+  mutate(data = map(data,cor)) %>%
+  mutate(data = map(data,as_tibble, rownames='module')) %>%
+  mutate(data = map(data,gather,module2, corr, -module)) %>%
+  unnest(cols=data) %>%
+  filter(module!=module2) %>%
+  group_by(k,rep,module) %>%
+  summarize(closest = max(corr)) %>%
+  group_by(k,rep) %>%
+  summarize(dup.rate = sum(closest>=0.9)/n())
+
+grid.dups %>%
+  ggplot(aes(as.numeric(k), dup.rate)) +
+  stat_summary(geom='line', color='red', linetype='dotted') +
+  stat_summary(aes(as.numeric(k), dup.rate)) +
+  theme_classic() +
+  theme(aspect.ratio = 0.5) +
+  xlab("k")
+```
+
+
+```{r ica-dup-corr-plot, eval=F}
+contrib <- paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-qvalues.csv.gz") %>%
+  read_csv() %>%
+  dplyr::select(-qval) %>%
+  spread(module, weight) %>%
+  column_to_rownames('X1') 
+
+contrib.cor <- cor(contrib, method='spearman')
+
+contrib.cor.hc <- {1-contrib.cor} %>% as.dist() %>% hclust
+
+
+pheatmap::pheatmap(contrib.cor,
+                   cluster_rows = contrib.cor.hc, 
+                   cluster_cols = contrib.cor.hc, border_color = NA)
+```
+
+```{r usage-dup-corr-plot, eval=F}
+usage <- paste0("../results/gep/larval-w1118-testes/optimal/consensus-usage.csv.gz") %>%
+  read_csv() %>%
+  spread(cons, usage) %>%
+  column_to_rownames('X1') 
+
+usage.cor <- cor(usage, method='spearman')
+
+usage.cor.hc <- {1-usage.cor} %>% as.dist() %>% hclust
+
+
+pheatmap::pheatmap(usage.cor,
+                   cluster_rows = usage.cor.hc, 
+                   cluster_cols = usage.cor.hc, border_color = NA)
+```
+
+```{r eval=F}
+paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-modules.json") %>%
+  read_json() %>%
+  enframe('GEP','gene_id') %>%
+  unnest_auto('gene_id') %>%
+  group_by(GEP) %>%
+  summarize(n=sum(!str_detect(gene_id,'FBgn'))) %>%
+  arrange(desc(n))
+```
+
+```{r eval=F}
+paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-modules.json") %>%
+  read_json() %>%
+  enframe('GEP','gene_id') %>%
+  unnest_auto('gene_id') %>%
+  filter(gene_id == 'FBgn0260932')
+```
+
+```{r eval=F}
+goi <- c('cuff','rhi','EAChm','sa','dom','E(bx)','can','Mad','bam','vas','dac','lola')
+
+map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
+       ~{filter(w1118.scaled, clusters == . & gene_symbol %in% goi) %>% collect()}) %>%
+left_join(collect(w1118.obs), by=c(index='X1','cell_type'='cell_type')) %>%
+  ungroup() %>%
+  #group_by(cell_type) %>%
+  mutate(ord = dense_rank(cell_type)) %>%
+  mutate(gene_symbol = fct_relevel(gene_symbol, markers2display)) %>%
+  ggplot(aes(fct_reorder(clusters2, ord),expression)) +
+  geom_violin(aes(fill=clusters2),draw_quantiles = c(0.5),scale = 'width') +
+  facet_wrap(~gene_symbol, ncol = 1, scales = 'free_y') +
+  scale_fill_brewer(type='qual',palette = 8, name="") +
+  theme_classic() +
+  theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)), axis.title = element_text(size = rel(1.2)), axis.text.y = element_text(size=rel(1.2)), axis.text.x=element_text(angle=90, hjust=1, vjust=0.5, size=rel(1.2)),aspect.ratio = 0.1) +
+  xlab('') + guides(fill=F)
+```
+
+```{r eval=F}
+paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-modules.json") %>%
+  read_json() %>%
+  enframe('GEP','gene_id') %>%
+  unnest_auto('gene_id') %>%
+  left_join(collect(w1118.var), by=c(gene_id = 'X1')) %>%
+  filter(GEP == '26') %>%
+  pull(gene_id) %>%
+  walk(message)
+```
+
+```{r last, eval=F}
+read_csv("../results/gep/larval-w1118-testes/optimal/consensus-ica-enrichment-CC.csv.gz") %>% filter(weight01 < 0.05) %>% filter(str_detect(Term,'histo'))
+```
+
+
+
+

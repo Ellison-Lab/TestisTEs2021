@@ -1,4 +1,6 @@
 *
+!TestisTEs2021-manuscript
+!TestisTEs2021-manuscript/*
 analysis
 analysis/*
 !analysis/README.md
@@ -20,3 +22,6 @@ __pycache__
 .~lock*
 .Rproj.user
 RM_*/
+*log
+*tex
+*udpipe*

@@ -1,0 +1,121 @@
+
+# Section 3
+
+```{r}
+w1118.usage.mat <- w1118.gep_usage %>% 
+  collect() %>%
+  #group_by(X1) %>%
+  #mutate(usage = scales::rescale(usage,c(-1,1))) %>%
+  spread(cons, usage) %>%
+  column_to_rownames('X1') %>% as.matrix()
+
+#sdum <- sd(w1118.usage.mat)
+#w1118.usage.mat <- t(apply(w1118.usage.mat, MARGIN = 1, FUN=function(x) (x-mean(x))/sdum))
+
+w1118.usage.hc.geps <- w1118.usage.mat %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+w1118.usage.hc.cells <- w1118.usage.mat %>% t() %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+```
+
+```{r}
+w1118.membership.mat <- w1118.gep_membership %>% 
+  collect() %>%
+  dplyr::select(-qval) %>%
+  spread(module, weight) %>%
+  column_to_rownames('X1') %>% as.matrix()
+
+w1118.membership.hc.geps <- w1118.membership.mat  %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+w1118.membership.hc.genes <- w1118.membership.mat  %>% t() %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+```
+
+```{r f3a, out.height="4in", fig.dim=c(10,10), fig.cap='Figure 3A'}
+palette_len <- 255
+colors <- colorRampPalette( (c("#3B9AB2", "#3B9AB2","#78B7C5", "#E1AF00", "#F21A00")))(palette_len)
+  
+myBreaks <- c(seq(min(w1118.usage.mat)*0.1, mean(w1118.usage.mat), length.out=ceiling(palette_len/2)),
+              seq(median(w1118.usage.mat) + 0.01, max(w1118.usage.mat)*0.1, length.out=floor(palette_len/2)))
+
+cls <- circlize::colorRamp2(breaks = myBreaks,colors = colors)
+
+levs <- w1118.obs %>% collect() %>%
+  pull(clusters2) %>% unique %>%
+  set_names(.,.) %>%
+  map(~str_remove(.,'\\d+\\/')) %>%
+  {names(.)[order(unlist(.))]}
+
+col <- list(cell_types=RColorBrewer::brewer.pal(length(levs),'Set3') %>%
+               set_names(levs))
+
+  # Create the heatmap annotation
+ha <- HeatmapAnnotation(cell_types = pull(w1118.obs,'clusters2'), col = col)
+  
+Heatmap(t(w1118.usage.mat)[,pull(w1118.obs,'X1')],
+                 column_names_rot = 45,
+                 column_title_side = "bottom",
+                 na_col = 'green',
+                 cluster_rows = w1118.membership.hc.geps,
+                 name = 'GEP usage',
+                  row_title = 'GEPs', 
+                 #top_annotation = ha,
+                 show_column_names = F,
+                 col = cls,
+                  column_title_rot = 90,
+                 column_title_gp = gpar(fontsize=12),
+                 row_names_gp = gpar(fontsize = 2),
+                  show_row_names = T,
+                 show_column_dend = F, 
+                show_row_dend = T,
+                 column_split = factor(pull(w1118.obs,'clusters2'),levels=levs),
+                 use_raster = T,
+                 heatmap_height = unit(4.7,units = "in"),
+                 width=unit(8.7,units="in"),
+                 cluster_column_slices = F)
+```
+
+```{r f3b, fig.cap='Figure 3B'}
+w1118.gep_membership %>%
+  filter(qval < 0.005) %>%
+  collect() %>%
+  left_join(te.lookup, by=c(X1='merged_te')) %>%
+  filter(!str_detect(X1,'FBgn')) %>%
+  dplyr::select(module, X1, repClass, repFamily) %>%
+  distinct() %>%
+  group_by(module) %>%
+  mutate(n_tes=n()) %>%
+  filter(n_tes > 1) %>%
+  mutate(repClass=replace_na(repClass,replace = 'other')) %>%
+  ggplot(aes(reorder(module, n_tes), fill=repClass)) +
+  geom_bar(position='stack') +
+  scale_fill_brewer(type='qual',palette=6, name='') +
+  theme_classic() +
+  theme(aspect.ratio = 0.3,legend.position = 'bottom', axis.text = element_text(size=rel(1.2))) +
+  xlab("") + ylab('N') +
+  scale_y_continuous(expand=c(0,0))
+```
+
+```{r f3c, fig.cap='Figure 3C'}
+feature_types <- c('mRNA','ncRNA','snRNA','pre_miRNA','miRNA','pseudogene','snoRNA')
+feature_df <- gtf %>% 
+  mutate(type=as.character(type)) %>%
+  filter(type %in% feature_types) %>%
+  dplyr::select(gene_id,type) %>%
+  distinct()
+
+w1118.gep_membership %>%
+  filter(qval < 0.005) %>%
+  collect() %>%
+  left_join(feature_df, by=c('X1'='gene_id')) %>%
+  filter(module==tep.name) %>%
+  mutate(type=ifelse(!str_detect(X1,'FBgn'),'TE',type)) %>%
+  count(type) %>%
+  mutate(pct=n/sum(n)) %>%
+  ggplot(aes("",pct,fill=type)) +
+  geom_bar(color='white',stat='identity') +
+  coord_polar('y',start=0) +
+  scale_fill_brewer(type='qual',palette=6,direction = -1, name='') +
+  theme_no_axes() +
+  theme(aspect.ratio = 1, legend.position='bottom') +
+  xlab('') + ylab('') +
+  geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5), size=rel(5))
+```
+
+

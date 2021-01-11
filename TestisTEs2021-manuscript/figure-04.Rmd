@@ -1,0 +1,117 @@
+
+# Section 4
+
+```{r}
+library(textrank)
+library(udpipe)
+
+tagger <- udpipe_download_model("english")
+tagger <- udpipe_load_model(tagger$file_model)
+
+mod.kw <- w1118.gep_enr %>%
+  filter(weight01 < 0.05) %>%
+  collect() %>%
+  group_by(cluster, ont) %>%
+  do(as.data.frame(udpipe_annotate(tagger, pull(.,Term)))) %>%
+  group_by(cluster, ont) %>%
+  do(as.data.frame(textrank_keywords(.$lemma, relevant = .$upos %in% c('NOUN','ADJ'),ngram_max = 3)$keywords)) %>%
+  filter(ngram > 1 & freq >1) %>%
+  ungroup()
+
+mod.kw <- mod.kw %>% 
+  arrange(cluster, desc(ont), desc(ngram), freq) %>% 
+  group_by(cluster, ont) %>% slice_head(n=1) %>% 
+  group_by(cluster) %>% 
+  summarize(descriptor=paste(rev(keyword), collapse = '-')) %>%
+  complete(cluster=full_seq(cluster,1), fill = list(descriptor='unknown')) %>%
+  mutate(title=paste(cluster,descriptor,sep = '/'))
+
+ave.usage.df <- w1118.gep_usage %>% 
+  collect() %>%
+  left_join(dplyr::select(collect(w1118.obs),X1, clusters2)) %>%
+  left_join(mod.kw, ., by=c(cluster='cons')) %>%
+  group_by(cluster,title, clusters2) %>%
+  summarize(med.usage = median(usage), mean.usage=mean(usage))
+```
+
+
+```{r s4a}
+most.used.modules <- ave.usage.df %>%
+  group_by(clusters2) %>%
+  top_n(5, med.usage) %>%
+  mutate(rank = dense_rank(-med.usage)) %>%
+  arrange(clusters2, rank) %>%
+  ungroup()
+
+most.used.modules %>%
+  dplyr::select(title, clusters2, rank) %>%
+  group_by(clusters2) %>%
+gt() %>%
+  tab_options(row_group.background.color =  'lightgray', column_labels.hidden = T) %>%
+  tab_style(cell_text(indent = px(50)),locations = cells_body(columns = 'title')) %>%
+  gt::tab_header("Most utilized GEPs by cell cluster")
+```
+
+
+```{r s4b}
+tep.tes <- tep.members[!str_detect(tep.members,'FBgn')]
+
+tep_te_expr_df <- map_df(as.list(unique(pull(collect(w1118.obs),'clusters'))) %>% set_names(.,.),
+       ~{filter(w1118.expr, (clusters == .) & (gene_id %in% tep.tes)) %>% collect()}) %>%
+  dplyr::select(index, gene_id, expression, clusters) %>%
+  mutate(clusters = as.character(clusters)) %>%
+  mutate(umis = exp(expression) - 1) %>%
+  mutate(expression=log2(umis + 1))
+
+top_tep_te_rnk_df <- tep_te_expr_df %>%
+  left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
+  group_by(gene_id, clusters2, clusters) %>%
+  summarize(mean_expr = mean(expression)) %>%
+  ungroup() %>%
+  group_by(clusters2) %>%
+  mutate(rnk = dense_rank(-mean_expr)) %>%
+  arrange(clusters2,rnk) %>%
+  filter(rnk <= 20) %>%
+    filter(clusters==8)
+
+tep_te_expr_df %>%
+    filter(clusters==8 & gene_id %in% pull(filter(top_tep_te_rnk_df, clusters==8), gene_id)) %>%
+  left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
+ggplot(aes(reorder(gene_id,expression),expression, fill=clusters2)) +
+  scale_fill_brewer(type = 'qual', palette = 3) +
+  #stat_summary(geom='crossbar',fun.data = mean_se) +
+  geom_boxplot() +
+  theme_classic() +
+    theme(aspect.ratio = 0.5, 
+          axis.text.x=element_text(angle=0, hjust=0.5, size=rel(2)),
+          axis.text.y=element_text(size=rel(2)),axis.title.y = element_text(size=rel(2))) +
+  facet_wrap(~clusters2,scales='free') +
+  ylab('log2(normalized UMIs)') + xlab('') +
+  guides(fill=F) +
+  coord_flip()
+```
+
+
+```{r s4c}
+other_cluster_tep_te_rnk_df <- tep_te_expr_df %>%
+  filter(gene_id %in% pull(filter(top_tep_te_rnk_df, clusters==8),gene_id)) %>%
+  left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
+  filter(clusters !=8 ) %>%
+    group_by(gene_id) %>%
+  summarize(mean_expr = mean(expression)) %>%
+  arrange(mean_expr)
+
+tep_te_expr_df %>%
+  filter(gene_id %in% pull(filter(top_tep_te_rnk_df, clusters==8),gene_id)) %>%
+  left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
+  arrange(expression) %>%
+  filter(gene_id %in% head(other_cluster_tep_te_rnk_df$gene_id,4)) %>%
+  ggplot(aes(X_umap1, X_umap2, color=expression)) +
+    geom_point() +
+    facet_wrap(~gene_id) +
+  scale_color_gradient2(low='steelblue', mid='lightgray',high='tomato', midpoint = 3) +
+  theme_classic()
+```
+
+
+

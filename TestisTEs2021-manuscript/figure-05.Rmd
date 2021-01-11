@@ -1,0 +1,78 @@
+
+# Section 5
+
+```{r f5a}
+xa.ratio.w1118 %>%
+  filter(comparison=='chrX_Auto_ratio') %>%
+  ggplot(aes(GEP,ratio), fill='white') +
+  stat_boxplot(outlier.shape=NA) +
+  ggpubr::stat_compare_means(aes(label = paste("p =",..p.format..)),method = 'wilcox.test',paired = F, size=rel(3)) +
+  theme_classic() + 
+  theme(aspect.ratio = 1) +
+  ylab('X/A (insertions per mb)')
+```
+
+```{r f5b}
+# get 1 range for each purported insertion
+hetchrom.ins.2 <- hetchrom.ins %>%
+  collect() %>%
+  dplyr::select(chr,start,end,`repeat`,ins_id) %>%
+  distinct() %>%
+  GRanges() %>%
+  split(., .$ins_id) %>%
+  lapply(FUN = function(x) GRanges(seqnames = seqnames(x), ranges=IRanges(start=min(start(x)),end = max(end(x)),names = unique(x$ins_id)),strand = strand(x)[1]) %>% .[1]) %>%
+  map_df(as_tibble, .id='ins_id') %>%
+  mutate(`repeat`=str_extract(ins_id,regex('.+(?=\\.)'))) %>%
+  mutate(queryHits = row_number()) %>%
+  left_join(te.lookup, by=c(`repeat`='gene_id')) %>%
+  filter(is.na(component) | component %in% c(2,3,4)) %>% # removes ltr portion
+  filter(!is.na(merged_te)) %>%
+  mutate(chrom = map_chr(as.character(seqnames), ~str_split(.,regex("_"))[[1]][1])) %>%
+  mutate(chrom = ifelse(str_detect(chrom,'^Contig'),'unmapped contig', chrom))
+
+hetchrom.ins.2 <- hetchrom.ins.2 %>% 
+  mutate(GEP = ifelse(merged_te %in% tep.members,'TEP','other')) %>%
+  relocate(-ins_id)
+
+```
+
+
+```{r f5c}
+hetchrom.ins.2 %>%
+  mutate(chrom=ifelse(chrom=='Y','Y','other')) %>%
+  count(chrom,GEP) %>%
+  group_by(GEP) %>%
+  mutate(percent = n/sum(n)) %>%
+  ggplot(aes(GEP,percent,fill=chrom)) +
+  geom_col() +
+  theme_classic() +
+  theme(aspect.ratio = 1) +
+  xlab('insertions') +
+  scale_y_continuous(expand=c(0,0))
+```
+
+
+```{r f5c-2}
+run_chisq_y <- function(top_tes,other_tes) {
+  topmod_ins_gr <- top_tes[,1:3] %>% GRanges()
+  othermod_ins_gr <- other_tes[,1:3] %>% GRanges()
+  
+  
+  top_in_y<-sum(str_detect(seqnames(topmod_ins_gr),'Y'))
+  
+  top_not_in_y<-sum(!str_detect(seqnames(topmod_ins_gr),'Y'))
+  
+  other_in_y<-sum(str_detect(seqnames(othermod_ins_gr),'Y'))
+  
+  other_not_in_y<-sum(!str_detect(seqnames(othermod_ins_gr),'Y')) 
+
+  x <- matrix(c(top_in_y, other_in_y, top_not_in_y, other_not_in_y), nrow=2,dimnames = list(c('top','other'),c('y','not_y')))
+  
+  list(contingency=x, tbl = broom::tidy(chisq.test(x)))
+}
+
+res_y <- run_chisq_y(filter(hetchrom.ins.2,GEP=='TEP'),filter(hetchrom.ins.2,GEP=='other'))
+
+gt(res_y$tbl)
+```
+
