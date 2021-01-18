@@ -1,5 +1,51 @@
 
+
+
 # Section 4
+
+
+```{r f4a, fig.cap='Figure 4A: Expression of genes associated with primary spermatocyte expression program and Y activation.',  out.height='6in', out.width='7in'}
+ylinked <- unique(gtf %>% filter(seqnames == 'Y' & type == 'mRNA') %>% pull(gene_symbol)) %>%
+  tibble(gene_symbol = ., group='y-linked')
+tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
+ttaf <- c('sa') %>% tibble(gene_symbol = ., group='tTAF')
+tbrd <- c('tbrd-1','tbrd2') %>% tibble(gene_symbol = ., group='tBRD')
+tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
+
+male.meiosis1.associated <- bind_rows(ylinked, tmac, ttaf, tbrd, tplus)
+
+male.meiosis1.associated_df <- map_df(w1118.obs %>% 
+                                        collect() %>% 
+                                        pull(clusters) %>%
+                                        unique() %>% 
+                                        as.list %>% 
+                                        set_names(.,.),
+                                      ~{filter(w1118.expr, clusters == . & gene_symbol %in% male.meiosis1.associated$gene_symbol) %>% collect()}) %>%
+  left_join(collect(w1118.obs), by=c(index='X1','cell_type'='cell_type')) %>%
+  ungroup() %>%
+  left_join(male.meiosis1.associated)
+
+
+male.meiosis1.associated_df %>%
+  dplyr::select(index, gene_symbol, expression, clusters2, group) %>%
+  group_by(gene_symbol, clusters2, group) %>%
+  mutate(pct.expressing = sum(expression > 0)/n(), mean.expression=mean(expression)) %>%
+  summarize(pct.expressing = unique(pct.expressing), mean.expression = unique(mean.expression)) %>%
+  ungroup() %>%
+  ggplot(aes(gene_symbol, clusters2)) +
+    geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
+  scale_fill_fermenter(palette = 8, direction = 1, name='Log1p normalized UMIs') +
+  scale_size(range=c(0, rel(5)), name='Proportion expressing') +
+  theme_minimal()  +
+  theme(legend.position = 'bottom') +
+  theme(axis.text.x = element_text(angle=45, size=rel(1.2), hjust=1)) +
+  theme(axis.text.y = element_text(size=rel(1.2),)) +
+  theme(aspect.ratio = 0.5) +
+  xlab('') + ylab('')
+```
+
+
+\newpage
 
 ```{r}
 library(textrank)
@@ -35,25 +81,31 @@ ave.usage.df <- w1118.gep_usage %>%
 ```
 
 
-```{r s4a}
+```{r s4a, results='asis'}
 most.used.modules <- ave.usage.df %>%
   group_by(clusters2) %>%
-  top_n(5, med.usage) %>%
+  top_n(3, med.usage) %>%
   mutate(rank = dense_rank(-med.usage)) %>%
   arrange(clusters2, rank) %>%
   ungroup()
 
-most.used.modules %>%
+(most.used.modules %>%
   dplyr::select(title, clusters2, rank) %>%
   group_by(clusters2) %>%
-gt() %>%
+  gt() %>%
   tab_options(row_group.background.color =  'lightgray', column_labels.hidden = T) %>%
-  tab_style(cell_text(indent = px(50)),locations = cells_body(columns = 'title')) %>%
-  gt::tab_header("Most utilized GEPs by cell cluster")
+  tab_header(title = 'Supp. Fig. 4A: Most utilized GEPs', subtitle = "Table shows each GEP's most strongly utilized by each cell cluster. Because many discovered GEPs are enriched for multiple GO terms, names for each GEP are generated from  keywords frequently found in the descriptions for all enriched terms.") %>%
+  tab_style(cell_text(indent = px(50)),locations = cells_body(columns = 'title'))
+  )%>%
+  as_latex() %>%
+  as.character() %>%
+  cat()
+  
 ```
 
+\newpage
 
-```{r s4b}
+```{r s4b, fig.cap = "Supp. Fig. 4B: TE candidates for RNA-FISH experiment chosen from among top expressed TEs in the TEP-expressing cell cluster."}
 tep.tes <- tep.members[!str_detect(tep.members,'FBgn')]
 
 tep_te_expr_df <- map_df(as.list(unique(pull(collect(w1118.obs),'clusters'))) %>% set_names(.,.),
@@ -82,7 +134,7 @@ ggplot(aes(reorder(gene_id,expression),expression, fill=clusters2)) +
   #stat_summary(geom='crossbar',fun.data = mean_se) +
   geom_boxplot() +
   theme_classic() +
-    theme(aspect.ratio = 0.5, 
+    theme(aspect.ratio = 1, 
           axis.text.x=element_text(angle=0, hjust=0.5, size=rel(2)),
           axis.text.y=element_text(size=rel(2)),axis.title.y = element_text(size=rel(2))) +
   facet_wrap(~clusters2,scales='free') +
@@ -92,7 +144,7 @@ ggplot(aes(reorder(gene_id,expression),expression, fill=clusters2)) +
 ```
 
 
-```{r s4c}
+```{r s4c, fig.cap="Supp. Fig. 4C: Two TEs were chosen from highly expressed candidates based on their selective expression in TEP-expressing cells."}
 other_cluster_tep_te_rnk_df <- tep_te_expr_df %>%
   filter(gene_id %in% pull(filter(top_tep_te_rnk_df, clusters==8),gene_id)) %>%
   left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
@@ -106,12 +158,13 @@ tep_te_expr_df %>%
   left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
   arrange(expression) %>%
   filter(gene_id %in% head(other_cluster_tep_te_rnk_df$gene_id,4)) %>%
+  filter(gene_id %in% c('ACCORD2','QUASIMODO2')) %>%
   ggplot(aes(X_umap1, X_umap2, color=expression)) +
-    geom_point() +
+    geom_point(size=0.75) +
     facet_wrap(~gene_id) +
   scale_color_gradient2(low='steelblue', mid='lightgray',high='tomato', midpoint = 3) +
-  theme_classic()
+  theme_classic() +
+  coord_fixed()
 ```
-
 
 

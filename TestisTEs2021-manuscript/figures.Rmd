@@ -1,21 +1,32 @@
 ---
+title: 'figures'
 date: "`r Sys.Date()`"
-output: 
+output:
   pdf_document:
     latex_engine: xelatex
     extra_dependencies: ["float"]
-  html_document: default
+    toc: true
+  html_document:
+    toc: true
 mainfont: Times New Roman
 header-includes:
 - \usepackage{caption}
 - \usepackage{float}
+- \usepackage{longtable}
+- \usepackage{booktabs}
 - \captionsetup[figure]{labelformat=empty}
+- \usepackage{sectsty} \sectionfont{\centering}
+- \usepackage{lscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
 ---
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.pos="H", echo = F, message = F, warning = F, error = F, fig.path = './figures/', dev = c('pdf','png'), dpi=300,  out.extra="", fig.align='center')
 ```
 
-```{r libraries}
+```{r libraries, cache=F}
 library(tidyverse)
 library(jsonlite)
 library(arrow)
@@ -44,11 +55,10 @@ mods_all <- w1118.gep_membership %>%
   filter(qval < 0.005)
 ```
 
+```{r data-02, cache=T}
+te.lookup <- read_tsv('~/work/TestisTpn/data/te_id_lookup.curated.tsv.txt')
 
-```{r data-02}
-te.lookup <- read_tsv('../resources/te_id_lookup.curated.tsv.txt')
-
-gtf <- import('../results/custom-genome/combined.fixed.gtf') %>%
+gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
   as_tibble()
 
 tep.name <- w1118.gep_membership %>%
@@ -71,175 +81,34 @@ tep.members <- w1118.gep_membership %>%
   pull(X1)
 ```
 
+\newpage
 
-```{r child= c('figure-01.Rmd','figure-02.Rmd','figure-03.Rmd','figure-04.Rmd','figure-05.Rmd')}
+```{r child='figure-01.Rmd', cache=T}
+
 ```
 
+\newpage
 
-```{r grid-search-trend, eval=F}
-metrics.grid <- w1118.grid %>%
-  collect() %>%
-  mutate_at(vars('cov','pct_unique_term','pct_enr'), scales::rescale) %>%
-  mutate(score = cov * pct_unique_term)
+```{r child='figure-02.Rmd', cache=T}
 
-metrics.grid %>%
-  dplyr::rename(coverage='cov', uniqueness='pct_unique_term') %>%
-  gather(metric, value, -rep:-comps) %>%
-  filter(metric %in% c("coverage","uniqueness")) %>%
-ggplot() +
-  geom_smooth(aes(comps, value, color=metric)) +
-  geom_point(aes(comps, value)) +
-  facet_grid(qval~rep) +
-  theme_classic() +
-  scale_color_viridis_d(direction=-1, ) +
-  theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
-  xlab("k") + ylab('score') +
-  labs(caption = "Relationship between k and enrichment metrics.")
 ```
 
+\newpage
 
-```{r grid-search-heat, eval=F }
-ggplot(metrics.grid,aes(as.factor(comps),as.factor(qval),fill=score)) +
-  geom_raster(interpolate = F) +
-  theme_minimal() +
-  xlab("k") + ylab("qval") +
-  scale_fill_viridis_c() +
-  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0)) +
-  labs(caption = "Joint score displayed by FDR cutoff and k.") +
-  facet_wrap(~rep)
+```{r child='figure-03.Rmd', cache=T}
+
 ```
 
+\newpage
 
+```{r child='figure-04.Rmd', cache=T}
 
-```{r mod-sizes, eval=F}
-fls <- Sys.glob(paste0("../results/gep-grid-search/larval-w1118-testes/ica/",optimal['comps'],"/*/consensus-ica.qvalues.csv.gz"))
-grid.mods <- map_df(fls,read_csv, .id = 'rep')
-
-grid.mods %>% 
-  filter(qval < optimal['qval']) %>% group_by(module,rep) %>% tally() %>%
-  ggplot(aes(n)) +
-  geom_histogram(aes(fill=..count..), color='black') +
-  theme_classic() +
-  scale_y_continuous(expand = c(0,0)) +
-  facet_wrap(~rep) +
-  scale_fill_fermenter(direction = 1, palette = 13) +
-  theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
-  xlab('module size') +
-  labs(caption = 'Distribution of module sizes for each replicate at optimal params.')
 ```
 
-```{r optimal-k-dups-1, eval=F}
-grid.dups <- Sys.glob(paste0("../results/gep-grid-search/larval-w1118-testes/ica/*/*/consensus-ica.csv.gz")) %>%
-  tibble(file=.) %>%
-  mutate(k=str_extract(file,"(?<=ica\\/)\\d+(?=\\/)")) %>%
-  mutate(rep=str_extract(file,"(?<=\\/)\\d+(?=\\/consensus)")) %>%
-  mutate(data = map(file, read_csv)) %>%
-  mutate(data = map(data,column_to_rownames,'index')) %>%
-  mutate(data = map(data,cor)) %>%
-  mutate(data = map(data,as_tibble, rownames='module')) %>%
-  mutate(data = map(data,gather,module2, corr, -module)) %>%
-  unnest(cols=data) %>%
-  filter(module!=module2) %>%
-  group_by(k,rep,module) %>%
-  summarize(closest = max(corr)) %>%
-  group_by(k,rep) %>%
-  summarize(dup.rate = sum(closest>=0.9)/n())
+\newpage
 
-grid.dups %>%
-  ggplot(aes(as.numeric(k), dup.rate)) +
-  stat_summary(geom='line', color='red', linetype='dotted') +
-  stat_summary(aes(as.numeric(k), dup.rate)) +
-  theme_classic() +
-  theme(aspect.ratio = 0.5) +
-  xlab("k")
+```{r child='figure-05.Rmd', cache=T}
+
 ```
 
-
-```{r ica-dup-corr-plot, eval=F}
-contrib <- paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-qvalues.csv.gz") %>%
-  read_csv() %>%
-  dplyr::select(-qval) %>%
-  spread(module, weight) %>%
-  column_to_rownames('X1') 
-
-contrib.cor <- cor(contrib, method='spearman')
-
-contrib.cor.hc <- {1-contrib.cor} %>% as.dist() %>% hclust
-
-
-pheatmap::pheatmap(contrib.cor,
-                   cluster_rows = contrib.cor.hc, 
-                   cluster_cols = contrib.cor.hc, border_color = NA)
-```
-
-```{r usage-dup-corr-plot, eval=F}
-usage <- paste0("../results/gep/larval-w1118-testes/optimal/consensus-usage.csv.gz") %>%
-  read_csv() %>%
-  spread(cons, usage) %>%
-  column_to_rownames('X1') 
-
-usage.cor <- cor(usage, method='spearman')
-
-usage.cor.hc <- {1-usage.cor} %>% as.dist() %>% hclust
-
-
-pheatmap::pheatmap(usage.cor,
-                   cluster_rows = usage.cor.hc, 
-                   cluster_cols = usage.cor.hc, border_color = NA)
-```
-
-```{r eval=F}
-paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-modules.json") %>%
-  read_json() %>%
-  enframe('GEP','gene_id') %>%
-  unnest_auto('gene_id') %>%
-  group_by(GEP) %>%
-  summarize(n=sum(!str_detect(gene_id,'FBgn'))) %>%
-  arrange(desc(n))
-```
-
-```{r eval=F}
-paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-modules.json") %>%
-  read_json() %>%
-  enframe('GEP','gene_id') %>%
-  unnest_auto('gene_id') %>%
-  filter(gene_id == 'FBgn0260932')
-```
-
-```{r eval=F}
-goi <- c('cuff','rhi','EAChm','sa','dom','E(bx)','can','Mad','bam','vas','dac','lola')
-
-map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
-       ~{filter(w1118.scaled, clusters == . & gene_symbol %in% goi) %>% collect()}) %>%
-left_join(collect(w1118.obs), by=c(index='X1','cell_type'='cell_type')) %>%
-  ungroup() %>%
-  #group_by(cell_type) %>%
-  mutate(ord = dense_rank(cell_type)) %>%
-  mutate(gene_symbol = fct_relevel(gene_symbol, markers2display)) %>%
-  ggplot(aes(fct_reorder(clusters2, ord),expression)) +
-  geom_violin(aes(fill=clusters2),draw_quantiles = c(0.5),scale = 'width') +
-  facet_wrap(~gene_symbol, ncol = 1, scales = 'free_y') +
-  scale_fill_brewer(type='qual',palette = 8, name="") +
-  theme_classic() +
-  theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)), axis.title = element_text(size = rel(1.2)), axis.text.y = element_text(size=rel(1.2)), axis.text.x=element_text(angle=90, hjust=1, vjust=0.5, size=rel(1.2)),aspect.ratio = 0.1) +
-  xlab('') + guides(fill=F)
-```
-
-```{r eval=F}
-paste0("../results/gep/larval-w1118-testes/optimal/consensus-ica-modules.json") %>%
-  read_json() %>%
-  enframe('GEP','gene_id') %>%
-  unnest_auto('gene_id') %>%
-  left_join(collect(w1118.var), by=c(gene_id = 'X1')) %>%
-  filter(GEP == '26') %>%
-  pull(gene_id) %>%
-  walk(message)
-```
-
-```{r last, eval=F}
-read_csv("../results/gep/larval-w1118-testes/optimal/consensus-ica-enrichment-CC.csv.gz") %>% filter(weight01 < 0.05) %>% filter(str_detect(Term,'histo'))
-```
-
-
-
-
+\newpage

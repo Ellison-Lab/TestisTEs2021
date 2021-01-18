@@ -1,77 +1,21 @@
 
 # Section 3
 
-```{r}
-w1118.usage.mat <- w1118.gep_usage %>% 
+```{r f3a, fig.cap='Figure 3A: A TE-enriched GEP is highly expressed in a spermatocyte population.'}
+w1118.gep_usage %>%
+  filter(cons %in% tep.name) %>%
   collect() %>%
-  #group_by(X1) %>%
-  #mutate(usage = scales::rescale(usage,c(-1,1))) %>%
-  spread(cons, usage) %>%
-  column_to_rownames('X1') %>% as.matrix()
-
-#sdum <- sd(w1118.usage.mat)
-#w1118.usage.mat <- t(apply(w1118.usage.mat, MARGIN = 1, FUN=function(x) (x-mean(x))/sdum))
-
-w1118.usage.hc.geps <- w1118.usage.mat %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
-w1118.usage.hc.cells <- w1118.usage.mat %>% t() %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+  left_join(collect(w1118.obs)) %>%
+  arrange(usage) %>%
+  ggplot(aes(X_umap1,X_umap2, color=usage)) +
+  geom_point(size=0.75) +
+  scale_color_gradient2(low='steelblue', mid='lightgray',high='tomato', midpoint = 0.04) +
+  theme_classic() +
+  coord_fixed()
 ```
 
-```{r}
-w1118.membership.mat <- w1118.gep_membership %>% 
-  collect() %>%
-  dplyr::select(-qval) %>%
-  spread(module, weight) %>%
-  column_to_rownames('X1') %>% as.matrix()
 
-w1118.membership.hc.geps <- w1118.membership.mat  %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
-w1118.membership.hc.genes <- w1118.membership.mat  %>% t() %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
-```
-
-```{r f3a, out.height="4in", fig.dim=c(10,10), fig.cap='Figure 3A'}
-palette_len <- 255
-colors <- colorRampPalette( (c("#3B9AB2", "#3B9AB2","#78B7C5", "#E1AF00", "#F21A00")))(palette_len)
-  
-myBreaks <- c(seq(min(w1118.usage.mat)*0.1, mean(w1118.usage.mat), length.out=ceiling(palette_len/2)),
-              seq(median(w1118.usage.mat) + 0.01, max(w1118.usage.mat)*0.1, length.out=floor(palette_len/2)))
-
-cls <- circlize::colorRamp2(breaks = myBreaks,colors = colors)
-
-levs <- w1118.obs %>% collect() %>%
-  pull(clusters2) %>% unique %>%
-  set_names(.,.) %>%
-  map(~str_remove(.,'\\d+\\/')) %>%
-  {names(.)[order(unlist(.))]}
-
-col <- list(cell_types=RColorBrewer::brewer.pal(length(levs),'Set3') %>%
-               set_names(levs))
-
-  # Create the heatmap annotation
-ha <- HeatmapAnnotation(cell_types = pull(w1118.obs,'clusters2'), col = col)
-  
-Heatmap(t(w1118.usage.mat)[,pull(w1118.obs,'X1')],
-                 column_names_rot = 45,
-                 column_title_side = "bottom",
-                 na_col = 'green',
-                 cluster_rows = w1118.membership.hc.geps,
-                 name = 'GEP usage',
-                  row_title = 'GEPs', 
-                 #top_annotation = ha,
-                 show_column_names = F,
-                 col = cls,
-                  column_title_rot = 90,
-                 column_title_gp = gpar(fontsize=12),
-                 row_names_gp = gpar(fontsize = 2),
-                  show_row_names = T,
-                 show_column_dend = F, 
-                show_row_dend = T,
-                 column_split = factor(pull(w1118.obs,'clusters2'),levels=levs),
-                 use_raster = T,
-                 heatmap_height = unit(4.7,units = "in"),
-                 width=unit(8.7,units="in"),
-                 cluster_column_slices = F)
-```
-
-```{r f3b, fig.cap='Figure 3B'}
+```{r f3b, fig.cap='Figure 3B: Shown are all GEPs with  >1 TE. The TEP is highly enriched for TEs'}
 w1118.gep_membership %>%
   filter(qval < 0.005) %>%
   collect() %>%
@@ -118,4 +62,73 @@ w1118.gep_membership %>%
   geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5), size=rel(5))
 ```
 
+```{r}
+w1118.usage.mat <- w1118.gep_usage %>% 
+  collect() %>%
+  #group_by(X1) %>%
+  #mutate(usage = scales::rescale(usage,c(-1,1))) %>%
+  spread(cons, usage) %>%
+  column_to_rownames('X1') %>% as.matrix()
+
+#sdum <- sd(w1118.usage.mat)
+#w1118.usage.mat <- t(apply(w1118.usage.mat, MARGIN = 1, FUN=function(x) (x-mean(x))/sdum))
+
+w1118.usage.hc.geps <- w1118.usage.mat %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+w1118.usage.hc.cells <- w1118.usage.mat %>% t() %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+```
+
+```{r}
+w1118.membership.mat <- w1118.gep_membership %>% 
+  collect() %>%
+  dplyr::select(-qval) %>%
+  spread(module, weight) %>%
+  column_to_rownames('X1') %>% as.matrix()
+
+w1118.membership.hc.geps <- w1118.membership.mat  %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+w1118.membership.hc.genes <- w1118.membership.mat  %>% t() %>% cor() %>% {1-.} %>% as.dist() %>% hclust()
+```
+
+```{r s3a, out.height="4in", fig.dim=c(10,10), fig.cap='Figure S3A'}
+palette_len <- 255
+colors <- colorRampPalette( (c("#3B9AB2", "#3B9AB2","#78B7C5", "#E1AF00", "#F21A00")))(palette_len)
+  
+myBreaks <- c(seq(min(w1118.usage.mat)*0.1, mean(w1118.usage.mat), length.out=ceiling(palette_len/2)),
+              seq(median(w1118.usage.mat) + 0.01, max(w1118.usage.mat)*0.1, length.out=floor(palette_len/2)))
+
+cls <- circlize::colorRamp2(breaks = myBreaks,colors = colors)
+
+levs <- w1118.obs %>% collect() %>%
+  pull(clusters2) %>% unique %>%
+  set_names(.,.) %>%
+  map(~str_remove(.,'\\d+\\/')) %>%
+  {names(.)[order(unlist(.))]}
+
+col <- list(cell_types=RColorBrewer::brewer.pal(length(levs),'Set3') %>%
+               set_names(levs))
+
+  # Create the heatmap annotation
+ha <- HeatmapAnnotation(cell_types = pull(w1118.obs,'clusters2'), col = col)
+  
+Heatmap(t(w1118.usage.mat)[,pull(w1118.obs,'X1')],
+                 column_names_rot = 45,
+                 column_title_side = "bottom",
+                 na_col = 'green',
+                 cluster_rows = w1118.membership.hc.geps,
+                 name = 'GEP usage',
+                  row_title = 'GEPs', 
+                 #top_annotation = ha,
+                 show_column_names = F,
+                 col = cls,
+                  column_title_rot = 90,
+                 column_title_gp = gpar(fontsize=12),
+                 row_names_gp = gpar(fontsize = 2),
+                  show_row_names = T,
+                 show_column_dend = F, 
+                show_row_dend = T,
+                 column_split = factor(pull(w1118.obs,'clusters2'),levels=levs),
+                 use_raster = T,
+                 heatmap_height = unit(4.7,units = "in"),
+                 width=unit(8.7,units="in"),
+                 cluster_column_slices = F)
+```
 

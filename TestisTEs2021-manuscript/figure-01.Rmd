@@ -10,7 +10,7 @@ umap_labs <- w1118.obs %>%
 
 collect(w1118.obs) %>%
   ggplot(aes(X_umap1, X_umap2)) +
-  geom_point(aes(color=clusters2), size=rel(1)) +
+  geom_point(aes(color=clusters2), size=rel(0.75)) +
   scale_color_brewer(type='qual',palette='Set3', name='') +
   theme_classic() +
   coord_fixed(xlim = c(-15, 8)) +
