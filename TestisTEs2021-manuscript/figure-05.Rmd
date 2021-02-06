@@ -76,3 +76,39 @@ res_y <- run_chisq_y(filter(hetchrom.ins.2,GEP=='TEP'),filter(hetchrom.ins.2,GEP
 gt(res_y$tbl)
 ```
 
+```{r,eval=F}
+# checking out variant calls for ce chat 210202, not eval
+filtered_calls <- import('~/work/transposon-variants-hts/results/freebayes/calls.filt.vcf.gz')
+male <- import('~/work/transposon-variants-hts/results/freebayes/male.vcf.gz')
+
+male_df <- as_tibble(VariantAnnotation::geno(male)$AO, rownames='variant') %>%
+  mutate_at(vars(c('w1118_male','w1118_female')), unlist) %>%
+  separate(variant, c('TE','call'), sep=c(':')) %>%
+  separate(call, c('pos','call'), sep=c('_')) %>%
+  separate(TE, c('TE','family'), sep=c('#'))
+  
+  
+tep.members.gene_id <- te.lookup %>% filter(merged_te %in% tep.members) %>% pull(gene_id) %>% unique()
+
+
+te.expressed <- collect(w1118.var) %>% dplyr::select(X1) %>% left_join(te.lookup, by=c(X1='merged_te')) %>% filter(!str_detect(X1,'FBgn')) %>% pull(gene_id)
+
+male_df <- male_df %>%
+  mutate(GEP = ifelse(TE %in% tep.members.gene_id,'TEP',ifelse(TE %in% te.expressed,'other','not expressed')))
+  
+male_df %>%
+  pivot_longer(c('w1118_male','w1118_female'),names_to = 'sex',values_to = 'count') %>%
+  filter(count > 0) %>%
+  ggplot(aes(forcats::fct_infreq(TE))) +
+  geom_bar(aes(fill=sex), position='dodge') +
+  ggtitle('Sex specific variants')
+
+
+male_df %>% 
+  filter(w1118_female == 0 & w1118_male > 3) %>%
+  ggplot(aes(reorder(paste(TE,str_trunc(call,width = 20, side = 'center')),w1118_male), w1118_male)) +
+  geom_col(aes(fill=GEP)) +
+  theme(axis.text.x = element_text(angle=50, hjust=1, size=rel(2)), aspect.ratio = 0.5, legend.text = element_text(size=rel(2))) +
+  ylab('w1118 male supporting reads') + xlab('call')
+```
+

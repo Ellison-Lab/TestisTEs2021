@@ -27,11 +27,13 @@ w1118.gep_membership %>%
   mutate(n_tes=n()) %>%
   filter(n_tes > 1) %>%
   mutate(repClass=replace_na(repClass,replace = 'other')) %>%
+  mutate(module=paste0("GEP-",module)) %>%
   ggplot(aes(reorder(module, n_tes), fill=repClass)) +
   geom_bar(position='stack') +
   scale_fill_brewer(type='qual',palette=6, name='') +
   theme_classic() +
-  theme(aspect.ratio = 0.3,legend.position = 'bottom', axis.text = element_text(size=rel(1.2))) +
+  theme(axis.text.x = element_text(angle=90, hjust = 1, vjust=0.5)) +
+  #theme(aspect.ratio = 0.3,legend.position = 'bottom', axis.text.x = element_text(angle=45, hjust=90, vjust=0.5)) +
   xlab("") + ylab('N') +
   scale_y_continuous(expand=c(0,0))
 ```
@@ -59,7 +61,7 @@ w1118.gep_membership %>%
   theme_no_axes() +
   theme(aspect.ratio = 1, legend.position='bottom') +
   xlab('') + ylab('') +
-  geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5), size=rel(5))
+  geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5))
 ```
 
 ```{r}
@@ -131,4 +133,146 @@ Heatmap(t(w1118.usage.mat)[,pull(w1118.obs,'X1')],
                  width=unit(8.7,units="in"),
                  cluster_column_slices = F)
 ```
+
+```{r s3b, fig.cap='Supp. Fig. 3B'}
+metrics.grid <- w1118.grid %>%
+  collect() %>%
+  mutate_at(vars('cov','pct_unique_term','pct_enr'), scales::rescale) %>%
+  mutate(score = cov * pct_unique_term)
+
+metrics.grid %>%
+ dplyr::rename(coverage='cov', uniqueness='pct_unique_term') %>%
+ gather(metric, value, -rep:-comps) %>%
+ filter(metric %in% c("coverage","uniqueness")) %>%
+ggplot(aes(comps, value, color=metric))  +
+geom_smooth() +
+geom_point() +
+facet_grid(qval~rep) +
+theme_classic() +
+scale_color_viridis_d(direction=-1) +
+theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
+xlab("k") + ylab('score')
+```
+
+
+```{r s3c, fig.cap='Supp. Fig. 3C'}
+ggplot(metrics.grid,aes(as.factor(comps),as.factor(qval),fill=score)) +
+  geom_raster(interpolate = F) +
+  theme_minimal() +
+  xlab("k") + ylab("qval") +
+  scale_fill_viridis_c() +
+  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0)) +
+  labs(caption = "Joint score displayed by FDR cutoff and k.") +
+  facet_wrap(~rep)
+```
+
+```{r s3d, fig.cap='Supp. Fig. 3D'}
+w1118.gep_membership %>%
+  filter(qval < optimal_qval) %>%
+  collect() %>%
+  group_by(module) %>% tally() %>%
+  ggplot(aes(n)) +
+  geom_histogram(aes(fill=..count..), color='black') +
+  theme_classic() +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_fill_fermenter(direction = 1, palette = 13) +
+  theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
+  xlab('module sizes')
+```
+
+
+```{r eval=F}
+grid.dups <- Sys.glob(paste0("../results/gep-grid-search/larval-w1118-testes/ica/*/*/consensus-ica.csv.gz")) %>%
+  tibble(file=.) %>%
+  mutate(k=str_extract(file,"(?<=ica\\/)\\d+(?=\\/)")) %>%
+  mutate(rep=str_extract(file,"(?<=\\/)\\d+(?=\\/consensus)")) %>%
+  mutate(data = map(file, read_csv)) %>%
+  mutate(data = map(data,column_to_rownames,'index')) %>%
+  mutate(data = map(data,cor)) %>%
+  mutate(data = map(data,as_tibble, rownames='module')) %>%
+  mutate(data = map(data,gather,module2, corr, -module)) %>%
+  unnest(cols=data) %>%
+  filter(module!=module2) %>%
+  group_by(k,rep,module) %>%
+  summarize(closest = max(corr)) %>%
+  group_by(k,rep) %>%
+  summarize(dup.rate = sum(closest>=0.9)/n())
+```
+
+
+```{r s3e, fig.cap='Supp. Fig. 3E'}
+usage <- w1118.gep_usage %>%
+  collect() %>%
+  spread(cons, usage) %>%
+  column_to_rownames('X1')
+
+usage.cor <- cor(usage, method='spearman')
+
+usage.cor.hc <- {1-usage.cor} %>% as.dist() %>% hclust
+
+
+pheatmap::pheatmap(usage.cor,
+                   cluster_rows = usage.cor.hc, 
+                   cluster_cols = usage.cor.hc, treeheight_row = F,treeheight_col = 10,fontsize_col = 2,
+                   border_color = NA, cellwidth = 2, cellheight = 2, show_rownames = F)
+```
+
+```{r s3f, fig.cap='Supp. Fig. 3F', dev.args = list(ragg_png= list(scaling=1))}
+rnaseq_pe_df <- collect(rnaseq_pe) %>% filter(strandedness == "first_strand")
+
+hsbam_dat <- left_join(rnaseq_pe_df, te.lookup) %>%
+  mutate(gene_id = ifelse(!is.na(merged_te),merged_te,gene_id)) %>%
+  group_by(sample,gene_id) %>%
+  summarize(count = sum(count)) %>%
+    spread(sample,count) %>%
+  column_to_rownames('gene_id') %>%
+  as.matrix()
+
+hsbam_cd <- tibble(name=colnames(hsbam_dat )) %>%
+mutate(condition = str_remove(str_remove(name,c('RNA_seq_')),'_rep.+')) %>%
+  column_to_rownames('name')
+
+gtf %>%
+  filter(type == 'exon') %>%
+  left_join(dplyr::select(te.lookup,gene_id,merged_te)) %>%
+  mutate(gene_id= ifelse(!str_detect(gene_id,'FBgn'),merged_te,gene_id)) %>% # grouping by merged_te
+  GRanges() %>%
+  split(.,.$gene_id) -> grx
+
+stopifnot(length(rownames(hsbam_dat)[!rownames(hsbam_dat) %in% names(grx)])==0)
+
+hsbam_dds <- grx %>%
+  .[rownames(hsbam_dat)] %>%
+  SummarizedExperiment(assays = list(counts=hsbam_dat), rowRanges=., colData=hsbam_cd) %>%
+  DESeqDataSet(design = ~condition)
+
+fpkm_df <- fpkm(hsbam_dds) %>%
+  as_tibble(rownames = 'gene') %>%
+  gather(condition, fpkm, -gene) %>%
+  mutate(condition = str_remove(condition,'_rep\\d+')) %>%
+  mutate(GEP = as.factor(ifelse(gene %in% tep.members,'TEP','other'))) %>%
+  mutate(type = as.factor(ifelse(str_detect(gene,'FBgn'),'gene','TE'))) %>%
+  group_by(gene, condition, GEP, type) %>%
+  summarize(fpkm=mean(fpkm)) %>%
+  ungroup() %>%
+  mutate(condition = str_remove(condition,'RNA_seq_')) %>%
+  mutate(condition = str_remove(condition,'_mutant')) %>%
+   mutate(condition = fct_relevel(condition,  c('bam','aly',
+                    '48hrPHS','72hrPHS')))
+
+fpkm_df %>%
+ggplot(aes(condition, fpkm, fill=condition)) +
+  geom_boxplot(position=position_dodge(), outlier.shape = NA) +
+  #geom_violin(position=position_dodge(), scale = 'width') +
+  theme_classic() +
+  theme(aspect.ratio = 0.4, axis.text.x = element_text(angle=90, hjust=1, vjust=0.5), legend.position = 'bottom') +
+  coord_cartesian(ylim = quantile(fpkm_df$fpkm, c(0.001, 0.95))) +
+  scale_fill_brewer(type='qual',palette = 6) +
+  facet_grid(type~GEP, scales = 'free_y') +
+  ggpubr::stat_compare_means(aes(label = paste0("p = ", ..p.format..)), label.y = 125) +
+  guides(fill=F) +
+  xlab("")
+  
+```
+
 

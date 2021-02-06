@@ -1,11 +1,11 @@
 
 # Section 2
 
-```{r f2a, out.height="4in", fig.dim=c(10,10), fig.cap='Figure 2A'}
+```{r f2a,  fig.cap='Figure 2A', dev.args=list(ragg_png=list(scaling=0.7))}
 tmpclust <- c(0:10) %>% as.character()
 obstmp <- w1118.obs %>% collect() %>% filter(clusters %in% tmpclust)
 te_expr_df <- map_df(obstmp %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
-       ~{filter(w1118.scaled, (clusters == .) & (gene_id %in% te.lookup$merged_te)) %>% collect()}) %>%
+       ~{filter(w1118.scaled, (clusters == .) & (gene_id %in% unique(te.lookup$merged_te))) %>% collect()}) %>%
   dplyr::select(index, gene_id, expression, clusters) %>%
   mutate(clusters = as.character(clusters))
 
@@ -61,7 +61,7 @@ Heatmap(te_expr_mat[,obstmp$X1],
 
 ```{r s2a, fig.dim=c(10,10), fig.cap='Supp. Fig. 2A'}
 map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
-       ~{filter(w1118.expr, clusters == . & gene_id %in% te.lookup$merged_te) %>% collect()}) %>%
+       ~{filter(w1118.expr, clusters == . & gene_id %in% unique(te.lookup$merged_te)) %>% collect()}) %>%
   dplyr::select(index, gene_id, expression) %>%
   mutate(expression = exp(expression) - 1) %>%
   group_by(index) %>%

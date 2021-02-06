@@ -1,5 +1,5 @@
 ---
-title: 'figures'
+title: 'Figures'
 date: "`r Sys.Date()`"
 output:
   pdf_document:
@@ -23,7 +23,11 @@ header-includes:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(fig.pos="H", echo = F, message = F, warning = F, error = F, fig.path = './figures/', dev = c('pdf','png'), dpi=300,  out.extra="", fig.align='center')
+ragg_png = function(..., res = 300) {
+  ragg::agg_png(..., res = res, units = "in")
+}
+
+knitr::opts_chunk$set(fig.pos="H", echo = F, message = F, warning = F, error = F, fig.path = './figures/', dev = c('ragg_png'), dpi=300,  out.extra="", fig.align='center', dev.args = list(ragg_png= list(scaling=1.5) ))
 ```
 
 ```{r libraries, cache=F}
@@ -35,6 +39,8 @@ library(pheatmap)
 library(rtracklayer)
 library(ggforce)
 library(gt)
+library(ragg)
+library(DESeq2)
 ```
 
 ```{r data-01, cache=F}
@@ -49,20 +55,22 @@ w1118.gep_membership <- open_dataset("~/finalized/larval-w1118-testes/optimal_ge
 xa.ratio.w1118 <- open_dataset("~/finalized/larval-w1118-testes/xa_ratio/", format='arrow') %>% collect()
 hetchrom.ins <- open_dataset("~/finalized/hetchrom_assembly_insertions/", format='arrow')
 rnaseq_pe <- open_dataset("~/finalized/rnaseq_pe/", format='arrow')
-
-mods_all <- w1118.gep_membership %>% 
-  collect() %>%
-  filter(qval < 0.005)
 ```
 
 ```{r data-02, cache=T}
+optimal_qval <- 0.005
+
+mods_all <- w1118.gep_membership %>% 
+  collect() %>%
+  filter(qval < optimal_qval)
+
 te.lookup <- read_tsv('~/work/TestisTpn/data/te_id_lookup.curated.tsv.txt')
 
 gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
   as_tibble()
 
 tep.name <- w1118.gep_membership %>%
-  filter(qval < 0.005) %>%
+  filter(qval < optimal_qval) %>%
   collect() %>%
   left_join(te.lookup, by=c(X1='merged_te')) %>%
   filter(!str_detect(X1,'FBgn')) %>%
@@ -75,10 +83,12 @@ tep.name <- w1118.gep_membership %>%
   pull(module) %>% as.character()
 
 tep.members <- w1118.gep_membership %>%
-  filter(qval < 0.005) %>%
+  filter(qval < optimal_qval) %>%
   collect() %>%
   filter(as.character(module)==tep.name) %>%
   pull(X1)
+
+
 ```
 
 \newpage
