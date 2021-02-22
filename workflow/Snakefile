@@ -40,86 +40,72 @@ singularity: "docker://continuumio/miniconda3"
 configfile: "config/config.yaml"
 pepfile: "config/pep.yaml"
 
+MAIN_CONFIG = config.get("MAIN_CONFIG",'config/config.yaml')
+
+subworkflow scrna:
+    workdir:
+        "../subworkflows/gte21-scrna/"
+    snakefile:
+        "../subworkflows/gte21-scrna/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
+
+subworkflow gep:
+    workdir:
+        "../subworkflows/gte21-ica-grid/"
+    snakefile:
+        "../subworkflows/gte21-ica-grid/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
+
+subworkflow xa_ratio:
+    workdir:
+        "../subworkflows/gte21-tidal-xa/"
+    snakefile:
+        "../subworkflows/gte21-tidal-xa/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
+
+subworkflow hetchrom_y:
+    workdir:
+        "../subworkflows/gte21-y-hetchrom/"
+    snakefile:
+        "../subworkflows/gte21-y-hetchrom/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
+
+subworkflow hsbam_rna:
+    workdir:
+        "../subworkflows/gte21-hsbam-rna/"
+    snakefile:
+        "../subworkflows/gte21-hsbam-rna/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
+
+subworkflow transposon_variants:
+    workdir:
+        "../subworkflows/transposon-variants-hts/"
+    snakefile:
+        "../subworkflows/transposon-variants-hts/workflow/Snakefile"
+
+
 
 # variables
 RANDOM_SEED = config.get("RANDOM_SEED",2020)
 random.seed(RANDOM_SEED)
-TOPGO_NODES = config.get("TOPGO_NODES",100)
-MIN_QVAL = config.get("GRID_MIN_QVAL",0.005)
-MAX_QVAL = config.get("GRID_MAX_QVAL",0.1)
-STEP_QVAL = config.get("GRID_STEP_QVAL", 2)
-MIN_COMPS = config.get("GRID_MIN_COMPS",20)
-MAX_COMPS = config.get("GRID_MAX_COMPS",170) + 1
-STEP_COMPS = config.get("GRID_STEP_COMPS", 10)
-REPS = range(1,config.get("GRID_REPS",50) + 1,1)
-OVERALL_REPS = range(1,config.get("GRID_OVERALL_REPS",2) + 1,1)
-COMPONENTS = range(MIN_COMPS,MAX_COMPS,STEP_COMPS)
-QVALS = [MIN_QVAL]
-while QVALS[-1] < MAX_QVAL:
-    QVALS.append(QVALS[-1] * STEP_QVAL)
-OUTLIER_FILT_KNN_ICA = config.get("OUTLIER_FILT_KNN_ICA")
-OUTLIER_MAX_DIST_ICA = config.get("OUTLIER_MAX_DIST_ICA")
-ONT = config.get('ONT_GRID','BP')
-ICA_VERSION = 1
-GRID_INDIV_RANDOM_SEEDS_ICA = [random.sample(range(0,100000,1),k=max(REPS)) for x in OVERALL_REPS]
 
-N_INS_SHUFFLES =config.get('N_INS_SHUFFLES',1000)
-INDIV_RANDOM_SEEDS_SHUF = random.sample(range(0,N_INS_SHUFFLES,1),k=N_INS_SHUFFLES)
-
-if config.get("is_test",False):
-    REPS = [1,2]
-    OVERALL_REPS = [1,2]
-    COMPONENTS = [5,10,15]
-    QVALS = [0.001,0.01,0.1]
-    ONT = "CC"
-
-FINAL_DATASETS = ['obs','var','expr','scaled','grid_enr','grid_silhouette',
+FINAL_DATASETS = ['obs','var','expr','scaled',
+                    'grid_enr',#'grid_silhouette',
                     'optimal_gep_enr','optimal_gep_usage',
-                    'optimal_gep_membership','xa_ratio']
+                    'optimal_gep_membership',
+                    'xa_ratio']
 
 rule all:
     input:
         expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
         "results/finalized/hetchrom_assembly_insertions/",
-        "results/finalized/rnaseq_pe/",
-
-rule all_rnaseq:
-    input:
-        expand("results/rnaseq/star/{s}/",s=[x.sample_name for x in pep.samples if x.assay == "RNAseq"]),
-
-
-rule all_isoseq_1:
-    input:
-        #expand("results/fastq-dump/{s}/",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
-        #expand("results/isoseq-1/mm2/{s}.{z}", z=['sam'],s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
-        #expand("results/isoseq-1/flnc/{s}.bam",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
-        #expand("results/fastqc/{s}",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"])
-        #expand("results/isoseq-1/pbmm2/{s}/{s}.bam",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
-        expand("results/isoseq-1/isoseq_collapse/{s}.gff",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
-        #expand("results/isoseq-1/cupcake-fusion/{s}/{s}.fusion.gff",s=[x.sample_name for x in pep.samples if x.assay == "ISOseq"]),
-
-rule all_chipseq:
-    input:
-        expand("results/chipseq/aln/{s}/{s}.rmdup.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "CHIPseq"]),
-        #expand("results/chipseq/aln/{s}/{s}_input.bam",s=[x.sample_name for x in pep.samples if x.assay == "CHIPseq"]),
-
-rule all_srnaseq:
-    input:
-        #expand("results/srna/trimmed/{s}/{s}.srt.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
-        #expand("results/fastqc/{s}",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
-        expand("results/small-rna/shortstack-clean/{s}/{s}.bam.bai",s=[x.sample_name for x in pep.samples if x.assay == "sRNAseq"]),
-
+        "results/finalized/hsbam_rnaseq_pe/",
+        transposon_variants(expand('results/copies/{s}.tsv',s=['w1118_male','w1118_female'])),
+        transposon_variants(expand("results/snps/{s}-snps.vcf", s='w1118_male')),
 
 include: "rules/finalize.smk"
-include: "rules/custom-genome.smk"
-include: "rules/cellranger.smk"
-include: "rules/common.smk"
-include: "rules/isoseq-1.smk"
-include: "rules/chipseq.smk"
-include: "rules/small-rnas.smk"
-include: "rules/process-with-scanpy.smk"
-include: "rules/gep-grid-search.smk"
-include: "rules/gep.smk"
-include: "rules/tidal.smk"
-include: "rules/hetchrom-ins.smk"
-include: "rules/rnaseq-pe.smk"

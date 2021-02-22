@@ -17,7 +17,7 @@ This must be installed per the recommendations at https://cole-trapnell-lab.gith
 ### command
 
 ```
-snakemake --use-conda --profile config/profile/{your system} -kp
+PYTHONHASHSEED=0 snakemake --use-conda --profile config/profile/{your system} -kp
 ```
 
 ## Authors

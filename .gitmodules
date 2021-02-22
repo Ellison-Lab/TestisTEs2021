@@ -1,0 +1,21 @@
+[submodule "subworkflows/gte21-custom-genome"]
+	path = subworkflows/gte21-custom-genome
+	url = https://github.com/mal2017/gte21-custom-genome
+[submodule "subworkflows/gte21-hsbam-rna"]
+	path = subworkflows/gte21-hsbam-rna
+	url = https://github.com/mal2017/gte21-hsbam-rna
+[submodule "subworkflows/gte21-ica-grid"]
+	path = subworkflows/gte21-ica-grid
+	url = https://github.com/mal2017/gte21-ica-grid
+[submodule "subworkflows/gte21-scrna"]
+	path = subworkflows/gte21-scrna
+	url = https://github.com/mal2017/gte21-scrna
+[submodule "subworkflows/gte21-y-hetchrom"]
+	path = subworkflows/gte21-y-hetchrom
+	url = https://github.com/mal2017/gte21-y-hetchrom
+[submodule "subworkflows/gte21-tidal-xa"]
+	path = subworkflows/gte21-tidal-xa
+	url = https://github.com/mal2017/gte21-tidal-xa
+[submodule "subworkflows/transposon-variants-hts"]
+	path = subworkflows/transposon-variants-hts
+	url = https://github.com/mal2017/transposon-variants-hts

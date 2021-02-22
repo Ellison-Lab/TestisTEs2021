@@ -1,8 +1,9 @@
+MAIN_CONFIG: /media/mlawlor/work/TestisTEs2021/config/config.yaml
 # alignment options
-GENOME_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel-all-chromosome-r6.22.fasta.masked
-TRANSPOSON_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel_repbase_lib.fasta
+GENOME_FASTA: /media/mlawlor/work/data/genome/dmel-all-chromosome-r6.22.fasta.masked #/projects/genetics/ellison_lab/genomes/dna/masked/dmel-all-chromosome-r6.22.fasta.masked
+TRANSPOSON_FASTA: /media/mlawlor/work/data/genome/dmel_repbase_lib.fasta
 GENE_GTF: ftp://ftp.flybase.net/releases/FB2018_03/dmel_r6.22/gtf/dmel-all-r6.22.gtf.gz
-HETCHROM_FASTA: /scratch/mal456/hetchrom_dmel_scaffold2_V5.fasta
+HETCHROM_FASTA: /media/mlawlor/work/data/genome/hetchrom_dmel_scaffold2_V5.fasta #/scratch/mal456/hetchrom_dmel_scaffold2_V5.fasta
 HETCHROM_GTF: /scratch/mal456/hetchrom_dmel_scaffold2_V5.gtf
 TIDAL: http://www.bio.brandeis.edu/laulab/Tidal_Fly/Tidal_Fly_v1Archive20150930.zip
 TIDAL_ANNO: https://github.com/laulabbrandeis/TIDAL/raw/master/annotation.tar.gz
@@ -15,7 +16,7 @@ FASTERQDUMP_MEM: 16000
 SHORTSTACK_MEM: 24000
 
 # scanpy options
-FBGNS: 'ftp://ftp.flybase.org/releases/FB2020_01/precomputed_files/genes/fbgn_annotation_ID_fb_2020_01.tsv.gz'
+FBGNS: /media/mlawlor/work/data/genome/fbgn_annotation_ID_fb_2020_01.tsv.gz #'ftp://ftp.flybase.org/releases/FB2020_01/precomputed_files/genes/fbgn_annotation_ID_fb_2020_01.tsv.gz'
 LARVAL_TESTIS_MARKERS: 'resources/larval-testis-markers.txt'
 RANDOM_SEED: 2021
 MITO_CUTOFF: 0.05 # 0.05

@@ -1,6 +1,6 @@
 rule collect_var:
     input:
-        "results/scanpy/{group}/anno/var.csv"
+        scrna("results/scanpy/{group}/anno/")
     output:
         directory("results/finalized/{group}/var")
     resources:
@@ -13,9 +13,9 @@ rule collect_var:
 
 rule collect_obs:
     input:
-        clusters = "results/scanpy/{group}/clusters-to-celltypes.csv",
-        obsm = "results/scanpy/{group}/anno/obsm.csv",
-        obs = "results/scanpy/{group}/anno/obs.csv",
+        clusters = scrna("results/scanpy/{group}/clusters-to-celltypes.csv"),
+        obsm = scrna("results/scanpy/{group}/obsm.csv"),
+        obs = scrna("results/scanpy/{group}/obs.csv"),
     output:
         directory("results/finalized/{group}/obs")
     resources:
@@ -29,7 +29,7 @@ rule collect_obs:
 rule collect_scrna_expr:
     input:
         var= rules.collect_var.output,
-        expr = "results/scanpy/{group}/lognorm-expression.csv.gz",
+        expr = scrna("results/scanpy/{group}/lognorm-expression.csv.gz"),
         obs = rules.collect_obs.output
     output:
         directory("results/finalized/{group}/expr")
@@ -44,7 +44,7 @@ rule collect_scrna_expr:
 rule collect_scrna_scaled:
     input:
         var= rules.collect_var.output,
-        expr = "results/scanpy/{group}/scaled-expression.csv.gz",
+        expr = scrna("results/scanpy/{group}/scaled-expression.csv.gz"),
         obs = rules.collect_obs.output
     output:
         directory("results/finalized/{group}/scaled")
@@ -58,7 +58,7 @@ rule collect_scrna_scaled:
 
 rule collect_grid_enr_metrics:
     input:
-        "results/gep-grid-search/{group}/enr-metrics.csv"
+        gep("results/grid-search-{group}-go-metrics.csv")
     output:
         directory("results/finalized/{group}/grid_enr")
     resources:
@@ -69,22 +69,22 @@ rule collect_grid_enr_metrics:
     script:
         "../scripts/collect-var.R"
 
-rule collect_grid_cica_silhouette:
-    input:
-        "results/gep-grid-search/{group}/silhouette.csv"
-    output:
-        directory("results/finalized/{group}/grid_silhouette")
-    resources:
-        time=10,
-        mem=24000,
-    conda:
-        "../envs/r_arrow.yaml"
-    script:
-        "../scripts/collect-var.R"
+# rule collect_grid_cica_silhouette:
+#     input:
+#         "results/gep-grid-search/{group}/silhouette.csv"
+#     output:
+#         directory("results/finalized/{group}/grid_silhouette")
+#     resources:
+#         time=10,
+#         mem=24000,
+#     conda:
+#         "../envs/r_arrow.yaml"
+#     script:
+#         "../scripts/collect-var.R"
 
 rule collect_optimal_enr:
     input:
-        lambda wc: expand("results/gep/{g}/optimal/consensus-ica-enrichment-{o}.csv.gz",g = wc.group, o=config.get('ONTS'))
+        lambda wc: gep(expand("results/gep/{g}/optimal/consensus-ica-enrichment-{o}.csv.gz",g = wc.group, o=config.get('ONTS')))
     output:
         directory("results/finalized/{group}/optimal_gep_enr/")
     resources:
@@ -97,7 +97,7 @@ rule collect_optimal_enr:
 
 rule collect_optimal_usage:
     input:
-        lambda wc: expand("results/gep/{g}/optimal/consensus-usage.csv.gz",g = wc.group, o=config.get('ONTS'))
+        lambda wc: gep(expand("results/gep/{g}/optimal/consensus-usage.csv.gz",g = wc.group, o=config.get('ONTS')))
     output:
         directory("results/finalized/{group}/optimal_gep_usage/")
     resources:
@@ -110,7 +110,7 @@ rule collect_optimal_usage:
 
 rule collect_optimal_gep_membership:
     input:
-        lambda wc: expand("results/gep/{g}/optimal/consensus-ica-qvalues.csv.gz",g = wc.group, o=config.get('ONTS'))
+        lambda wc: gep(expand("results/gep/{g}/optimal/consensus-ica-qvalues.csv.gz",g = wc.group, o=config.get('ONTS')))
     output:
         directory("results/finalized/{group}/optimal_gep_membership/")
     resources:
@@ -123,7 +123,7 @@ rule collect_optimal_gep_membership:
 
 rule collect_hetchrom_assembly_ins:
     input:
-        "results/hetchrom-ins/insertions.csv"
+        hetchrom_y("results/hetchrom-ins/insertions.csv")
     output:
         directory("results/finalized/hetchrom_assembly_insertions/")
     resources:
@@ -136,7 +136,7 @@ rule collect_hetchrom_assembly_ins:
 
 rule collect_tidal:
     input:
-        "results/tidal/ratio/{group}/xa-ratio.csv"
+        xa_ratio("results/tidal/ratio/{group}/xa-ratio.csv")
     output:
         directory("results/finalized/{group}/xa_ratio/")
     resources:
@@ -146,3 +146,13 @@ rule collect_tidal:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule collect_hsbam_rnaseq:
+    input:
+        star=hsbam_rna(expand("results/rnaseq/star/{s}/",s=[x.sample_name for x in pep.samples if x.assay == "RNAseq"]))
+    output:
+        directory("results/finalized/hsbam_rnaseq_pe/")
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/parse_star_counts.R"
