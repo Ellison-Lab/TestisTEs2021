@@ -87,6 +87,8 @@ subworkflow transposon_variants:
         "../subworkflows/transposon-variants-hts/"
     snakefile:
         "../subworkflows/transposon-variants-hts/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
 
 
 
