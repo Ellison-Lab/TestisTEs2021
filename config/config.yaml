@@ -16,7 +16,7 @@ FASTERQDUMP_MEM: 16000
 SHORTSTACK_MEM: 24000
 
 # scanpy options
-FBGNS: 'ftp://ftp.flybase.org/releases/FB2020_01/precomputed_files/genes/fbgn_annotation_ID_fb_2020_01.tsv.gz' #/media/mlawlor/work/data/genome/fbgn_annotation_ID_fb_2020_01.tsv.gz 
+FBGNS: 'ftp://ftp.flybase.org/releases/FB2020_01/precomputed_files/genes/fbgn_annotation_ID_fb_2020_01.tsv.gz' #/media/mlawlor/work/data/genome/fbgn_annotation_ID_fb_2020_01.tsv.gz
 LARVAL_TESTIS_MARKERS: 'resources/larval-testis-markers.txt'
 RANDOM_SEED: 2021
 MITO_CUTOFF: 0.05 # 0.05
@@ -55,7 +55,11 @@ GRID_STEP_COMPS: 10
 GRID_REPS: 100
 GRID_OVERALL_REPS: 3
 
-
+# te variants
+MIN_BM2_MAPQ: 1
+MOSDEPTH_WINDOW_SIZE: 100
+MIN_SNP_BQ: 10
+MIN_SNP_SUPPORT: 15
 
 # sample assignments
 SCRNA_GROUPS:
