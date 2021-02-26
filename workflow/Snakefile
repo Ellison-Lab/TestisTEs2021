@@ -100,6 +100,7 @@ rule all:
         expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
         "results/finalized/hetchrom_assembly_insertions/",
         transposon_variants(expand('results/copies/{s}.tsv',s=['w1118_male','w1118_female'])),
-        transposon_variants(expand("results/snps/{s}-snps.vcf", s='w1118_male')),
+        transposon_variants("results/snps/snps.vcf"),
+        transposon_variants("results/snps/total-depth-at-snps.tsv.gz")
 
 include: "rules/finalize.smk"
