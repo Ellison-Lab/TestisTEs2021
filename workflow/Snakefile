@@ -74,13 +74,6 @@ subworkflow hetchrom_y:
     configfile:
         MAIN_CONFIG
 
-subworkflow hsbam_rna:
-    workdir:
-        "../subworkflows/gte21-hsbam-rna/"
-    snakefile:
-        "../subworkflows/gte21-hsbam-rna/workflow/Snakefile"
-    configfile:
-        MAIN_CONFIG
 
 subworkflow transposon_variants:
     workdir:
@@ -106,7 +99,6 @@ rule all:
     input:
         expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS),
         "results/finalized/hetchrom_assembly_insertions/",
-        "results/finalized/hsbam_rnaseq_pe/",
         transposon_variants(expand('results/copies/{s}.tsv',s=['w1118_male','w1118_female'])),
         transposon_variants(expand("results/snps/{s}-snps.vcf", s='w1118_male')),
 

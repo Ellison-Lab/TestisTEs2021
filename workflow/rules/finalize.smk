@@ -146,13 +146,3 @@ rule collect_tidal:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
-
-rule collect_hsbam_rnaseq:
-    input:
-        star=hsbam_rna(expand("results/rnaseq/star/{s}/",s=[x.sample_name for x in pep.samples if x.assay == "RNAseq"]))
-    output:
-        directory("results/finalized/hsbam_rnaseq_pe/")
-    conda:
-        "../envs/r_arrow.yaml"
-    script:
-        "../scripts/parse_star_counts.R"

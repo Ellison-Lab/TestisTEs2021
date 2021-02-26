@@ -1,9 +1,6 @@
 [submodule "subworkflows/gte21-custom-genome"]
 	path = subworkflows/gte21-custom-genome
 	url = https://github.com/mal2017/gte21-custom-genome
-[submodule "subworkflows/gte21-hsbam-rna"]
-	path = subworkflows/gte21-hsbam-rna
-	url = https://github.com/mal2017/gte21-hsbam-rna
 [submodule "subworkflows/gte21-ica-grid"]
 	path = subworkflows/gte21-ica-grid
 	url = https://github.com/mal2017/gte21-ica-grid
