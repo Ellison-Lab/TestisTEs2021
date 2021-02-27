@@ -1,6 +1,6 @@
 rule collect_var:
     input:
-        scrna("results/scanpy/{group}/anno/")
+        scrna("results/scanpy/{group}/var.csv/")
     output:
         directory("results/finalized/{group}/var")
     resources:
