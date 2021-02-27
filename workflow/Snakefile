@@ -83,7 +83,13 @@ subworkflow transposon_variants:
     configfile:
         MAIN_CONFIG
 
-
+subworkflow te_var_expr:
+    workdir:
+        "../subworkflows/gte21-te-variant-expression/"
+    snakefile:
+        "../subworkflows/gte21-te-variant-expression/workflow/Snakefile"
+    configfile:
+        MAIN_CONFIG
 
 # variables
 RANDOM_SEED = config.get("RANDOM_SEED",2020)
@@ -101,6 +107,7 @@ rule all:
         "results/finalized/hetchrom_assembly_insertions/",
         transposon_variants(expand('results/copies/{s}.tsv',s=['w1118_male','w1118_female'])),
         transposon_variants("results/snps/snps.vcf"),
-        transposon_variants("results/snps/depth-at-snps.tsv.gz")
+        transposon_variants("results/snps/depth-at-snps.tsv.gz"),
+        te_var_expr(expand("results/depths/{s}-{r}-{t}-at-male-snps.tsv.gz",s=['w1118_testes'],r=['rep1','rep2','rep3','rep4'],t=['depth','reads']))
 
 include: "rules/finalize.smk"
