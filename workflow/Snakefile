@@ -101,7 +101,6 @@ rule all:
         "results/finalized/hetchrom_assembly_insertions/",
         transposon_variants(expand('results/copies/{s}.tsv',s=['w1118_male','w1118_female'])),
         transposon_variants("results/snps/snps.vcf"),
-        transposon_variants("results/snps/total-depth-at-snps.tsv.gz"),
         transposon_variants("results/snps/depth-at-snps.tsv.gz")
 
 include: "rules/finalize.smk"
