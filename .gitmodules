@@ -16,3 +16,6 @@
 [submodule "subworkflows/transposon-variants-hts"]
 	path = subworkflows/transposon-variants-hts
 	url = https://github.com/mal2017/transposon-variants-hts
+[submodule "subworkflows/gte21-te-variant-expression"]
+	path = subworkflows/gte21-te-variant-expression
+	url = https://github.com/mal2017/gte21-te-variant-expression.git
