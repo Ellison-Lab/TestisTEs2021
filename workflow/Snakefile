@@ -74,7 +74,6 @@ subworkflow hetchrom_y:
     configfile:
         MAIN_CONFIG
 
-
 subworkflow transposon_variants:
     workdir:
         "../subworkflows/transposon-variants-hts/"
