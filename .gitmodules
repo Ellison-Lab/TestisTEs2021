@@ -19,3 +19,6 @@
 [submodule "subworkflows/gte21-te-variant-expression"]
 	path = subworkflows/gte21-te-variant-expression
 	url = https://github.com/mal2017/gte21-te-variant-expression.git
+[submodule "subworkflows/gte21-star-bulk-tpn"]
+	path = subworkflows/gte21-star-bulk-tpn
+	url = https://github.com/mal2017/gte21-star-bulk-tpn
