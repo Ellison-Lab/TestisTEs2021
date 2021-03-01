@@ -146,3 +146,33 @@ rule collect_tidal:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule collect_te_copies:
+    input:
+        transposon_variants('results/copies/{wgs_group}.tsv'),
+    output:
+        "results/finalized/wgs/{wgs_group}/copies/"
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
+
+rule collect_male_te_wgs_snp_depth:
+    input:
+        transposon_variants("results/snps/depth-at-snps.tsv.gz"),
+    output:
+        "results/finalized/wgs/w1118_male/snp_depths/"
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
+
+rule collect_te_expr_snp_depth:
+    input:
+        te_var_expr("results/depths/{wgs_sample}-{wgs_rep}-{wgs_res_type}-at-male-snps.tsv.gz")
+    output:
+        "finalized/w1118-testes-total-rna/{wgs_rep}-{wgs_res_type}-at-male-snps/"
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
