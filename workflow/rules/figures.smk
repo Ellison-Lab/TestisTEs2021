@@ -79,8 +79,6 @@ rule tidal_larval_tep_xa_boxplot:
 
 rule larval_later_sperm_marker_umis:
 
-rule larval_scrna_vs_bulk:
-
 rule comparison_with_mahadevaraju:
 
 rule larracuente_y_ins_barchart:
