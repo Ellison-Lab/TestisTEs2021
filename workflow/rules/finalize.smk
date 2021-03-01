@@ -184,6 +184,6 @@ rule collect_larval_polya_expr:
         "results/finalized/larval-polya/{larval_polya_sample}.tsv"
     shell:
         """
-        echo 'gene_id\tfirst_strand\tsecond_strand\ttotal' > {output}
+        echo 'gene_id\ttotal\tfirst_strand\tsecond_strand > {output}
         grep -v 'N_' {input}/ReadsPerGene.out.tab >> {output}
         """
