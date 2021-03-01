@@ -107,7 +107,8 @@ FINAL_DATASETS = ['obs','var','expr','scaled',
                     'xa_ratio']
 
 FINAL_DATASETS_FILES = expand("results/finalized/{g}/{d}",g=config.get('SCRNA_GROUPS'), d=FINAL_DATASETS) + ["results/finalized/hetchrom_assembly_insertions/"] + expand("results/finalized/wgs/{s}/copies/",s=['w1118_male','w1118_female']) + ["results/finalized/wgs/w1118_male/snp_depths/"] + expand("results/finalized/w1118-testes-total-rna/{r}-{t}-at-male-snps/",r=['rep1','rep2','rep3','rep4'],t=['depth','reads'])
-FINAL_DATASETS_FILES += larval_polya(expand("results/star/{s}",s=["larval_testes_cleaned_papain_01","larval_testes_papain_02","larval_testes_papain_03","larval_testes_papain_04"]))
+#FINAL_DATASETS_FILES += larval_polya(expand("results/star/{s}",s=["larval_testes_cleaned_papain_01","larval_testes_papain_02","larval_testes_papain_03","larval_testes_papain_04"]))
+FINAL_DATASETS_FILES += expand("results/finalized/larval-polya/{l}.tsv",l=["larval_testes_cleaned_papain_01","larval_testes_papain_02","larval_testes_papain_03","larval_testes_papain_04"])
 
 rule all:
     input:

@@ -27,6 +27,16 @@ rule larval_marker_expression:
         "../fig-scripts/larval_marker_expression.R"
 
 
+rule larval_scrna_vs_bulk:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.png",
+        ggp = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.ggp.rds",
+        dat = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.dat.tsv",
+    script:
+        "../fig-scripts/larval_scrna_vs_bulk.R"
 
 rule larval_te_heatmap:
 
