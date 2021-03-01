@@ -121,6 +121,14 @@ rule collect_optimal_gep_membership:
     script:
         "../scripts/collect-var.R"
 
+rule collect_optimal_gep_params:
+    input:
+        gep("results/grid-search-{group}-optimal.json")
+    output:
+        "results/finalized/optimal-gep-params/{group}.json"
+    shell:
+        "cp {input} {output}"
+
 rule collect_hetchrom_assembly_ins:
     input:
         hetchrom_y("results/hetchrom-ins/insertions.csv")

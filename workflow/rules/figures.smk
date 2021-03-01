@@ -32,13 +32,24 @@ rule larval_scrna_vs_bulk:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output
     output:
-        png = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.png",
-        ggp = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.ggp.rds",
+        png1 = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.png",
+        png2 = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.tes.png",
+        ggp1 = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.ggp.rds",
+        ggp2 = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.tes.ggp.rds",
         dat = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.dat.tsv",
     script:
         "../fig-scripts/larval_scrna_vs_bulk.R"
 
 rule larval_te_heatmap:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figslarval_te_heatmap/larval_te_heatmap.png",
+        ggp = "results/figs/larval_te_heatmap/larval_te_heatmap.ggp.rds",
+        dat = "results/figs/larval_te_heatmap/larval_te_heatmap.dat.tsv"
+    script:
+        "../fig-scripts/larval_te_heatmap.R"
 
 
 rule larval_normalized_te_umis:
