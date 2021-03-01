@@ -109,6 +109,6 @@ rule all:
         #te_var_expr(expand("results/depths/{s}-{r}-{t}-at-male-snps.tsv.gz",s=['w1118_testes'],r=['rep1','rep2','rep3','rep4'],t=['depth','reads']))
         expand("results/finalized/wgs/{s}/copies/",s=['w1118_male','w1118_female']),
         "results/finalized/wgs/w1118_male/snp_depths/",
-        expand("finalized/w1118-testes-total-rna/{r}-{t}-at-male-snps/",r=['rep1','rep2','rep3','rep4'],t=['depth','reads'])
+        expand("results/finalized/w1118-testes-total-rna/{r}-{t}-at-male-snps/",r=['rep1','rep2','rep3','rep4'],t=['depth','reads'])
 
 include: "rules/finalize.smk"
