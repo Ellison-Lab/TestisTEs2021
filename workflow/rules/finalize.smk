@@ -179,11 +179,11 @@ rule collect_te_expr_snp_depth:
 
 rule collect_larval_polya_expr:
     input:
-        larval_polya("results/star/{larval_polya_sample}/ReadsPerGene.out.tab")
+        larval_polya("results/star/{larval_polya_sample}/")
     output:
         "results/finalized/larval-polya/{larval_polya_sample}.tsv"
     shell:
         """
         echo 'gene_id\tfirst_strand\tsecond_strand\ttotal' > {output}
-        grep -v 'N_' {input} >> {output}
+        grep -v 'N_' {input}/ReadsPerGene.out.tab >> {output}
         """
