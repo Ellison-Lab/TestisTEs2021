@@ -171,7 +171,7 @@ rule collect_te_expr_snp_depth:
     input:
         te_var_expr("results/depths/w1118_testes-{wgs_rep}-{wgs_res_type}-at-male-snps.tsv.gz")
     output:
-        directory("finalized/w1118-testes-total-rna/{wgs_rep}-{wgs_res_type}-at-male-snps/")
+        directory("results/finalized/w1118-testes-total-rna/{wgs_rep}-{wgs_res_type}-at-male-snps/")
     conda:
         "../envs/r_arrow.yaml"
     script:
