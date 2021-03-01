@@ -27,16 +27,6 @@ rule larval_marker_expression:
         "../fig-scripts/larval_marker_expression.R"
 
 
-rule larval_marker_expression:
-    input:
-        FINAL_DATASETS_FILES,
-        rules.celltype_rename_table.output
-    output:
-        png = "results/figs/larval_marker_expression/larval_marker_expression.png",
-        ggp = "results/figs/larval_marker_expression/larval_marker_expression.ggp.rds",
-        dat = "results/figs/larval_marker_expression/larval_marker_expression.dat.tsv"
-    script:
-        "../fig-scripts/larval_marker_expression.R"
 
 rule larval_te_heatmap:
 
