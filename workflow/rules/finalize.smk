@@ -169,7 +169,7 @@ rule collect_male_te_wgs_snp_depth:
 
 rule collect_te_expr_snp_depth:
     input:
-        te_var_expr("results/depths/{wgs_sample}-{wgs_rep}-{wgs_res_type}-at-male-snps.tsv.gz")
+        te_var_expr("results/depths/w1118_testes-{wgs_rep}-{wgs_res_type}-at-male-snps.tsv.gz")
     output:
         "finalized/w1118-testes-total-rna/{wgs_rep}-{wgs_res_type}-at-male-snps/"
     conda:
