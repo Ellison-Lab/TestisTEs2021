@@ -157,7 +157,7 @@ rule collect_tidal:
 
 rule collect_te_copies:
     input:
-        transposon_variants('results/copies/{wgs_group}.tsv'),
+        transposon_variants('results/copies/{wgs_group}.csv'),
     output:
         directory("results/finalized/wgs/{wgs_group}/copies/")
     conda:
@@ -167,7 +167,7 @@ rule collect_te_copies:
 
 rule collect_male_te_wgs_snp_depth:
     input:
-        transposon_variants("results/snps/depth-at-snps.tsv.gz"),
+        transposon_variants("results/snps/depth-at-snps.csv.gz"),
     output:
         directory("results/finalized/wgs/w1118_male/snp_depths/")
     conda:
@@ -177,7 +177,7 @@ rule collect_male_te_wgs_snp_depth:
 
 rule collect_te_expr_snp_depth:
     input:
-        te_var_expr("results/depths/w1118_testes-{wgs_rep}-{wgs_res_type}-at-male-snps.tsv.gz")
+        te_var_expr("results/depths/w1118_testes-{wgs_rep}-{wgs_res_type}-at-male-snps.csv.gz")
     output:
         directory("results/finalized/w1118-testes-total-rna/{wgs_rep}-{wgs_res_type}-at-male-snps/")
     conda:
