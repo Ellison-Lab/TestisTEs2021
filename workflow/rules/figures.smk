@@ -206,8 +206,12 @@ rule w1118_y_linked_copies:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output
     output:
-        png = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.png",
-        ggp = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.ggp.rds",
+        png1 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.1.png",
+        ggp1 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.1.ggp.rds",
+        png2 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.2.png",
+        ggp2 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.2.ggp.rds",
+        png3 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.3.png",
+        ggp3 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.3.ggp.rds",
         dat = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.dat.tsv"
     script:
         "../fig-scripts/w1118_y_linked_copies.R"

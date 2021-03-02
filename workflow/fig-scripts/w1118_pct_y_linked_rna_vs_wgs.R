@@ -3,6 +3,7 @@ library(arrow)
 library(ggpubr)
 library(ggpointdensity)
 library(jsonlite)
+library(ragg)
 
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
 
@@ -27,6 +28,36 @@ tep_tes <- geps %>%
 rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snps/') %>%
   set_names(.,str_extract(.,"(?<=rna\\/)rep\\d+")) %>%
   map_df(~collect(open_dataset(., format='arrow'))) %>%
-  
   spread(.,sex, depth, fill = 0) %>%
   mutate(.,pct.male=male/(unknown+male))
+
+dna <- open_dataset('results/finalized/wgs/w1118_male/snp_depths/', format='arrow') %>% 
+  collect() %>%
+  spread(.,sex, depth, fill = 0) %>%
+  mutate(.,pct.male=male/(unknown+male))
+
+
+res2 <- inner_join(dna, rna, by=c('seqnames','pos'), suffix=c('.dna','.tx')) %>%
+  group_by(sample.tx, seqnames) %>% summarise(pct.male.dna=mean(pct.male.dna), pct.male.tx=mean(pct.male.tx), .groups = 'drop')
+
+
+res3 <- res2%>% mutate(gep=ifelse(seqnames %in% tep_tes,'tep','other'))
+
+
+df <- res3 %>%
+  filter(!str_detect(seqnames,'[-_]LTR'))
+
+g <- ggplot(df, aes(pct.male.dna,pct.male.tx, label=seqnames)) +
+  geom_point() +
+  facet_wrap(~gep, scales = 'free_x') +
+  stat_cor(method = 'spearman') + 
+  theme_classic() +
+  ggrepel::geom_text_repel() +
+  geom_abline(slope=1, intercept=0)
+
+agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+print(g)
+dev.off()
+
+saveRDS(g,snakemake@output[['ggp']])
+write_tsv(df,snakemake@output[['dat']])
