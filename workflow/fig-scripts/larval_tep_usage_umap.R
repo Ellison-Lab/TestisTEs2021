@@ -48,11 +48,20 @@ df <- w1118.gep_usage %>%
   left_join(collect(w1118.obs)) %>%
   arrange(usage)
 
-g <-  ggplot(df, aes(X_umap1,X_umap2, color=usage)) +
-  geom_point(size=0.75) +
+umap_labs <- w1118.obs %>%
+  group_by(clusters2) %>%
+  collect() %>%
+  summarise(x = mean(X_umap1), y=mean(X_umap2)) %>%
+  ungroup() %>%
+  left_join(rename.table)
+
+g <-  ggplot(df, aes(X_umap1,X_umap2)) +
+  geom_point(size=0.75, aes(color=usage)) +
   scale_color_gradient2(low='steelblue', mid='lightgray',high='tomato', midpoint = 0.04) +
   theme_classic() +
-  coord_fixed()
+  coord_fixed() 
+
+g <- g + geom_text(data=umap_labs, aes(x + sign(x) *1, y, label=clusters.rename), size=rel(3), color='black')
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

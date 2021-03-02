@@ -1,3 +1,29 @@
+rule figure1:
+    output:
+        "results/panels/figure1.pdf"
+    script:
+        "../fig-scripts/figure1.R"
+
+rule figure2:
+    output:
+        "results/panels/figure2.pdf"
+    script:
+        "../fig-scripts/figure2.R"
+
+rule figure3:
+    output:
+        "results/panels/figure3.pdf"
+    script:
+        "../fig-scripts/figure3.R"
+
+
+rule figure5:
+    output:
+        "results/panels/figure5.pdf"
+    script:
+        "../fig-scripts/figure5.R"
+
+
 rule celltype_rename_table:
     output:
         tsv="results/figs/celltype_rename_table.tsv"
@@ -222,7 +248,9 @@ rule w1118_pct_y_linked_rna_vs_wgs:
         rules.celltype_rename_table.output
     output:
         png = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.png",
+        png0 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.png",
         ggp = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.ggp.rds",
+        ggp0 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.ggp.rds",
         dat = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.dat.tsv"
     script:
         "../fig-scripts/w1118_pct_y_linked_rna_vs_wgs.R"

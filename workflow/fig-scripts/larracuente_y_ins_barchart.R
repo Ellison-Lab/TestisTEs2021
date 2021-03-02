@@ -55,7 +55,7 @@ hetchrom.ins.5 <- hetchrom.ins.4 %>%
   relocate(-ins_id)
 
 df <- hetchrom.ins.5 %>%
-  #mutate(chrom=ifelse(chrom=='Y','Y','other')) %>%
+  mutate(chrom=ifelse(chrom=='Y','Y','other')) %>%
   count(chrom,GEP) %>%
   group_by(GEP) %>%
   mutate(percent = n/sum(n))

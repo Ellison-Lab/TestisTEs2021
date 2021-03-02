@@ -1,6 +1,10 @@
 library(tidyverse)
 library(arrow)
 library(ragg)
+library(rtracklayer)
+
+gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
+  as_tibble()
 
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
   mutate(clusters.rename = fct_reorder(clusters.rename,as.numeric(str_extract(clusters.rename,"\\d+")))) %>%
@@ -9,7 +13,8 @@ rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
 w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='arrow')
 w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format='arrow')
 
-ylinked <- tibble(gene_symbol = c('kl-3','kl-5'), group='y-linked')
+ylinked <- unique(gtf %>% filter(seqnames == 'Y' & type == 'mRNA') %>% pull(gene_symbol)) %>%
+  tibble(gene_symbol = ., group='y-linked')
 tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
 ttaf <- c('sa') %>% tibble(gene_symbol = ., group='tTAF')
 tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
@@ -17,7 +22,7 @@ tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
 
 male.meiosis1.associated <- bind_rows(ylinked, tmac, ttaf, tbrd, tplus)
 
-markers2display <- male.meiosis1.associated$gene_symbol
+markers2display <- ylinked$gene_symbol
 
 dat <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
               ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers2display) %>% collect()}) %>%
