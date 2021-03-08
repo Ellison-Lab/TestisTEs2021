@@ -25,43 +25,43 @@ tep_tes <- geps %>%
   pull(gene_id) %>%
   unique()
 
-rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-reads-at-male-snps/') %>%
+rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snps/') %>%
   set_names(.,str_extract(.,"(?<=rna\\/)rep\\d+")) %>%
   map_df(~collect(open_dataset(., format='arrow'))) %>%
   distinct() %>% # get rid of apparent dup rows caused by multiple male-specific snps in same pos
-  spread(.,sex, total.depth, fill = 0) %>%
-  mutate(.,pct.male=male/(unknown+male))
+  spread(.,sex, depth, fill = 0) %>%
+  mutate(.,pct.male=male/(unknown + male))
 
 dna <- open_dataset('results/finalized/wgs/w1118_male/snp_depths/', format='arrow') %>% 
   collect() %>%
   spread(.,sex, depth, fill = 0) %>%
-  mutate(.,pct.male=male/(unknown+male))
-
+  mutate(.,pct.male=male/(unknown + male))
 
 res2 <-full_join(dna, rna, by=c('seqnames','pos'), suffix=c('.dna','.tx')) %>%
   group_by(sample.tx, seqnames) %>% summarise(pct.male.dna=mean(pct.male.dna), pct.male.tx=mean(pct.male.tx), .groups = 'drop')
 
-
 res3 <- res2%>% mutate(gep=ifelse(seqnames %in% tep_tes,'tep','other'))
 
 df <- res3 %>%
-  filter(!str_detect(seqnames,'[-_]LTR'))
+  filter(!str_detect(seqnames,'[-_]LTR')) %>%
+  filter(!str_detect(seqnames,'ARS406')) %>%
+  filter(!str_detect(seqnames,'NTS_DM'))
 
 g0 <- df %>% mutate(ratio=pct.male.tx/pct.male.dna) %>%
   ggplot(aes(gep, ratio)) +
   geom_boxplot() +
   stat_compare_means() +
   theme_classic() +
-  theme(aspect.ratio = 1)
+  theme(aspect.ratio = 1) + xlab("") + ylab('')
 
 g <- ggplot(df, aes(pct.male.dna,pct.male.tx, label=seqnames)) +
-  geom_point() +
+  geom_point(aes(color=gep)) +
   facet_wrap(~gep, scales = 'free_x') +
   stat_cor(method = 'spearman') + 
   theme_classic() +
   ggrepel::geom_text_repel() +
   geom_abline(slope=1, intercept=0, color='lightgray', linetype='dashed') +
-  theme(aspect.ratio = 0.5)
+  theme(aspect.ratio = 1)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)
