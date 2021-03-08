@@ -255,18 +255,45 @@ rule w1118_pct_y_linked_rna_vs_wgs:
     script:
         "../fig-scripts/w1118_pct_y_linked_rna_vs_wgs.R"
 
+rule larval_pirna_genes:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_pirna_expression/larval_pirna_expression.png",
+        ggp = "results/figs/larval_pirna_expression/larval_pirna_expression.ggp.rds",
+        dat = "results/figs/larval_pirna_expression/larval_pirna_expression.dat.tsv"
+    script:
+        "../fig-scripts/larval_pirna_genes.R"
+
 # ------------------------------------------------------------------------------
 
-# rule larval_pirna_expression:
-#     input:
-#         FINAL_DATASETS_FILES,
-#         rules.celltype_rename_table.output
-#     output:
-#         png = "results/figs/larval_pirna_expression/larval_pirna_expression.png",
-#         ggp = "results/figs/larval_pirna_expression/larval_pirna_expression.ggp.rds",
-#         dat = "results/figs/larval_pirna_expression/larval_pirna_expression.dat.tsv"
-#     script:
-#         "../fig-scripts/larval_pirna_expression.R"
+rule w1118_full_length_tx:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png1 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.line.png",
+        ggp1 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.line.ggp.rds",
+        png2 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.heat.png",
+        ggp2 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.heat.ggp.rds",
+        dat = "results/figs/w1118_full_length_tx/w1118_full_length_tx.dat.tsv"
+    script:
+        "../fig-scripts/w1118_full_length_tx.R"
+
+
+rule comparison_with_mahadevaraju:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.png",
+        ggp = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.ggp.rds",
+        dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv"
+    script:
+        "../fig-scripts/comparison_with_mahadevaraju.R"
+
+
 #
 # rule larval_chromatin_mod_umap:
 #     input:
@@ -292,13 +319,3 @@ rule w1118_pct_y_linked_rna_vs_wgs:
 #     script:
 #         "../fig-scripts/larval_chrom_modifiers_umis.R"
 #
-# rule comparison_with_mahadevaraju:
-#     input:
-#         FINAL_DATASETS_FILES,
-#         rules.celltype_rename_table.output
-#     output:
-#         png = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.png",
-#         ggp = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.ggp.rds",
-#         dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv"
-#     script:
-#         "../fig-scripts/comparison_with_mahadevaraju.R"
