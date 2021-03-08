@@ -118,3 +118,4 @@ rule all:
 
 include: "rules/finalize.smk"
 include: "rules/figures.smk"
+include: "rules/panel.smk"

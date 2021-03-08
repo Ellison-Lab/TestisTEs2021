@@ -17,14 +17,16 @@ post.mei <- c('p-cup','wa-cup', 'twe','Dpy-30L2')
 
 late.sperm <- tibble(gene_symbol = post.mei, group = 'late spermatocyte')
 
-tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
-ttaf <- c('sa') %>% tibble(gene_symbol = ., group='tTAF')
-tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
-tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
+#tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
+#ttaf <- c('sa') %>% tibble(gene_symbol = ., group='tTAF')
+#tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
+#tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
 
-male.meiosis1.associated <- bind_rows(tmac, ttaf, tbrd, tplus)
+#male.meiosis1.associated <- bind_rows(tmac, ttaf, tbrd, tplus)
 
-markers <- bind_rows(male.meiosis1.associated, late.sperm)
+#markers <- bind_rows(male.meiosis1.associated, late.sperm)
+
+markers <- late.sperm
 
 df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
              ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers$gene_symbol) %>% collect()}) %>%

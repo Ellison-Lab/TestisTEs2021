@@ -83,7 +83,8 @@ g3 <- dat %>%
   geom_col(aes(fill=tep)) +
   theme_classic() +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  xlab("")
+  xlab("") +
+  scale_fill_brewer(type='qual', name='GEP')
 
 g2 <- dat %>% 
   ggplot(aes(est.copies.male,est.copies.female, label=sequence)) +
@@ -94,17 +95,20 @@ g2 <- dat %>%
   scale_y_log10() +
   scale_x_log10() +
   facet_wrap(~tep) +
-  theme(aspect.ratio = 1)
+  theme(aspect.ratio = 1) +
+  scale_color_brewer(type='qual', name='GEP')
 
 g1 <- dat %>%
   ggplot(aes(tep,est.copies.male/est.copies.female, label=sequence))+
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(width = 0.1, alpha = 0.5) +
+  geom_boxplot(outlier.shape = 22, aes(fill=tep)) +
+  #geom_jitter(width = 0.1, alpha = 0.5) +
   theme(aspect.ratio = 1) +
   stat_compare_means(size=rel(5)) +
   xlab('') +
   theme_classic() +
-  theme(aspect.ratio = 1.5)
+  theme(aspect.ratio = 1.5) +
+  scale_fill_brewer(type='qual', name='GEP') +
+  ylab("Est. Male Copies / Est. Female Copies")
 
 agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g1)

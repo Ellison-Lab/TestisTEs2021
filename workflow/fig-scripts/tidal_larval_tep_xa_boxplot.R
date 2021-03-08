@@ -2,7 +2,7 @@ library(tidyverse)
 library(arrow)
 library(ragg)
 
-df <-  open_dataset("~/finalized/larval-w1118-testes/xa_ratio/", format='arrow') %>% collect() %>% 
+df <-  open_dataset("results/finalized/larval-w1118-testes/xa_ratio/", format='arrow') %>% collect() %>% 
   filter(comparison=='chrX_Auto_ratio')
   
 g <- ggplot(df, aes(GEP,ratio), fill='white') +

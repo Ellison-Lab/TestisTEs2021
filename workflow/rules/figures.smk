@@ -1,29 +1,3 @@
-rule figure1:
-    output:
-        "results/panels/figure1.pdf"
-    script:
-        "../fig-scripts/figure1.R"
-
-rule figure2:
-    output:
-        "results/panels/figure2.pdf"
-    script:
-        "../fig-scripts/figure2.R"
-
-rule figure3:
-    output:
-        "results/panels/figure3.pdf"
-    script:
-        "../fig-scripts/figure3.R"
-
-
-rule figure5:
-    output:
-        "results/panels/figure5.pdf"
-    script:
-        "../fig-scripts/figure5.R"
-
-
 rule celltype_rename_table:
     output:
         tsv="results/figs/celltype_rename_table.tsv"
@@ -125,7 +99,7 @@ rule larval_all_gep_te_bachart:
         "../fig-scripts/larval_all_gep_te_barchart.R"
 
 
-rule larval_tep_te_bachart:
+rule larval_tep_te_barchart:
     input:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output

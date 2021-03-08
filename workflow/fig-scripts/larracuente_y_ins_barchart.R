@@ -8,7 +8,7 @@ te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
 
-w1118.gep_membership <- open_dataset("~/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
+w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
 
 tep.name <- w1118.gep_membership %>%
   filter(qval < optimal_ica[['qval']]) %>%
@@ -29,7 +29,7 @@ tep.members <- w1118.gep_membership %>%
   filter(as.character(module)==tep.name) %>%
   pull(X1)
 
-hetchrom.ins <- open_dataset("~/finalized/hetchrom_assembly_insertions/", format='arrow')
+hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format='arrow')
 
 # get 1 range for each purported insertion
 hetchrom.ins.2 <- hetchrom.ins %>%
