@@ -285,13 +285,16 @@ rule w1118_full_length_tx:
 rule comparison_with_mahadevaraju:
     input:
         FINAL_DATASETS_FILES,
-        rules.celltype_rename_table.output
+        rules.celltype_rename_table.output,
+        "resources/41467_2021_20897_MOESM5_ESM.xlsx"
     output:
         png = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.png",
         ggp = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.ggp.rds",
         dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv"
     script:
         "../fig-scripts/comparison_with_mahadevaraju.R"
+
+
 
 
 #
