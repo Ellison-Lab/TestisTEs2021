@@ -294,6 +294,27 @@ rule comparison_with_mahadevaraju:
     script:
         "../fig-scripts/comparison_with_mahadevaraju.R"
 
+rule larval_scrna_basic_qc_stats:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output,
+    output:
+        png_dubs = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.dubs.png",
+        ggp_dubs = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.dubs.ggp.rds",
+        png_batch = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.batch.png",
+        ggp_batch = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.batch.ggp.rds",
+        png_n_genes = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.n_genes.png",
+        ggp_n_genes = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.n_genes.ggp.rds",
+        png_log1p_umis = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.log1p_umis.png",
+        ggp_log1p_umis = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.log1p_umis.ggp.rds",
+        png_percent_mito = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.percent_mito.png",
+        ggp_percent_mito = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.percent_mito.ggp.rds",
+        png_phase = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.phase.png",
+        ggp_phase = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.phase.ggp.rds",
+        dat = "results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.dat.tsv"
+    script:
+        "../fig-scripts/larval_scrna_basic_qc_stats.R"
+
 
 
 
