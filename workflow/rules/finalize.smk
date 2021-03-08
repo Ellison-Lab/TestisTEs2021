@@ -177,13 +177,23 @@ rule collect_male_te_wgs_snp_depth:
 
 rule collect_te_expr_snp_depth:
     input:
-        te_var_expr("results/depths/w1118_testes-{wgs_rep}-{wgs_res_type}-at-male-snps.csv.gz")
+        te_var_expr("results/depths/w1118_testes-{total_rna_rep}-{total_rna_res_type}-at-male-snps.csv.gz")
     output:
-        directory("results/finalized/w1118-testes-total-rna/{wgs_rep}-{wgs_res_type}-at-male-snps/")
+        directory("results/finalized/w1118-testes-total-rna/{total_rna_rep}-{total_rna_res_type}-at-male-snps/")
     conda:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule copy_total_rna_te_bws:
+    input:
+        te_var_expr(expand("results/bigwigs/tes/{s}.{sub}.tes.strand-{t}.rpkm.bw",s=['w1118_testes'],sub=['rep1','rep2','rep3','rep4'],t=['forward','reverse']))
+    output:
+        expand("results/finalized/bigwigs/total-rna/{s}.{sub}.tes.strand-{t}.rpkm.bw",s=['w1118_testes'],sub=['rep1','rep2','rep3','rep4'],t=['forward','reverse'])
+    shell:
+        """
+        cp {input} results/finalized/bigwigs/total-rna/
+        """
 
 rule collect_larval_polya_expr:
     input:
