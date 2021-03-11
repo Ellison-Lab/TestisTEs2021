@@ -19,9 +19,10 @@ top_mods <- geps %>%
   group_by(module) %>% summarise(n_tes = sum(!str_detect(X1,'FBgn'))) %>%
   arrange(-n_tes)
 
+# says tep in script but have decided to show all TEs detected
 tep_tes <- geps %>%
-  filter(qval < optimal_ica[['qval']]) %>%
-  filter(module == top_mods$module[1]) %>%
+  #filter(qval < optimal_ica[['qval']]) %>%
+  #filter(module == top_mods$module[1]) %>%
   left_join(te.lookup, by=c(X1='merged_te')) %>%
   filter(!str_detect(X1,'FBgn')) %>%
   pull(gene_id) %>%
@@ -63,17 +64,28 @@ g1 <- bws %>%
 
 x <- bws %>%
   group_by(seqnames) %>%
-  mutate(pos.bin = as.factor(round(start/max(end),1.5))) %>%
+  mutate(pos.bin = as.factor(round(start/max(end),1.4))) %>%
   complete(replicate, seqnames, pos.bin, fill = list(score=0)) %>%
   group_by(seqnames, pos.bin) %>%
   summarise(score=mean(score,na.rm=T),.groups = 'drop_last') %>%
   mutate(scaled=scale(score)[,1])
 
-g2 <- x %>% group_by(seqnames) %>% mutate(pos.max=which.max(scaled)) %>% ungroup() %>%
-ggplot(aes(pos.bin,reorder(seqnames,pos.max),fill=scaled)) +
+
+x.hcl <- x %>% dplyr::select(seqnames, pos.bin, score) %>%
+  spread(seqnames, score) %>%
+  arrange(pos.bin) %>%
+  as.data.frame(row.names = 'pos.bin') %>%
+  column_to_rownames('pos.bin') %>% t() %>% dist() %>% hclust()
+
+NEW.ORDER <- x.hcl$labels[x.hcl$order]
+
+g2 <- x %>% group_by(seqnames) %>% mutate(pos.max=which.max(scaled)[1]) %>% 
+  mutate(max.scaled = log2(score)) %>% ungroup() %>%
+ggplot(aes(pos.bin,fct_relevel(seqnames, NEW.ORDER),fill=log2(score + 1))) +
   geom_raster(interpolate=F) +
   #scale_fill_viridis_c(name='scaled fpkm') +
-  scale_fill_distiller(type='div',palette = 6, name='scaled fpkm') +
+  #scale_fill_distiller(type='seq',palette = 2, name='scaled fpkm', direction = 1) +
+  scale_fill_gradient2(low = 'blue', mid = 'gray', high = 'red',midpoint = 0, name='log2(mean(FPKM) +1)') +
   scale_x_discrete(name='relative position',breaks = c(0,1), labels = c('start','end')) +
   ylab('')
 
