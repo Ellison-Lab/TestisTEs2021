@@ -10,7 +10,8 @@ snps <- readVcfAsVRanges("results/finalized/wgs/w1118_male/snps.vcf") %>% as_tib
 
 allele.lookup <- snps %>%
   dplyr::select(seqnames, pos=start, ref, alt, specificity) %>%
-  filter(specificity == 'w1118_male')
+  filter(specificity == 'w1118_male') %>%
+  distinct()
 
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
 
@@ -32,9 +33,13 @@ tep_tes <- geps %>%
   pull(gene_id) %>%
   unique()
 
-rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snps/') %>%
+rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep1-depth-at-male-snps/') %>%
   set_names(.,str_extract(.,"(?<=rna\\/)rep\\d+")) %>%
   map_df(~collect(open_dataset(., format='arrow'))) %>%
+  distinct() %>% # remove dupes due to multiple alleles
+
+
+rna %>% 
   distinct() %>%
   left_join(allele.lookup, by=c('seqnames','pos')) %>%
   filter(specificity == "w1118_male") %>%
@@ -57,5 +62,6 @@ dna <- open_dataset('results/finalized/wgs/w1118_male/pileups/', format='arrow')
   arrange(seqnames, pos)
 
 
-
+rna %>%
+  left_join(dna)
 
