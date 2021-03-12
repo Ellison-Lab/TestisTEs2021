@@ -6,7 +6,6 @@ library(jsonlite)
 library(ragg)
 library(VariantAnnotation)
 
-
 snps <- readVcfAsVRanges("results/finalized/wgs/w1118_male/snps.vcf") %>% as_tibble()
 
 allele.lookup <- snps %>%
@@ -36,7 +35,12 @@ tep_tes <- geps %>%
 rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snps/') %>%
   set_names(.,str_extract(.,"(?<=rna\\/)rep\\d+")) %>%
   map_df(~collect(open_dataset(., format='arrow'))) %>%
-  spread(.,sex, depth, fill = 0) %>%
+  left_join(allele.lookup, by=c('seqnames','pos')) %>%
+  filter(specificity == "w1118_male") %>%
+  mutate(sex = ifelse(nucleotide == alt, 'male','unknown')) %>%
+  group_by(seqnames, pos, sex, sample) %>%
+  summarise(depth = sum(`count`),.groups = 'drop') %>%
+  spread(.,sex, count, fill = 0) %>%
   mutate(.,pct.male=male/(unknown + male))
 
 # dna <- open_dataset('results/finalized/wgs/w1118_male/snp_depths/', format='arrow') %>% 
