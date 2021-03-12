@@ -205,3 +205,13 @@ rule collect_larval_polya_expr:
         echo 'gene_id\ttotal\tfirst_strand\tsecond_strand' > {output}
         grep -v 'N_' {input}/ReadsPerGene.out.tab >> {output}
         """
+
+rule collect_wgs_pileups:
+    input:
+        transposon_variants("results/pileups/w1118_male.pileups.csv.gz"),
+    output:
+        directory("results/finalized/wgs/w1118_male/pileups/")
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"

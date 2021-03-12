@@ -4,6 +4,14 @@ library(ggpubr)
 library(ggpointdensity)
 library(jsonlite)
 library(ragg)
+library(VariantAnnotation)
+
+
+snps <- readVcfAsVRanges("~/work/transposon-variants-hts/results/snps/snps.vcf") %>% as_tibble()
+
+allele.lookup <- snps %>%
+  dplyr::select(seqnames, pos=start, ref, alt, specificity) %>%
+  filter(specificity == 'w1118_male')
 
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
 
@@ -29,26 +37,35 @@ rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snp
   set_names(.,str_extract(.,"(?<=rna\\/)rep\\d+")) %>%
   map_df(~collect(open_dataset(., format='arrow'))) %>%
   spread(.,sex, depth, fill = 0) %>%
-  mutate(.,pct.male=male/(unknown + male), ratio.male=male/unknown)
+  mutate(.,pct.male=male/(unknown + male))
 
-dna <- open_dataset('results/finalized/wgs/w1118_male/snp_depths/', format='arrow') %>% 
-  collect() %>%
+# dna <- open_dataset('results/finalized/wgs/w1118_male/snp_depths/', format='arrow') %>% 
+#   collect() %>%
+#   spread(.,sex, depth, fill = 0) %>%
+#   mutate(.,pct.male=male/(unknown + male))
+
+dna <- read_tsv("~/work/transposon-variants-hts/results/pileups/w1118_male.pileups.tsv.gz") %>% 
+  left_join(allele.lookup, by=c('seqnames','pos')) %>%
+  filter(specificity == "w1118_male") %>%
+  mutate(sex = ifelse(nucleotide == alt, 'male','unknown')) %>%
+  group_by(seqnames, pos, sex, sample) %>%
+  summarise(depth = sum(`count`),.groups = 'drop') %>%
+  dplyr::select(sample, seqnames,pos,sex, depth) %>%
   spread(.,sex, depth, fill = 0) %>%
-  mutate(.,pct.male=male/(unknown + male), ratio.male=male/unknown)
+  mutate(.,pct.male=male/(unknown + male)) %>%
+  arrange(seqnames, pos)
 
 df <- left_join(dna, rna, by=c('seqnames','pos'), suffix=c('.dna','.tx')) %>%
   group_by(subsample, sample.tx, seqnames) %>% 
-  summarise(pct.male.dna=mean(pct.male.dna), pct.male.tx=mean(pct.male.tx),
-            ratio.male.dna=mean(ratio.male.dna), ratio.male.tx=mean(ratio.male.tx), .groups = 'drop')
+  summarise(pct.male.dna=mean(pct.male.dna), pct.male.tx=mean(pct.male.tx), .groups = 'drop')
 
 df <- te.lookup %>% dplyr::select(merged_te, gene_id) %>% distinct() %>%
   left_join(df, by=c(gene_id = 'seqnames')) %>%
   complete(gene_id, nesting(sample.tx, subsample)) %>%
   filter(!is.na(sample.tx)) %>%
   mutate(gep=ifelse(gene_id %in% tep_tes,'tep','other')) %>%
-  mutate_at(vars(c('pct.male.dna','pct.male.tx','ratio.male.dna','ratio.male.tx')), replace_na, 0) %>%
+  mutate_at(vars(c('pct.male.dna','pct.male.tx')), replace_na, 0) %>%
   filter(!str_detect(gene_id,'[-_]LTR'))
-
 
 g0 <- df %>%
   ggplot(aes(gep, pct.male.tx/pct.male.dna)) +
@@ -56,9 +73,9 @@ g0 <- df %>%
   stat_compare_means() +
   theme_classic() +
   theme(aspect.ratio = 1) + ylab("% Male Depth (Male Allele/DNA)") + xlab('') +
+  geom_hline(yintercept = 1) +
   scale_fill_brewer(type='qual', name='GEP') +
   facet_wrap(~subsample)
-
 
 g <- ggplot(df, aes(pct.male.dna,pct.male.tx, label=gene_id)) +
   geom_point(aes(color=gep)) +
