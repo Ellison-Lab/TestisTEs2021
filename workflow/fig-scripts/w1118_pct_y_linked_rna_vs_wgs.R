@@ -7,7 +7,7 @@ library(ragg)
 library(VariantAnnotation)
 
 
-snps <- readVcfAsVRanges("~/work/transposon-variants-hts/results/snps/snps.vcf") %>% as_tibble()
+snps <- readVcfAsVRanges("results/finalized/wgs/w1118_male/snps.vcf") %>% as_tibble()
 
 allele.lookup <- snps %>%
   dplyr::select(seqnames, pos=start, ref, alt, specificity) %>%
