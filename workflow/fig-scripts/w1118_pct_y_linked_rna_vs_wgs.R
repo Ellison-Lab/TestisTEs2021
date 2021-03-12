@@ -44,7 +44,8 @@ rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snp
 #   spread(.,sex, depth, fill = 0) %>%
 #   mutate(.,pct.male=male/(unknown + male))
 
-dna <- read_tsv("~/work/transposon-variants-hts/results/pileups/w1118_male.pileups.tsv.gz") %>% 
+dna <- open_dataset('results/finalized/wgs/w1118_male/pileups/', format='arrow') %>% 
+  collect() %>%
   left_join(allele.lookup, by=c('seqnames','pos')) %>%
   filter(specificity == "w1118_male") %>%
   mutate(sex = ifelse(nucleotide == alt, 'male','unknown')) %>%
@@ -76,6 +77,15 @@ g0 <- df %>%
   geom_hline(yintercept = 1) +
   scale_fill_brewer(type='qual', name='GEP') +
   facet_wrap(~subsample)
+
+g1 <- df %>% group_by(gene_id, gep) %>% summarise(pct.male.dna = mean(pct.male.dna), pct.male.tx=mean(pct.male.tx)) %>%
+  ggplot(aes(gep, pct.male.tx/pct.male.dna)) +
+  geom_boxplot(aes(fill=gep)) +
+  stat_compare_means() +
+  theme_classic() +
+  theme(aspect.ratio = 1) + ylab("% Male Depth (Male Allele/DNA)") + xlab('') +
+  geom_hline(yintercept = 1) +
+  scale_fill_brewer(type='qual', name='GEP')
 
 g <- ggplot(df, aes(pct.male.dna,pct.male.tx, label=gene_id)) +
   geom_point(aes(color=gep)) +

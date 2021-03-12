@@ -215,3 +215,13 @@ rule collect_wgs_pileups:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-var.R"
+
+rule collect_male_snp_vcf:
+    input:
+        transposon_variants('results/snps/snps.vcf'),
+    output:
+        "results/finalized/wgs/w1118_male/snps.vcf"
+    shell:
+        """
+        cp {input} {output}
+        """
