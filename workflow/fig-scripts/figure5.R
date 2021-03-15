@@ -11,12 +11,9 @@ tidal <- read_rds('results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_
 
 w1118_copies_box <- read_rds('results/figs/w1118_y_linked_copies/w1118_y_linked_copies.1.ggp.rds')
 
-male_expr <- read_rds('results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.ggp.rds') + theme(aspect.ratio = 1)
+male_expr <- read_rds('results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.paired.ggp.rds') + theme(aspect.ratio = 1)
 
-male_expr2 <-read_rds('results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.ggp.rds') 
-
-
-p <- ( tidal + larrac + w1118_copies_box ) /  (male_expr + male_expr2)  + plot_annotation(tag_levels = 'A')
+p <- ( tidal + larrac ) / w1118_copies_box + male_expr  + plot_annotation(tag_levels = 'A')
 
 
 

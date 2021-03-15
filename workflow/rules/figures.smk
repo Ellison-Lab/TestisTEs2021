@@ -222,9 +222,9 @@ rule w1118_pct_y_linked_rna_vs_wgs:
         rules.celltype_rename_table.output
     output:
         png = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.png",
-        png0 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.png",
+        png2 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.paired.png",
         ggp = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.ggp.rds",
-        ggp0 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.ggp.rds",
+        ggp2 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.paired.ggp.rds",
         dat = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.dat.tsv"
     script:
         "../fig-scripts/w1118_pct_y_linked_rna_vs_wgs.R"

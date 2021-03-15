@@ -42,8 +42,8 @@ tep_tes <- geps %>%
   pull(gene_id) %>%
   unique()
 
-copies.male <- open_dataset('results/finalized/wgs/w1118_male/', format='arrow') %>% collect()
-copies.female <- open_dataset('results/finalized/wgs/w1118_female/', format='arrow') %>% collect()
+copies.male <- open_dataset('results/finalized/wgs/w1118_male/copies/', format='arrow') %>% collect()
+copies.female <- open_dataset('results/finalized/wgs/w1118_female/copies/', format='arrow') %>% collect()
 
 dat.auto <- left_join(copies.male, copies.female, by="sequence", suffix=c('.male','.female')) %>%
   filter(!sequence  %in% tes)
