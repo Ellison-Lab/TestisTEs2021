@@ -79,6 +79,8 @@ x.hcl <- x %>% dplyr::select(seqnames, pos.bin, score) %>%
 
 NEW.ORDER <- x.hcl$labels[x.hcl$order]
 
+NEW.ORDER <- x %>% group_by(seqnames) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(seqnames)
+
 g2 <- x %>% group_by(seqnames) %>% mutate(pos.max=which.max(scaled)[1]) %>% 
   mutate(max.scaled = log2(score)) %>% ungroup() %>%
 ggplot(aes(pos.bin,fct_relevel(seqnames, NEW.ORDER),fill=log2(score + 1))) +
