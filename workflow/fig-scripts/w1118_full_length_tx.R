@@ -70,15 +70,6 @@ x <- bws %>%
   summarise(score=mean(score,na.rm=T),.groups = 'drop_last') %>%
   mutate(scaled=scale(score)[,1])
 
-
-x.hcl <- x %>% dplyr::select(seqnames, pos.bin, score) %>%
-  spread(seqnames, score) %>%
-  arrange(pos.bin) %>%
-  as.data.frame(row.names = 'pos.bin') %>%
-  column_to_rownames('pos.bin') %>% t() %>% dist() %>% hclust()
-
-NEW.ORDER <- x.hcl$labels[x.hcl$order]
-
 NEW.ORDER <- x %>% group_by(seqnames) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(seqnames)
 
 g2 <- x %>% group_by(seqnames) %>% mutate(pos.max=which.max(scaled)[1]) %>% 
