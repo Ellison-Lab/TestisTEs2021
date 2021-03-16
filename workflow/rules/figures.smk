@@ -146,6 +146,17 @@ rule larval_gep_size_histogram:
     script:
         "../fig-scripts/larval_gep_size_histogram.R"
 
+rule larval_tep_go_enrichment:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_tep_go_enrichment/larval_tep_go_enrichment.png",
+        ggp = "results/figs/larval_tep_go_enrichment/larval_tep_go_enrichment.ggp.rds",
+        dat = "results/figs/larval_tep_go_enrichment/larval_tep_go_enrichment.dat.tsv"
+    script:
+        "../fig-scripts/larval_tep_go_enrichment.R"
+
 rule larval_gep_corr_heatmap:
     input:
         FINAL_DATASETS_FILES,
