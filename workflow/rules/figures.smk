@@ -167,12 +167,25 @@ rule larval_gep_corr_heatmap:
     script:
         "../fig-scripts/larval_gep_corr_heatmap.R"
 
+rule larval_y_gene_enr:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_y_gene_enr/larval_y_gene_enr.png",
+        ggp = "results/figs/larval_y_gene_enr/larval_y_gene_enr.ggp.rds",
+        dat = "results/figs/larval_y_gene_enr/larval_y_gene_enr.dat.tsv"
+    script:
+        "../fig-scripts/larval_y_gene_enr.R"
+
 rule larval_y_gene_dotplot:
     input:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output
     output:
         png = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.png",
+        png2 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.png",
+        png3 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.png",
         ggp = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds",
         dat = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.dat.tsv"
     script:

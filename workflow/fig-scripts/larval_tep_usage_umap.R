@@ -59,11 +59,12 @@ g <-  ggplot(df, aes(X_umap1,X_umap2)) +
   geom_point(size=0.75, aes(color=usage)) +
   scale_color_gradient2(low='steelblue', mid='lightgray',high='tomato', midpoint = 0.04) +
   theme_classic() +
-  coord_fixed() 
+  coord_fixed()  +
+  geom_text(data=umap_labs, aes(x + sign(5-x) *2, y, label=clusters.rename), face='bold', size=rel(3)) +
+  theme(aspect.ratio = 1) +
+  xlab("UMAP1") + ylab("UMAP2")
 
-g <- g + geom_text(data=umap_labs, aes(x + sign(x) *1, y, label=clusters.rename), size=rel(3), color='black')
-
-agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g)
 dev.off()
 

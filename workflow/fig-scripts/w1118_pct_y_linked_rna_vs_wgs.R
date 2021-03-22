@@ -79,15 +79,6 @@ df <- df %>%
 # this is a score for over/underexpression of the allele
 df <- df %>% mutate(ratio = pct.tx/pct.dna) %>% drop_na()
 
-# ----- Most male alleles are not overexpressed relative to copy ------------------
-
-g1 <- df %>%
-  ggplot(aes(sex, log2(ratio))) +
-  geom_violin(na.rm = T, scale = 'width', aes(fill=sex)) +
-  coord_cartesian() +
-  theme_classic() +
-  ylab("log2(RNA/WGS)")
-
 
 # ------ Allelic expression at most male-biased sites ----------------------------
 
@@ -106,10 +97,25 @@ df2 <- df %>%
   ungroup() %>%
   mutate(gep = fct_relevel(gep, c("tep","other")))
 
+g1 <- df2 %>% 
+  filter(sex == "male") %>% 
+  group_by(subsample, gene_id, gep, pos) %>%
+  summarise(ratio = mean(ratio)) %>%
+  ggplot(aes(gep, ratio)) +
+  geom_boxplot(aes(fill=gep)) +
+  #geom_jitter() +
+  stat_compare_means(label.y.npc = 0.7) +
+  #stat_compare_means(method.args = list(alternative = "greater")) +
+  theme_classic() +
+  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
+  geom_hline(yintercept = 1) +
+  scale_fill_brewer(type='qual', name='GEP')
+
 g2 <- ggplot(df2, aes(gep, ratio)) +
   geom_boxplot(aes(fill=sex)) +
   #geom_jitter() +
-  stat_compare_means(method.args = list(alternative = "greater")) +
+  stat_compare_means(label.y.npc = 0.7) +
+  #stat_compare_means(method.args = list(alternative = "greater")) +
   theme_classic() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
   geom_hline(yintercept = 1) +
@@ -117,11 +123,11 @@ g2 <- ggplot(df2, aes(gep, ratio)) +
   facet_grid(sex~subsample)
 
 
-agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g1)
 dev.off()
 
-agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png2']], width=12, height =12, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g2)
 dev.off()
 

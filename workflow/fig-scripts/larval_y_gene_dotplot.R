@@ -19,10 +19,11 @@ tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
 ttaf <- c('sa') %>% tibble(gene_symbol = ., group='tTAF')
 tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
 tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
+tep.marker <- c('EAChm') %>% tibble(gene_symbol = ., group='TEP-HI')
 
-male.meiosis1.associated <- bind_rows(ylinked, tmac, ttaf, tbrd, tplus)
+male.meiosis1.associated <- bind_rows(ylinked, tmac, ttaf, tbrd, tplus, tep.marker)
 
-markers2display <- ylinked$gene_symbol
+markers2display <- male.meiosis1.associated$gene_symbol
 
 dat <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
               ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers2display) %>% collect()}) %>%
@@ -38,20 +39,59 @@ dat2 <- dat %>%
   summarize(pct.expressing = sum(expression > 0)/n(), mean.expression=mean(expression)) %>%
   left_join(male.meiosis1.associated)
 
-g <- ggplot(dat2, aes(gene_symbol, clusters.rename)) +
+g <- dat2 %>%
+  filter(group == "y-linked") %>%
+  ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  scale_size(range=c(0, rel(5)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   theme_minimal()  +
   theme(legend.position = 'bottom') +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
   theme(axis.text.y = element_text(size=rel(1.2),)) +
-  theme(aspect.ratio = 2, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  theme(aspect.ratio = 1.5, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  coord_flip() +
+  xlab('') + ylab('') +
+  facet_wrap(~group, scales = "free", ncol = 1)
+
+
+g2 <-  dat2 %>%
+  filter(group %in% c("tBRD","tPAF","tTAF")) %>%
+  ggplot(aes(gene_symbol, clusters.rename)) +
+  geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
+  scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  theme_minimal()  +
+  theme(legend.position = 'bottom') +
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  theme(axis.text.y = element_text(size=rel(1.2),)) +
+  theme(aspect.ratio = 1.5, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
   coord_flip() +
   xlab('') + ylab('')
 
-agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+g3 <-  dat %>%
+  left_join(male.meiosis1.associated) %>%
+  filter(group %in% c("TEP-HI")) %>%
+  ggplot(aes(clusters.rename, expression, fill=clusters.rename)) +
+  geom_violin(scale = "width") +
+  scale_fill_brewer(type='qual',palette='Set3', name='', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  theme_classic() +
+  theme(legend.position = 'bottom') +
+  theme(axis.text.y = element_text(size=rel(1.2),)) +
+  theme(axis.text.x = element_text(size=rel(1.2),angle = 45, hjust=1)) +
+  theme(aspect.ratio = 0.5, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  ylab('EAChm log1p(Normalized UMIs)') + xlab('') +guides(fill=F)
+
+agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g)
+dev.off()
+
+agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
+print(g2)
+dev.off()
+
+agg_png(snakemake@output[['png3']], width=19, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
+print(g3)
 dev.off()
 
 saveRDS(g,snakemake@output[['ggp']])

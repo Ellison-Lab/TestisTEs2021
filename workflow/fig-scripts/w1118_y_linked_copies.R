@@ -73,7 +73,8 @@ dat <- left_join(copies.male, copies.female, by="sequence", suffix=c('.male','.f
   mutate(tep = ifelse(sequence %in% tep_tes,'TEP','other')) %>%
   filter(!str_detect(sequence,'[-_]LTR')) %>%
   filter(est.copies.male >= 1 | est.copies.female > 1) %>%
-  mutate(m.f.ratio = est.copies.male/est.copies.female)
+  mutate(m.f.ratio = est.copies.male/est.copies.female) %>%
+  mutate(tep = fct_relevel(tep,c("TEP","other")))
 
 g3 <- dat %>%
   group_by(sign(log2(m.f.ratio))) %>%
@@ -110,15 +111,15 @@ g1 <- dat %>%
   scale_fill_brewer(type='qual', name='GEP') +
   ylab("Est. Male Copies / Est. Female Copies")
 
-agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g1)
 dev.off()
 
-agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g2)
 dev.off()
 
-agg_png(snakemake@output[['png3']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png3']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g3)
 dev.off()
 
