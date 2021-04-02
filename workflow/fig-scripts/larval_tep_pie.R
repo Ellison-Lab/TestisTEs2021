@@ -62,11 +62,11 @@ g <- ggplot(df, aes("",pct,fill=type)) +
   scale_fill_brewer(type='qual',palette=6,direction = -1, name='') +
   theme_void() +
   theme(aspect.ratio = 1, legend.position='bottom') +
-  xlab('') + ylab('') +
-  geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5))
+  xlab('') + ylab('') #+
+  #geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5))
 
 
-agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 3, bitsize = 16, res = 300, background = 'transparent')
 print(g)
 dev.off()
 
