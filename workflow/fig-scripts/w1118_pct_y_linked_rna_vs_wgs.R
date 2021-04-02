@@ -10,7 +10,8 @@ snps <- readVcfAsVRanges("results/finalized/wgs/w1118_male/snps.vcf") %>% as_tib
 
 allele.lookup <- snps %>%
   dplyr::select(seqnames, pos=start, ref, alt, specificity) %>%
-  filter(specificity == 'w1118_male')
+  filter(specificity == 'w1118_male') %>%
+  mutate(ref = ifelse(ref == "N", alt, ref))
 
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
 
@@ -35,87 +36,97 @@ tep_tes <- geps %>%
 rna <- Sys.glob('results/finalized/w1118-testes-total-rna/rep*-depth-at-male-snps/') %>%
   set_names(.,str_extract(.,"(?<=rna\\/)rep\\d+")) %>%
   map_df(~collect(open_dataset(., format='arrow'))) %>%
-  left_join(allele.lookup, by=c('seqnames','pos')) %>%
-  filter(specificity == "w1118_male") %>%
-  mutate(sex = ifelse(nucleotide == alt, 'male','unknown')) %>%
-  distinct() %>%
-  group_by(seqnames, pos, sex, sample) %>%
-  summarise(depth = sum(`count`),.groups = 'drop') %>%
-  spread(.,sex, depth, fill = 0) %>%
-  mutate(.,pct.male=male/(unknown + male))
-
-# dna <- open_dataset('results/finalized/wgs/w1118_male/snp_depths/', format='arrow') %>% 
-#   collect() %>%
-#   spread(.,sex, depth, fill = 0) %>%
-#   mutate(.,pct.male=male/(unknown + male))
+  arrange(seqnames, pos)
 
 dna <- open_dataset('results/finalized/wgs/w1118_male/pileups/', format='arrow') %>% 
   collect() %>%
-  left_join(allele.lookup, by=c('seqnames','pos')) %>%
+  right_join(allele.lookup, by=c('seqnames','pos')) %>%
+  #filter(nucleotide == ref | nucleotide == alt) %>%
   filter(specificity == "w1118_male") %>%
-  mutate(sex = ifelse(nucleotide == alt, 'male','unknown')) %>%
-  group_by(seqnames, pos, sex, sample) %>%
-  summarise(depth = sum(`count`),.groups = 'drop') %>%
-  dplyr::select(sample, seqnames,pos,sex, depth) %>%
-  spread(.,sex, depth, fill = 0) %>%
-  mutate(.,pct.male=male/(unknown + male)) %>%
+  filter(sample == "w1118_male") %>%
+  dplyr::select( nucleotide, ref, alt, seqnames,pos, count) %>%
   arrange(seqnames, pos)
 
-df <- left_join(dna, rna, by=c('seqnames','pos'), suffix=c('.dna','.tx')) %>%
-  group_by(subsample, sample.tx, seqnames) %>% 
-  summarise(pct.male.dna=mean(pct.male.dna), pct.male.tx=mean(pct.male.tx), .groups = 'drop')
+rna <- rna %>%
+  dplyr::select(subsample, seqnames, pos, nucleotide, count) %>%
+  complete(subsample, nesting(seqnames, pos), nucleotide, fill = list(count=0)) %>%
+  filter(nucleotide!="-") %>% # don't register deletions - only considering snps
+  distinct() # stand in for bug fix - upstream I return multiple counts for each entry in allele lookup
 
+df <- left_join(dna, rna, by=c('seqnames','pos','nucleotide'), suffix=c('.dna','.tx'))
+
+df <- mutate(df, sex = ifelse(nucleotide == alt, 'male',ifelse(nucleotide == ref, "ref", "other")))
+
+df <- df %>% 
+  dplyr::select(seqnames, pos, sex, nucleotide, ref, alt, count.dna, subsample, count.tx)
+
+# get no-solo ltrs, add gep annotation
 df <- te.lookup %>% dplyr::select(merged_te, gene_id) %>% distinct() %>%
-  left_join(df, by=c(gene_id = 'seqnames')) %>%
-  complete(gene_id, nesting(sample.tx, subsample)) %>%
-  filter(!is.na(sample.tx)) %>%
+  right_join(df, by=c(gene_id = 'seqnames')) %>%
+  complete(gene_id, subsample) %>%
   mutate(gep=ifelse(gene_id %in% tep_tes,'tep','other')) %>%
-  mutate_at(vars(c('pct.male.dna','pct.male.tx')), replace_na, 0) %>%
   filter(!str_detect(gene_id,'[-_]LTR'))
 
-g0 <- df %>%
-  ggplot(aes(gep, pct.male.tx/pct.male.dna)) +
-  geom_boxplot(aes(fill=gep)) +
-  stat_compare_means() +
+# get absolute depths at each pos and pct for each allele at each pos
+df <- df %>% 
+  group_by(gene_id, subsample, gep, pos) %>%
+  mutate(depth.dna = sum(count.dna), depth.tx = sum(count.tx)) %>% 
+  ungroup() %>%
+  mutate(pct.tx = count.tx/depth.tx, pct.dna=count.dna/depth.dna) %>%
+  arrange(subsample, gene_id, pos)
+
+# get ratio of pct allele coverage (rna/wgs)
+# this is a score for over/underexpression of the allele
+df <- df %>% mutate(ratio = pct.tx/pct.dna) %>% drop_na()
+
+# ----- Most male alleles are not overexpressed relative to copy ------------------
+
+g1 <- df %>%
+  ggplot(aes(sex, log2(ratio))) +
+  geom_violin(na.rm = T, scale = 'width', aes(fill=sex)) +
+  coord_cartesian() +
   theme_classic() +
-  theme(aspect.ratio = 1) + ylab("% Male Depth (Male Allele/DNA)") + xlab('') +
+  ylab("log2(RNA/WGS)")
+
+
+# ------ Allelic expression at most male-biased sites ----------------------------
+
+df2 <- df %>%
+  filter(sex == "male") %>%
+  group_by(gene_id, pos, nucleotide) %>%
+  summarise(pct.tx = mean(pct.tx), ratio=mean(ratio)) %>%
+  group_by(gene_id) %>%
+  slice_max(ratio, n=1) %>%
+  slice_max(pct.tx, n=1, with_ties = F) %>% #group_by(gene_id) %>% add_tally() %>% filter(n > 1)
+  ungroup() %>%
+  dplyr::select(gene_id, pos) %>%
+  left_join(df) %>%  
+  group_by(subsample, gene_id, pos, sex) %>%
+  slice_max(ratio, n=1, with_ties = F) %>%
+  ungroup() %>%
+  mutate(gep = fct_relevel(gep, c("tep","other")))
+
+g2 <- ggplot(df2, aes(gep, ratio)) +
+  geom_boxplot(aes(fill=sex)) +
+  #geom_jitter() +
+  stat_compare_means(method.args = list(alternative = "greater")) +
+  theme_classic() +
+  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
   geom_hline(yintercept = 1) +
   scale_fill_brewer(type='qual', name='GEP') +
-  facet_wrap(~subsample)
+  facet_grid(sex~subsample)
 
-g1 <- df %>% group_by(gene_id, gep) %>% summarise(pct.male.dna = mean(pct.male.dna), pct.male.tx=mean(pct.male.tx)) %>%
-  ggplot(aes(gep, pct.male.tx/pct.male.dna)) +
-  geom_boxplot(aes(fill=gep)) +
-  stat_compare_means() +
-  theme_classic() +
-  theme(aspect.ratio = 1) + ylab("% Male Depth (Male Allele/DNA)") + xlab('') +
-  geom_hline(yintercept = 1) +
-  scale_fill_brewer(type='qual', name='GEP')
-
-g <- ggplot(df, aes(pct.male.dna,pct.male.tx, label=gene_id)) +
-  geom_point(aes(color=gep)) +
-  facet_wrap(~gep, scales = 'free') +
-  stat_cor(method = 'spearman') + 
-  theme_classic() +
-  #ggrepel::geom_text_repel(force = 2) +
-  geom_abline(slope=1, intercept=0, color='lightgray', linetype='dashed') +
-  theme(aspect.ratio = 1) +
-  scale_color_brewer(type='qual', name='GEP') +
-  scale_x_continuous(labels=scales::percent) +
-  scale_y_continuous(labels=scales::percent) +
-  xlab('WGS mean male SNP depth') +
-  ylab('RNA-seq mean male SNP depth')  +
-  guides(color=F) +
-  facet_grid(gep~subsample)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
-print(g)
+print(g1)
 dev.off()
 
-agg_png(snakemake@output[['png0']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
-print(g0)
+agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+print(g2)
 dev.off()
 
-saveRDS(g,snakemake@output[['ggp']])
-saveRDS(g0,snakemake@output[['ggp0']])
-write_tsv(df,snakemake@output[['dat']])
+
+saveRDS(g1,snakemake@output[['ggp']])
+saveRDS(g2,snakemake@output[['ggp2']])
+
+write_tsv(df2,snakemake@output[['dat']])

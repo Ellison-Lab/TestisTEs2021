@@ -70,22 +70,15 @@ x <- bws %>%
   summarise(score=mean(score,na.rm=T),.groups = 'drop_last') %>%
   mutate(scaled=scale(score)[,1])
 
-
-x.hcl <- x %>% dplyr::select(seqnames, pos.bin, score) %>%
-  spread(seqnames, score) %>%
-  arrange(pos.bin) %>%
-  as.data.frame(row.names = 'pos.bin') %>%
-  column_to_rownames('pos.bin') %>% t() %>% dist() %>% hclust()
-
-NEW.ORDER <- x.hcl$labels[x.hcl$order]
+NEW.ORDER <- x %>% group_by(seqnames) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(seqnames)
 
 g2 <- x %>% group_by(seqnames) %>% mutate(pos.max=which.max(scaled)[1]) %>% 
   mutate(max.scaled = log2(score)) %>% ungroup() %>%
-ggplot(aes(pos.bin,fct_relevel(seqnames, NEW.ORDER),fill=log2(score + 1))) +
+  ggplot(aes(pos.bin,fct_relevel(seqnames, NEW.ORDER),fill=log2(score + 1))) +
   geom_raster(interpolate=F) +
   #scale_fill_viridis_c(name='scaled fpkm') +
   #scale_fill_distiller(type='seq',palette = 2, name='scaled fpkm', direction = 1) +
-  scale_fill_gradient2(low = 'blue', mid = 'gray', high = 'red',midpoint = 0, name='log2(mean(FPKM) +1)') +
+  scale_fill_gradient2(low = 'blue', mid = 'gray', high = 'red',midpoint = 0.5, name='log2(mean(FPKM) +1)') +
   scale_x_discrete(name='relative position',breaks = c(0,1), labels = c('start','end')) +
   ylab('')
 
