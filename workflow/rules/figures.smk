@@ -62,7 +62,16 @@ rule larval_normalized_te_umis:
     script:
         "../fig-scripts/larval_normalized_te_umis.R"
 
-
+rule larval_raw_te_umis:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.png",
+        ggp = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.ggp.rds",
+        dat = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.dat.tsv"
+    script:
+        "../fig-scripts/larval_raw_te_umis.R"
 
 rule larval_later_sperm_marker_umis:
     input:
