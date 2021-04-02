@@ -56,6 +56,19 @@ rule collect_scrna_scaled:
     script:
         "../scripts/collect-scrna-expr.R"
 
+rule collect_umis:
+    input:
+        scrna("results/scanpy/{group}/umis.csv.gz")
+    output:
+        directory("results/finalized/{group}/umis")
+    resources:
+        time=40,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-var.R"
+
 rule collect_grid_enr_metrics:
     input:
         gep("results/grid-search-{group}-go-metrics.csv")

@@ -100,7 +100,7 @@ subworkflow larval_polya:
 RANDOM_SEED = config.get("RANDOM_SEED",2020)
 random.seed(RANDOM_SEED)
 
-FINAL_DATASETS = ['obs','var','expr','scaled',
+FINAL_DATASETS = ['obs','var','expr','scaled','umis',
                     'grid_enr',#'grid_silhouette',
                     'optimal_gep_enr','optimal_gep_usage',
                     'optimal_gep_membership',
