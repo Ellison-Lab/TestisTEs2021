@@ -16,7 +16,7 @@ w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format
 ylinked <- unique(gtf %>% filter(seqnames == 'Y' & type == 'mRNA') %>% pull(gene_symbol)) %>%
   tibble(gene_symbol = ., group='y-linked')
 tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
-ttaf <- c('sa') %>% tibble(gene_symbol = ., group='tTAF')
+ttaf <- c('sa','nht','mia','can','Taf12L') %>% tibble(gene_symbol = ., group='tTAF')
 tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
 tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
 tep.marker <- c('EAChm') %>% tibble(gene_symbol = ., group='TEP-HI')
