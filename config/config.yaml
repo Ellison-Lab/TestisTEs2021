@@ -69,6 +69,10 @@ SCRNA_GROUPS:
     - larval-testes-01
     - larval-testes-02
     - larval-testes-03
+  adult-ral517-testes:
+    - adult-testes-ral
+  adult-wt-testes:
+    - adult-testes-wild
 
 RNASEQ_GROUPS:
   hsBam-rna:

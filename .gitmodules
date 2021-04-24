@@ -22,3 +22,6 @@
 [submodule "subworkflows/gte21-star-bulk-tpn"]
 	path = subworkflows/gte21-star-bulk-tpn
 	url = https://github.com/mal2017/gte21-star-bulk-tpn
+[submodule "subworkflows/gte21-chimeric-rnaseq"]
+	path = subworkflows/gte21-chimeric-rnaseq
+	url = https://github.com/mal2017/gte21-chimeric-rnaseq

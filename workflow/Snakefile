@@ -92,9 +92,9 @@ subworkflow te_var_expr:
 
 subworkflow larval_polya:
     workdir:
-        "../subworkflows/gte21-star-bulk-tpn/"
+        "../subworkflows/gte21-chimeric-rnaseq/"
     snakefile:
-        "../subworkflows/gte21-star-bulk-tpn/workflow/Snakefile"
+        "../subworkflows/gte21-chimeric-rnaseq/workflow/Snakefile"
 
 # variables
 RANDOM_SEED = config.get("RANDOM_SEED",2020)
