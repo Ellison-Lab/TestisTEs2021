@@ -1,7 +1,8 @@
 rule figure1:
     input:
         rules.intro_larval_umap.output,
-        rules.larval_marker_expression.output
+        rules.larval_marker_expression.output,
+        rules.larval_scrna_basic_qc_stats.output
     output:
         "results/panels/figure1.pdf"
     script:
@@ -20,6 +21,8 @@ rule figure3:
         rules.larval_te_heatmap.output,
         rules.larval_tep_pie.output,
         rules.larval_tep_te_barchart.output,
+        rules.larval_all_gep_te_bachart.output,
+        rules.larval_tep_usage_umap.output,
     output:
         "results/panels/figure3.pdf"
     script:
@@ -28,7 +31,8 @@ rule figure3:
 rule figure4:
     input:
         rules.larval_later_sperm_marker_umis.output,
-        rules.larval_y_gene_dotplot.output
+        rules.larval_y_gene_dotplot.output,
+        rules.larval_fish_candidate_umis.output,
     output:
         "results/panels/figure4.pdf"
     script:

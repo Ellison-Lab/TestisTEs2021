@@ -41,6 +41,7 @@ tep.name <- geps %>%
   pull(module) %>% as.character()
 
 feature_types <- c('mRNA','ncRNA','snRNA','pre_miRNA','miRNA','pseudogene','snoRNA')
+
 feature_df <- gtf %>% 
   mutate(type=as.character(type)) %>%
   filter(type %in% feature_types) %>%
@@ -61,10 +62,9 @@ g <- ggplot(df, aes("",pct,fill=type)) +
   coord_polar('y',start=0) +
   scale_fill_brewer(type='qual',palette=6,direction = -1, name='') +
   theme_void() +
-  theme(aspect.ratio = 1, legend.position='bottom') +
+  theme(aspect.ratio = 1, legend.position='bottom', legend.text = element_text(size=rel(2))) +
   xlab('') + ylab('') #+
   #geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5))
-
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 3, bitsize = 16, res = 300, background = 'transparent')
 print(g)

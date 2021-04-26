@@ -3,6 +3,8 @@ library(arrow)
 library(ragg)
 library(rtracklayer)
 
+source("workflow/fig-scripts/theme.R")
+
 gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
   as_tibble()
 
@@ -15,6 +17,7 @@ w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format
 
 ylinked <- unique(gtf %>% filter(seqnames == 'Y' & type == 'mRNA') %>% pull(gene_symbol)) %>%
   tibble(gene_symbol = ., group='y-linked')
+
 tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
 ttaf <- c('sa','nht','mia','can','Taf12L') %>% tibble(gene_symbol = ., group='tTAF')
 tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
@@ -45,11 +48,10 @@ g <- dat2 %>%
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  theme_minimal()  +
-  theme(legend.position = 'bottom') +
-  theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  theme(axis.text.y = element_text(size=rel(1.2),)) +
-  theme(aspect.ratio = 1.5, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  theme_gte21()  +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  theme(aspect.ratio = 1.5) +
   coord_flip() +
   xlab('') + ylab('') +
   facet_wrap(~group, scales = "free", ncol = 1)
@@ -61,11 +63,10 @@ g2 <-  dat2 %>%
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  theme_minimal()  +
-  theme(legend.position = 'bottom') +
-  theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  theme(axis.text.y = element_text(size=rel(1.2),)) +
-  theme(aspect.ratio = 1.5, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  theme_gte21()  +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  theme(aspect.ratio = 2) +
   coord_flip() +
   xlab('') + ylab('')
 
@@ -74,12 +75,11 @@ g3 <-  dat %>%
   filter(group %in% c("TEP-HI")) %>%
   ggplot(aes(clusters.rename, expression, fill=clusters.rename)) +
   geom_violin(scale = "width") +
-  scale_fill_brewer(type='qual',palette='Set3', name='', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  theme_classic() +
-  theme(legend.position = 'bottom') +
-  theme(axis.text.y = element_text(size=rel(1.2),)) +
-  theme(axis.text.x = element_text(size=rel(1.2),angle = 45, hjust=1)) +
-  theme(aspect.ratio = 0.5, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  scale_fill_gte21() +
+  theme_gte21()  +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  xlab('') + ylab('') +
   ylab('EAChm log1p(Normalized UMIs)') + xlab('') +guides(fill=F)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
@@ -95,4 +95,5 @@ print(g3)
 dev.off()
 
 saveRDS(g,snakemake@output[['ggp']])
+saveRDS(g3,snakemake@output[['ggp_eachm']])
 write_tsv(dat2,snakemake@output[['dat']])

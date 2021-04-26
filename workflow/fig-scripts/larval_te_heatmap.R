@@ -3,6 +3,8 @@ library(arrow)
 library(ragg)
 library(ComplexHeatmap)
 
+# source("workflow/fig-scripts/theme.R")
+
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv')
 w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='arrow')
 w1118.scaled <- open_dataset("results/finalized/larval-w1118-testes/scaled", format='arrow')
@@ -28,6 +30,8 @@ te_expr_mat <- te_expr_df %>%
 
 palette_len <- 255
 colors <- colorRampPalette( (c("#3B9AB2", "#3B9AB2","#78B7C5", "#E1AF00", "#F21A00")))(palette_len)
+#colors <- gte21_pal("diverging")(palette_len)[c(1:10,40:50)]
+#palette_len <- 21
 
 myBreaks <- c(seq(min(te_expr_mat), mean(te_expr_mat), length.out=ceiling(palette_len/2)),
               seq(mean(te_expr_mat) + 0.01, 0.3*max(te_expr_mat), length.out=floor(palette_len/2)))

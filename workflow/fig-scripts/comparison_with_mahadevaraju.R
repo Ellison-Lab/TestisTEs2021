@@ -3,7 +3,7 @@ library(readxl)
 library(arrow)
 library(ragg)
 
-rename.table <- read_tsv('results/figs/celltype_rename_table.tsv')
+source("workflow/fig-scripts/theme.R")
 
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
   mutate(clusters.rename = fct_reorder(clusters.rename,as.numeric(str_extract(clusters.rename,"\\d+")))) %>%
@@ -51,7 +51,7 @@ g <- cor.df %>%
   #spread(y, estimate) %>%
   ggplot(aes(y,x,fill=estimate)) +
   geom_tile() +
-  scale_fill_distiller(type = 'seq', palette = 7, direction = 1,name='Spearman corr.') +
+  scale_fill_distiller(type = 'seq', palette = 8, direction = 1,name='Spearman corr.') +
   theme_minimal() +
   coord_fixed() +
   theme(aspect.ratio = 1) +

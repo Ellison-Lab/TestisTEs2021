@@ -196,6 +196,7 @@ rule larval_y_gene_dotplot:
         png2 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.png",
         png3 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.png",
         ggp = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds",
+        ggp_eachm = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.ggp.rds",
         dat = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.dat.tsv"
     script:
         "../fig-scripts/larval_y_gene_dotplot.R"

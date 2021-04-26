@@ -3,6 +3,8 @@ library(arrow)
 library(ragg)
 library(jsonlite)
 
+source("workflow/fig-scripts/theme.R")
+
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership/", format='arrow')
 w1118.gep_enr <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_enr", format='arrow')
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
@@ -22,7 +24,6 @@ tep.name <- w1118.gep_membership %>%
   head(1) %>%
   pull(module) %>% as.character()
 
-
 df <- w1118.gep_enr %>%
   collect() %>%
   filter(cluster == tep.name) %>%
@@ -34,7 +35,8 @@ g <-  df %>%
   ggplot(aes(score, reorder(Term, rnk))) +
   geom_col(aes(fill=ont)) +
   facet_wrap(~ont, scales = "free", ncol = 1) +
-  theme_classic() +
+  theme_gte21() +
+  scale_fill_brewer(type='qual', palette = 3) +
   theme(aspect.ratio = 1) +
   xlab("-log10(pval)") + ylab("") +
   guides(fill=F)

@@ -4,6 +4,8 @@ library(ragg)
 library(GenomicRanges)
 library(jsonlite)
 
+source("workflow/fig-scripts/theme.R")
+
 te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
@@ -62,11 +64,11 @@ df <- hetchrom.ins.5 %>%
 
 g <-ggplot(df, aes(GEP,percent,fill=chrom)) +
   geom_col(color='white') +
-  theme_classic() +
+  theme_gte21() +
+  scale_fill_gte21("categories1",reverse = T) +
   theme(aspect.ratio = 1) +
   xlab('insertions') +
-  scale_y_continuous(expand=c(0,0)) +
-  scale_fill_viridis_d(option = 'C',direction = -1)
+  scale_y_continuous(expand=c(0,0))
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

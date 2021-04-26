@@ -5,6 +5,8 @@ library(arrow)
 library(jsonlite)
 library(ragg)
 
+source("workflow/fig-scripts/theme.R")
+
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
 
 tes <- te.lookup$gene_id %>% unique
@@ -82,22 +84,23 @@ g3 <- dat %>%
   arrange(-m.f.ratio) %>%
   ggplot(aes(reorder(sequence,m.f.ratio),log2(m.f.ratio))) +
   geom_col(aes(fill=tep)) +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  xlab("") +
-  scale_fill_brewer(type='qual', name='GEP')
+  theme_gte21() +
+  theme(axis.text.x = element_text(angle=90, hjust=1, size=rel(1))) +
+  xlab("") + ylab("log2(M/F)") +
+  scale_fill_gte21("binary")
 
 g2 <- dat %>% 
   ggplot(aes(est.copies.male,est.copies.female, label=sequence)) +
   geom_point(aes(color=tep, size=m.f.ratio)) +
   theme(aspect.ratio = 1) +
   geom_abline(intercept = 0, slope = 1) +
-  theme_classic() +
+  theme_gte21() +
   scale_y_log10() +
   scale_x_log10() +
   facet_wrap(~tep) +
   theme(aspect.ratio = 1) +
-  scale_color_brewer(type='qual', name='GEP')
+  scale_color_gte21("binary",name="GEP") +
+  scale_size(name="M/F")
 
 g1 <- dat %>%
   ggplot(aes(tep,est.copies.male/est.copies.female, label=sequence))+
@@ -106,10 +109,11 @@ g1 <- dat %>%
   theme(aspect.ratio = 1) +
   stat_compare_means(size=rel(5)) +
   xlab('') +
-  theme_classic() +
+  theme_gte21() +
   theme(aspect.ratio = 1.5) +
-  scale_fill_brewer(type='qual', name='GEP') +
-  ylab("Est. Male Copies / Est. Female Copies")
+  scale_fill_gte21("binary",name="GEP") +
+  guides(fill=F) +
+  ylab("M/F")
 
 agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g1)

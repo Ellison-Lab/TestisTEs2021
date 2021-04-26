@@ -3,11 +3,13 @@ library(arrow)
 library(ragg)
 library(jsonlite)
 
+source("workflow/fig-scripts/theme.R")
+
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
 
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
 
-te.lookup <- read_tsv('~/work/TestisTpn/data/te_id_lookup.curated.tsv.txt')
+te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
 tep.name <- w1118.gep_membership %>%
   filter(qval < optimal_ica[['qval']]) %>%
@@ -44,18 +46,20 @@ df2 <- df %>%
   mutate(pct=n/sum(n)) %>%
   mutate_if(is.character, ~replace_na(.,"other"))
 
-g <- ggplot(df2, aes("",pct,fill=repFamily)) +
+g <- df2 %>% filter(repClass != "other" & repFamily != "other") %>%
+  ggplot(aes("",pct,fill=repFamily)) +
   geom_bar(color='white',stat='identity') +
   coord_polar('y',start=0) +
   scale_fill_viridis_d() +
+  scale_fill_brewer(palette = "Set3",type = "qual", name="") +
   theme_void() +
   theme(aspect.ratio = 1, legend.position='bottom') +
   xlab('') + ylab('') +
-  geom_text(aes(label = repFamily), position = position_stack(vjust = 0.5), color='orange') +
-  guides(fill=F) +
-  #geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5)) +
+  #geom_text(aes(label = repFamily), position = position_stack(vjust = 0.5), color='orange') +
+  #guides(fill=F) +
+  #geom_text(aes(label = scales::percent(round(pct,3))), position = position_stack(vjust = 0.5), size=3) +
   #scale_y_continuous(expand=c(0,0)) +
-    facet_wrap(~repClass)
+  facet_wrap(~repClass)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

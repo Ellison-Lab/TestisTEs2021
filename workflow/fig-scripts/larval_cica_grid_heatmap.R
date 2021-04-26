@@ -2,6 +2,7 @@ library(tidyverse)
 library(arrow)
 library(ragg)
 
+source("workflow/fig-scripts/theme.R")
 
 w1118.grid <- open_dataset("results/finalized/larval-w1118-testes/grid_enr/", format='arrow')
 
@@ -15,11 +16,10 @@ g <- df %>%
   summarize(score=mean(score)) %>%
 ggplot(aes(as.factor(comps),as.factor(qval),fill=score)) +
   geom_raster(interpolate = F) +
-  theme_minimal() +
+  theme_gte21() +
   xlab("k") + ylab("qval") +
-  scale_fill_viridis_c() +
-  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0)) +
-  labs(caption = "Joint score displayed by FDR cutoff and k.") #+
+  scale_fill_gte21("diverging",discrete = F) +
+  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0))
   #facet_wrap(~rep)
 
 

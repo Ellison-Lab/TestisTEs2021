@@ -3,10 +3,16 @@ library(arrow)
 library(ragg)
 library(rtracklayer)
 library(jsonlite)
+library(broom)
+
+source("workflow/fig-scripts/theme.R")
 
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership/", format='arrow')
+
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
+
 w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='arrow')
+
 w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format='arrow')
 
 gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
@@ -18,7 +24,12 @@ rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
 
 te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
-tep.name <-  %>%
+geps <- w1118.gep_membership %>%
+  #
+  collect()
+
+tep.name <- geps %>%
+  filter(qval < optimal_ica[['qval']]) %>%
   left_join(te.lookup, by=c(X1='merged_te')) %>%
   filter(!str_detect(X1,'FBgn')) %>%
   dplyr::select(module, X1, repClass, repFamily) %>%
@@ -29,9 +40,9 @@ tep.name <-  %>%
   head(1) %>%
   pull(module) %>% as.character()
 
-geps <- w1118.gep_membership %>%
-  filter(qval < optimal_ica[['qval']]) %>%
-  collect()
+#tep_genes <- geps %>% 
+#  filter(qval < optimal_ica[['qval']]) %>%
+#  filter(module == tep.name) %>% pull(X1)
 
 ylinked <- gtf %>%
   filter(seqnames == 'Y' & type == 'mRNA') %>% 
@@ -39,13 +50,62 @@ ylinked <- gtf %>%
   distinct() %>%
   filter(gene_id %in% geps$X1)
 
-other.detected <- geps %>% filter(str_detect(X1,'FBgn')) %>% pull(X1) %>% unique() %>% length()
+tep <- geps %>%
+  filter(qval < optimal_ica[['qval']]) %>%
+  filter(str_detect(X1,"FBgn")) %>%
+  mutate(chrom = ifelse(X1 %in% ylinked$gene_id,"Y","other")) %>%
+  mutate(GEP = ifelse(module == tep.name,"TEP","non-TEP")) %>%
+  filter(GEP == "TEP") %>%
+  dplyr::select(X1, chrom, GEP)
+
+non_tep <- geps %>%
+  filter(str_detect(X1,"FBgn")) %>%
+  mutate(chrom = ifelse(X1 %in% ylinked$gene_id,"Y","other")) %>%
+  mutate(GEP = ifelse(module == tep.name,"TEP","non-TEP")) %>%
+  filter(GEP == "non-TEP") %>%
+  filter(!X1 %in% tep$X1) %>%
+  dplyr::select(X1, chrom, GEP) %>%
+  distinct()
   
-geps %>%
-mutate(is.y = X1 %in% ylinked$gene_id) %>%
-  group_by(module) %>%
-  summarise(n.ylinked = sum(is.y), n.other  = sum(!is.y), n.ylinked.in.other = nrow(ylinked) - n.ylinked, n.other.in.other = other.detected - n.other ) %>%
-  arrange(-n.ylinked) %>%
-  filter(module == tep.name) %>%
-  gather(x, n, n.ylinked.in.other, n.other.in.other)
-# TODO
+df <- bind_rows(tep, non_tep) %>%
+  group_by(chrom, GEP) %>%
+  tally() %>%
+  ungroup()
+
+g1 <- df %>%
+  group_by(chrom) %>%
+  mutate(pct = n/sum(n)) %>%
+  ggplot(aes(chrom,pct, fill=GEP)) +
+  geom_col(position = "stack") +
+  theme_gte21() +
+  scale_fill_gte21("binary",reverse = T) +
+  theme(aspect.ratio = 1) +
+  scale_y_continuous(labels=scales::percent) +
+  ylab("") + xlab("genomic location")
+
+pval <- df %>%
+  spread(chrom,n) %>%
+  arrange(desc(GEP)) %>%
+  dplyr::select(GEP,Y, other) %>%
+  column_to_rownames("GEP") %>%
+  fisher.test() %>%
+  tidy() %>%
+  pull(p.value)
+
+
+
+g1 <- g1 +
+  geom_text(aes(x=2, y=0.7, label=str_wrap(paste("Fisher's exact test: P = ",round(pval,digits = 6)),width = 20)))
+
+#pool <- geps %>%
+#  filter(str_detect(X1,"FBgn")) %>%
+#  pull
+
+agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 3, bitsize = 16, res = 300, background = 'transparent')
+print(g1)
+dev.off()
+
+saveRDS(g1,snakemake@output[['ggp']])
+write_tsv(df,snakemake@output[['dat']])
+
+

@@ -6,6 +6,8 @@ library(jsonlite)
 library(ragg)
 library(VariantAnnotation)
 
+source("workflow/fig-scripts/theme.R")
+
 snps <- readVcfAsVRanges("results/finalized/wgs/w1118_male/snps.vcf") %>% as_tibble()
 
 allele.lookup <- snps %>%
@@ -104,24 +106,34 @@ g1 <- df2 %>%
   ggplot(aes(gep, ratio)) +
   geom_boxplot(aes(fill=gep)) +
   #geom_jitter() +
-  stat_compare_means(label.y.npc = 0.7) +
+  stat_compare_means(label.y.npc = 0.9) +
   #stat_compare_means(method.args = list(alternative = "greater")) +
-  theme_classic() +
+  theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
-  geom_hline(yintercept = 1) +
-  scale_fill_brewer(type='qual', name='GEP')
+  scale_fill_brewer(type='qual', name='GEP') +
+  guides(fill=F)
 
 g2 <- ggplot(df2, aes(gep, ratio)) +
   geom_boxplot(aes(fill=sex)) +
   #geom_jitter() +
   stat_compare_means(label.y.npc = 0.7) +
-  #stat_compare_means(method.args = list(alternative = "greater")) +
-  theme_classic() +
+  theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
-  geom_hline(yintercept = 1) +
   scale_fill_brewer(type='qual', name='GEP') +
   facet_grid(sex~subsample)
 
+g3 <- df2 %>% 
+  filter(sex != "male") %>% 
+  group_by(subsample, gene_id, gep, pos) %>%
+  summarise(ratio = mean(ratio)) %>%
+  ggplot(aes(gep, ratio)) +
+  geom_boxplot(aes(fill=gep)) +
+  #geom_jitter() +
+  stat_compare_means(label.y.npc = 0.7) +
+  #stat_compare_means(method.args = list(alternative = "greater")) +
+  theme_gte21() +
+  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
+  scale_fill_brewer(type='qual', name='GEP')
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g1)

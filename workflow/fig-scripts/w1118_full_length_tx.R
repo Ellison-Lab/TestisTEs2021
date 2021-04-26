@@ -4,6 +4,8 @@ library(jsonlite)
 library(arrow)
 library(ragg)
 
+source("workflow/fig-scripts/theme.R")
+
 gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
   as_tibble()
 
@@ -14,13 +16,7 @@ optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-test
 geps <- open_dataset('results/finalized/larval-w1118-testes/optimal_gep_membership/', format='arrow') %>%
   collect()
 
-top_mods <- geps %>%
-  filter(qval < optimal_ica[['qval']]) %>%
-  group_by(module) %>% summarise(n_tes = sum(!str_detect(X1,'FBgn'))) %>%
-  arrange(-n_tes)
-
-# says tep in script but have decided to show all TEs detected
-tep_tes <- geps %>%
+tes <- geps %>%
   #filter(qval < optimal_ica[['qval']]) %>%
   #filter(module == top_mods$module[1]) %>%
   left_join(te.lookup, by=c(X1='merged_te')) %>%
@@ -28,60 +24,88 @@ tep_tes <- geps %>%
   pull(gene_id) %>%
   unique()
 
-tep_tes.no_ltrs <- tep_tes[!str_detect(tep_tes,'[-_]LTR')]
+tes.no_ltrs <- tes[!str_detect(tes,'[-_]LTR')]
 
-tep.name <- geps %>%
-  filter(qval < optimal_ica[['qval']]) %>%
-  collect() %>%
-  left_join(te.lookup, by=c(X1='merged_te')) %>%
-  filter(!str_detect(X1,'FBgn')) %>%
-  dplyr::select(module, X1, repClass, repFamily) %>%
-  distinct() %>%
-  group_by(module) %>%
-  summarize(n_tes=n()) %>%
-  arrange(-n_tes) %>%
-  head(1) %>%
-  pull(module) %>% as.character()
+genes_gr <- gtf %>% filter(str_detect(gene_id,"FBgn") & type == "mRNA") %>%
+  split(.$gene_id) %>%
+  map(GRanges) %>%
+  map(GenomicRanges::reduce) %>%
+  GRangesList() %>% unlist()
 
+tes_gr <- gtf %>% filter(gene_id %in% tes.no_ltrs) %>% GRanges()
 
-bws <- Sys.glob('results/finalized/bigwigs/total-rna/w1118_testes.rep*.tes.strand-forward.rpkm.bw') %>%
-  set_names(.,str_extract(.,'(?<=total-rna\\/).+(?=\\.tes)')) %>%
-  map(import) %>%
-  map(function(x){x[seqnames(x) %in% tep_tes.no_ltrs]}) %>%
+names(tes_gr) <- tes_gr$transcript_id
+
+gr <- c(genes_gr,tes_gr)
+
+gr <- gr %>% tile(width=50) %>% unlist()
+
+gr$gene_symbol <- names(gr) %>% str_extract(".+(?=\\.)")
+
+bws_fw <- Sys.glob('~/amarel-scratch/TE-proj-reorg/gte21-chimeric-rnaseq/results/bigwigs/larval_testes_*.strand-forward.rpkm.bw') %>%
+  set_names(.,str_extract(.,'(?<=bigwigs\\/).+(?=\\.strand-)')) %>%
+  map(import, which=gr) %>%
   map_df(as_tibble, .id='replicate') %>%
-  group_by(seqnames, replicate) %>%
-  mutate(pos = start/max(end), scaled=scale(score)[,1]) %>%
-  ungroup() %>%
-  mutate_if(is.factor,as.character)
+  mutate_if(is.factor,as.character) %>%
+  mutate(strand = "-")
 
-g1 <- bws %>%
-  ggplot(aes(pos,score, group=seqnames)) +
-  geom_line(aes(color=seqnames),alpha=1) +
-  theme_classic() +
-  guides(color=F) +
-  scale_x_continuous(name='relative position',breaks = c(0,1), labels = c('start','end')) +
-  ylab('fpkm') + facet_wrap(~replicate)
+bws_rev <- Sys.glob('~/amarel-scratch/TE-proj-reorg/gte21-chimeric-rnaseq/results/bigwigs/larval_testes_*.strand-reverse.rpkm.bw') %>%
+  set_names(.,str_extract(.,'(?<=bigwigs\\/).+(?=\\.strand-)')) %>%
+  map(import, which=gr) %>%
+  map_df(as_tibble, .id='replicate') %>%
+  mutate_if(is.factor,as.character) %>%
+  mutate(strand="+")
 
-x <- bws %>%
-  group_by(seqnames) %>%
-  mutate(pos.bin = as.factor(round(start/max(end),1.4))) %>%
-  complete(replicate, seqnames, pos.bin, fill = list(score=0)) %>%
-  group_by(seqnames, pos.bin) %>%
-  summarise(score=mean(score,na.rm=T),.groups = 'drop_last') %>%
-  mutate(scaled=scale(score)[,1])
+bws <- bind_rows(fw = bws_fw, rev = bws_rev) %>% mutate(subjectHits = row_number())
 
-NEW.ORDER <- x %>% group_by(seqnames) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(seqnames)
+bws_gr <- GRanges(bws)
 
-g2 <- x %>% group_by(seqnames) %>% mutate(pos.max=which.max(scaled)[1]) %>% 
-  mutate(max.scaled = log2(score)) %>% ungroup() %>%
-  ggplot(aes(pos.bin,fct_relevel(seqnames, NEW.ORDER),fill=log2(score + 1))) +
+ol_df <- findOverlaps(gr, bws_gr) %>% as_tibble()
+
+plot_df <- as_tibble(gr) %>% 
+  mutate(queryHits = row_number()) %>% 
+  left_join(ol_df) %>% 
+  left_join(bws, by = "subjectHits") %>% 
+  dplyr::select(replicate, chr = seqnames.x, start=start.x, end=end.x, strand=strand.x, strand.y, gene_symbol, score) %>%
+  filter(strand==strand.y) %>%
+  dplyr::select(-strand.y) %>%
+  group_by(gene_symbol, replicate) %>%
+  mutate(end = end - min(start), start = start - min(start)) %>% 
+  mutate(pos = start/max(end)) %>%
+  ungroup() %>% 
+  group_by(gene_symbol) %>%
+  filter(sum(score) > 0) %>% ungroup() %>%
+  mutate(type = ifelse(str_detect(gene_symbol,"FBgn"),"Gene","TE"))
+
+plot_df.summ <- plot_df %>% 
+  group_by(gene_symbol, pos, type) %>%
+  summarize(score = mean(score), .groups = "drop") %>%
+  mutate(bin = floor(pos * 10)/10) %>%
+  group_by(gene_symbol, bin, type) %>%
+  summarize(score=mean(score),.groups = "drop")
+
+NEW.ORDER <- group_by(plot_df.summ, gene_symbol) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(gene_symbol)
+
+g1 <- ggplot(plot_df.summ, aes(bin,fct_relevel(gene_symbol, NEW.ORDER),fill=log2(score + 1))) +
   geom_raster(interpolate=F) +
   #scale_fill_viridis_c(name='scaled fpkm') +
-  #scale_fill_distiller(type='seq',palette = 2, name='scaled fpkm', direction = 1) +
-  scale_fill_gradient2(low = 'blue', mid = 'gray', high = 'red',midpoint = 0.5, name='log2(mean(FPKM) +1)') +
-  scale_x_discrete(name='relative position',breaks = c(0,1), labels = c('start','end')) +
-  ylab('')
+  scale_fill_distiller(type='seq',palette = 3, name='fpkm', direction = 1) +
+  #scale_fill_gradient2(low = 'blue', mid = 'gray', high = 'red',midpoint = 0, name='log2(mean(FPKM) +1)') +
+  scale_x_continuous(name='relative position', breaks = c(0,0.9), labels = c("start","end"), expand = c(0,0)) +
+  ylab('') +
+  facet_wrap(~type, scales = "free") +
+  theme_gte21() +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.line.y=element_blank())
 
+g2 <- plot_df %>% group_by(replicate, gene_symbol, type) %>%
+  summarise(`std. dev.` = sd(score),.groups = "drop") %>%
+  ggplot(aes(type, `std. dev.`, fill=type)) +
+  geom_boxplot(outlier.shape = NA) +
+  ggpubr::stat_compare_means(label.y = 17) +
+  coord_cartesian(ylim=c(0,20)) +
+  theme_gte21() +
+  scale_fill_gte21("binary",reverse = T) +
+  xlab("") + facet_wrap(~replicate)
 
 agg_png(snakemake@output[['png1']], width=20, height =10, units = 'in', scaling = 1, bitsize = 16, res = 300, background = 'transparent')
 print(g1)
