@@ -1,6 +1,7 @@
 library(tidyverse)
 library(arrow)
 library(ragg)
+library(ggrepel)
 
 source("workflow/fig-scripts/theme.R")
 
@@ -23,7 +24,7 @@ g <- collect(w1118.obs) %>%
   scale_color_gte21() +
   theme_gte21() +
   labs(color="") +
-  geom_text(data=umap_labs, aes(x + sign(5-x) *2, y, label=clusters.rename), face='bold', size=rel(3)) +
+  geom_text_repel(data=umap_labs, aes(x + sign(5-x) *2, y, label=clusters.rename), face='bold', size=rel(3)) +
   xlab("UMAP1") + ylab("UMAP2") +
   theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)), axis.title = element_text(size = rel(1.2)), axis.text = element_text(size=rel(1.5))) +
   coord_fixed() +

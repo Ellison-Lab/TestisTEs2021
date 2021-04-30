@@ -15,19 +15,16 @@ theme_gte21 <- function(base_size=10) {
           ## Axis
           axis.line = element_blank(),
           axis.line.y = element_blank(),
-          axis.text = element_text(size = rel(1)),
-          axis.text.x = element_text(vjust = 0,
-                                     margin = margin(t = base_size * 0.5,
+          axis.text.x = element_text(margin = margin(t = base_size * 0.5,
                                                      unit = "pt")),
           axis.text.x.top = element_text(vjust = 0, margin = margin(b = base_size * 0.5, unit = "pt")),
-          axis.text.y = element_text(hjust = 1,
-                                     margin = margin(r = base_size * 0.5,
-                                                     unit = "pt")),
-          axis.ticks = element_line(size=rel(2.5)),
+          axis.text.y = element_text(hjust = 1, margin = margin(r = base_size * 0.25,
+                                                                unit = "pt")),
+          axis.ticks = element_line(lineend="round"),
           axis.title = element_text(size = rel(2)),
-          axis.title.x = element_text(margin = margin(t=base_size)),
-          axis.title.y = element_text(angle = 90, margin = margin(r=base_size)),
-          axis.ticks.length = unit( base_size * 0.5, "points"),
+          axis.title.x = element_text(margin = margin(t=base_size*0.25)),
+          axis.title.y = element_text(angle = 90),
+          axis.ticks.length = unit( base_size * 0.3, "points"),
           
           #legend
           legend.background = element_rect(linetype = 1),
@@ -46,10 +43,10 @@ theme_gte21 <- function(base_size=10) {
           
           # panel
           panel.background = element_rect(fill = NA),
-          panel.border = element_rect(linetype = 1, size=rel(2.5)),
+          panel.border = element_rect(linetype = 1),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          panel.spacing = unit(0.25, "lines"),
+          panel.spacing = unit(1, "lines"),
           
           # strip
           strip.background = element_rect(fill = NA,
@@ -64,7 +61,7 @@ theme_gte21 <- function(base_size=10) {
           plot.title = element_text(size = rel(2.5),
                                     hjust = 0.5,margin = margin(b=base_size),
                                     face = "bold"),
-          plot.margin = unit(c(1, 1, 1, 1), "points"),
+          plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
           aspect.ratio = NULL,
           complete = TRUE)
 }
@@ -72,9 +69,11 @@ theme_gte21 <- function(base_size=10) {
 
 .gte21_palettes <- list(
   binary = c("red2","gray"),
+  binary2 = c("lightgray","darkgray"),
   diverging = colorRamps::matlab.like2(10),
   diverging.wide = grDevices::rainbow(20),
-  categories1 = head(colorRamps::primary.colors(no.white = T),15)[-1],
+  categories1 = RColorBrewer::brewer.pal(12, name = "Set3"),
+  categories2 = head(colorRamps::primary.colors(no.white = T),15)[-1],
   increasing = grDevices::topo.colors(10)
 )
 

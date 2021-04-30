@@ -30,11 +30,9 @@ df <- w1118.gep_membership %>%
   group_by(module) %>% tally()
 
 g <- ggplot(df, aes(n)) +
-  geom_histogram(aes(fill=..count..), color='black') +
+  geom_histogram(color='black') +
   theme_gte21() +
   scale_y_continuous(expand = expand_scale(mult = c(0,0), add = c(0,1))) +
-  scale_fill_fermenter(direction = 1, palette = 13) +
-  scale_fill_gte21("diverging.wide", discrete = F, reverse = T) +
   theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
   xlab('module sizes')
 

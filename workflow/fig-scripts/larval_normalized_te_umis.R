@@ -1,6 +1,7 @@
 library(tidyverse)
 library(arrow)
 library(ragg)
+library(ggpubr)
 
 source("workflow/fig-scripts/theme.R")
 
@@ -21,7 +22,7 @@ df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list
   dplyr::select(index, gene_id, expression) %>%
   mutate(expression = exp(expression) - 1) %>%
   group_by(index) %>%
-  summarize(expression=log2(sum(expression) + 1)) %>%
+  summarize(expression=sum(expression)) %>%
   ungroup() %>%
   left_join(collect(w1118.obs), by=c(index='X1'))
   
@@ -32,14 +33,15 @@ df <- df %>%
 g <- ggplot(df, aes(clusters.rename,expression)) +
   geom_violin(aes(fill=clusters.rename),draw_quantiles = c(0.5),scale = 'width') +
   theme_gte21() +
-  xlab("") + ylab('log2(Normalized TE UMIs + 1)') +
+  xlab("") + ylab('UMIs (norm)') +
   guides(fill=F) +
   scale_fill_gte21() +
   theme(aspect.ratio = 0.3) +
   theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)),
-        axis.title = element_text(size = rel(1.2)), 
+        axis.title = element_text(size = rel(1)), 
         axis.text.y = element_text(size=rel(1)),
-        axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+        axis.text.x = element_text(angle=90, hjust=1, vjust=0.5)) +
+  stat_compare_means(label.y.npc = 0.9, label.x.npc = 0.1)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

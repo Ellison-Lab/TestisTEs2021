@@ -46,10 +46,10 @@ g <- dat2 %>%
   filter(group == "y-linked") %>%
   ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
-  scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_fill_fermenter(palette = 8, direction = 1, name='mean(log-norm UMIs)', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   theme_gte21()  +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1), axis.text.y=element_text(face="italic")) +
   theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
   theme(aspect.ratio = 1.5) +
   coord_flip() +
@@ -61,10 +61,10 @@ g2 <-  dat2 %>%
   filter(group %in% c("tBRD","tPAF","tTAF")) %>%
   ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
-  scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_fill_fermenter(palette = 8, direction = 1, name='mean(log-norm UMIs)', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   theme_gte21()  +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1), axis.text.y=element_text(face="italic")) +
   theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
   theme(aspect.ratio = 2) +
   coord_flip() +
@@ -95,5 +95,6 @@ print(g3)
 dev.off()
 
 saveRDS(g,snakemake@output[['ggp']])
+saveRDS(g2,snakemake@output[['ggp_tpaf']])
 saveRDS(g3,snakemake@output[['ggp_eachm']])
 write_tsv(dat2,snakemake@output[['dat']])

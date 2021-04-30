@@ -10,11 +10,9 @@ img <- image_read('results/figs/larval_te_heatmap/larval_te_heatmap.png', densit
 
 g <- image_ggplot(img)
 
-g <- g + labs(tag="A")
-
 ggsave(snakemake@output[[1]], g, width = 5, height = 3, scale = 2)
 
-
+saveRDS(g,snakemake@output[[2]])
 
 
 

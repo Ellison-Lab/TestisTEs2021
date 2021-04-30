@@ -16,6 +16,8 @@ df <- readxl::read_xlsx("resources/41467_2021_20897_MOESM5_ESM.xlsx",sheet = 'Ge
   dplyr::select(FBgn, contains('tpm')) %>%
   drop_na()
 
+df.cells <- readxl::read_xlsx("resources/41467_2021_20897_MOESM5_ESM.xlsx",sheet = 'Cell Level Data')
+
 # collect our data
 our.data <- w1118.expr %>% 
   filter(gene_id %in% df$FBgn) %>% 
@@ -51,16 +53,39 @@ g <- cor.df %>%
   #spread(y, estimate) %>%
   ggplot(aes(y,x,fill=estimate)) +
   geom_tile() +
-  scale_fill_distiller(type = 'seq', palette = 8, direction = 1,name='Spearman corr.') +
+  scale_fill_distiller(type = 'seq', palette = 8, direction = 1,name='Spearman') +
   theme_minimal() +
   coord_fixed() +
   theme(aspect.ratio = 1) +
-  xlab("Mahadevajaru et al. clusters") + ylab("This study")
+  xlab("Mahadevaraju et al. clusters") + ylab("This study")
+
+
+n_mahadevaraju <- df.cells %>% 
+  mutate(is_cell_used_in_study = as.logical(is_cell_used_in_study)) %>%
+  filter(is_cell_used_in_study) %>%
+  tally()
+
+n_this_study <- w1118.obs %>% collect() %>% tally()
+
+n_cells <- bind_rows(`Mahadevaraju et al.` = n_mahadevaraju, `This study` = n_this_study, .id = "study")
+
+
+g2 <- ggplot(n_cells,aes(study, n)) +
+  geom_col(aes(fill=study)) +
+  theme_gte21() +
+  scale_fill_gte21("binary", reverse = T) +
+  guides(fill=F) + xlab("")
+
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)
 dev.off()
 
+agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+print(2)
+dev.off()
+
 saveRDS(g,snakemake@output[['ggp']])
+saveRDS(g2,snakemake@output[['ggp2']])
 write_tsv(cor.df,snakemake@output[['dat']])
 

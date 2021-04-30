@@ -86,16 +86,18 @@ plot_df.summ <- plot_df %>%
 
 NEW.ORDER <- group_by(plot_df.summ, gene_symbol) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(gene_symbol)
 
-g1 <- ggplot(plot_df.summ, aes(bin,fct_relevel(gene_symbol, NEW.ORDER),fill=log2(score + 1))) +
+g1 <- plot_df.summ %>%
+  mutate(gene_symbol = fct_relevel(gene_symbol, NEW.ORDER)) %>%
+  ggplot(aes(bin,gene_symbol,fill=log2(score + 1))) +
   geom_raster(interpolate=F) +
   #scale_fill_viridis_c(name='scaled fpkm') +
   scale_fill_distiller(type='seq',palette = 3, name='fpkm', direction = 1) +
   #scale_fill_gradient2(low = 'blue', mid = 'gray', high = 'red',midpoint = 0, name='log2(mean(FPKM) +1)') +
   scale_x_continuous(name='relative position', breaks = c(0,0.9), labels = c("start","end"), expand = c(0,0)) +
   ylab('') +
-  facet_wrap(~type, scales = "free") +
+  facet_wrap(~type, scales = "free", strip.position="bottom") +
   theme_gte21() +
-  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.line.y=element_blank())
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.line.y=element_blank(), strip.placement = "outside")
 
 g2 <- plot_df %>% group_by(replicate, gene_symbol, type) %>%
   summarise(`std. dev.` = sd(score),.groups = "drop") %>%
@@ -105,7 +107,8 @@ g2 <- plot_df %>% group_by(replicate, gene_symbol, type) %>%
   coord_cartesian(ylim=c(0,20)) +
   theme_gte21() +
   scale_fill_gte21("binary",reverse = T) +
-  xlab("") + facet_wrap(~replicate)
+  xlab("") + facet_wrap(~replicate) +
+  guides(fill=F)
 
 agg_png(snakemake@output[['png1']], width=20, height =10, units = 'in', scaling = 1, bitsize = 16, res = 300, background = 'transparent')
 print(g1)

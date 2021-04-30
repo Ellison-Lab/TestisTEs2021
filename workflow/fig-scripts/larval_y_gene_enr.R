@@ -92,10 +92,7 @@ pval <- df %>%
   tidy() %>%
   pull(p.value)
 
-
-
-g1 <- g1 +
-  geom_text(aes(x=2, y=0.7, label=str_wrap(paste("Fisher's exact test: P = ",round(pval,digits = 6)),width = 20)))
+g1 <- g1
 
 #pool <- geps %>%
 #  filter(str_detect(X1,"FBgn")) %>%
@@ -105,7 +102,7 @@ agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling =
 print(g1)
 dev.off()
 
-saveRDS(g1,snakemake@output[['ggp']])
+saveRDS(list(g1,pval),snakemake@output[['ggp']])
 write_tsv(df,snakemake@output[['dat']])
 
 

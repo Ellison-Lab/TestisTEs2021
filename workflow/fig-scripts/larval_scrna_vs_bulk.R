@@ -39,7 +39,7 @@ larv_bulk_02 <- read_tsv("results/finalized/larval-polya/larval_testes_papain_02
 larv_bulk_03 <- read_tsv("results/finalized/larval-polya/larval_testes_papain_03.tsv")
 larv_bulk_04 <- read_tsv("results/finalized/larval-polya/larval_testes_papain_04.tsv")
 
-larv_bulk <- bind_rows(list(larv_bulk_01, larv_bulk_02, larv_bulk_03, larv_bulk_04), .id="replicate") %>%
+larv_bulk <- bind_rows(list(`bulk rep 1`=larv_bulk_01, `bulk rep 2`=larv_bulk_02, `bulk rep 3`=larv_bulk_03, `bulk rep 4` =larv_bulk_04), .id="replicate") %>%
   gather(logic, count, -replicate, -gene_id)
 
 larv_bulk <- filter(larv_bulk , 

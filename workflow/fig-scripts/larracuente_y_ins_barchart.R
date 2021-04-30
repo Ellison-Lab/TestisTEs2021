@@ -62,13 +62,16 @@ df <- hetchrom.ins.5 %>%
   group_by(GEP) %>%
   mutate(percent = n/sum(n))
 
-g <-ggplot(df, aes(GEP,percent,fill=chrom)) +
+g <- df %>% 
+  mutate(GEP=as.factor(GEP)) %>%
+  mutate(GEP = fct_relevel(GEP,"TEP","other")) %>%
+  ggplot(aes(GEP,percent,fill=chrom)) +
   geom_col(color='white') +
   theme_gte21() +
-  scale_fill_gte21("categories1",reverse = T) +
+  scale_fill_gte21("binary",reverse = T) +
   theme(aspect.ratio = 1) +
-  xlab('insertions') +
-  scale_y_continuous(expand=c(0,0))
+  ylab('Insertion percentage') +
+  scale_y_continuous(labels = scales::percent)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

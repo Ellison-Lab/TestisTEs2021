@@ -11,16 +11,17 @@ df <- w1118.grid %>%
   mutate_at(vars('cov','pct_unique_term','pct_enr'), scales::rescale) %>%
   mutate(score = cov * pct_unique_term)
 
+
+#group_by(qval,comps) %>%
+#summarize(score=mean(score)) %>%
 g <- df %>%
-  group_by(qval,comps) %>%
-  summarize(score=mean(score)) %>%
 ggplot(aes(as.factor(comps),as.factor(qval),fill=score)) +
   geom_raster(interpolate = F) +
   theme_gte21() +
   xlab("k") + ylab("qval") +
   scale_fill_gte21("diverging",discrete = F) +
-  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0))
-  #facet_wrap(~rep)
+  theme(aspect.ratio = 1, plot.caption = element_text(hjust=0)) +
+  facet_wrap(~rep)
 
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')

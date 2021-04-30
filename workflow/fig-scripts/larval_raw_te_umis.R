@@ -18,20 +18,23 @@ w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='a
 w1118.te_umis <- open_dataset("results/finalized/larval-w1118-testes/umis/", format='arrow') %>% collect()
 
 df <- w1118.obs %>% dplyr::select(X1, clusters2) %>%
-  left_join(w1118.te_umis, .,by=c(cell="X1")) %>%
-  left_join(rename.table)  
+  left_join(w1118.te_umis, .,by=c(cell="X1"))
 
-df.per_cell <- df %>% group_by(batch, clusters.rename, cell) %>%
+df.per_cell <- df %>% group_by(batch, clusters2, cell) %>%
   summarize(UMIs=sum(UMIs), .groups = "drop")
+
+df.per_cell <- df.per_cell %>%
+  left_join(rename.table)  
 
 g <- ggplot(df.per_cell, aes(clusters.rename,UMIs)) +
   geom_violin(aes(fill=clusters.rename),draw_quantiles = c(0.5),scale = 'width') +
   theme_gte21() +
-  xlab("") + ylab('UMIs') +
+  xlab("") + ylab('UMIs (raw)') +
   guides(fill=F) +
-  scale_fill_brewer(type='qual', palette = 8) +
+  scale_fill_gte21() +
   theme(plot.caption= element_text(hjust=0.5, face='italic'),
-        axis.text.x = element_text(angle=90, hjust=1)) +
+        axis.text.x = element_text(angle=90, hjust=1),
+        axis.title = element_text(size = rel(1))) +
   stat_compare_means(label.y.npc = 0.9, label.x.npc = 0.1)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')

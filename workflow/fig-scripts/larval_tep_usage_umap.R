@@ -2,6 +2,7 @@ library(tidyverse)
 library(arrow)
 library(ragg)
 library(jsonlite)
+library(ggrepel)
 
 source("workflow/fig-scripts/theme.R")
 
@@ -63,7 +64,7 @@ g <-  ggplot(df, aes(X_umap1,X_umap2)) +
   theme_gte21() +
   scale_color_gte21(palette = "diverging", discrete = F,name=str_wrap("Module score",width = 1)) +
   coord_fixed() +
-  geom_text(data=umap_labs, aes(x + sign(5-x) * 3, y, label=clusters.rename), face='bold', size=rel(4)) +
+  geom_text_repel(data=umap_labs, aes(x + sign(5-x) * 3, y, label=clusters.rename), face='bold', size=rel(4)) +
   xlab("UMAP1") + ylab("UMAP2")
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')

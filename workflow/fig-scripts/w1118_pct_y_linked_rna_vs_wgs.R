@@ -66,7 +66,7 @@ df <- df %>%
 df <- te.lookup %>% dplyr::select(merged_te, gene_id) %>% distinct() %>%
   right_join(df, by=c(gene_id = 'seqnames')) %>%
   complete(gene_id, subsample) %>%
-  mutate(gep=ifelse(gene_id %in% tep_tes,'tep','other')) %>%
+  mutate(gep=ifelse(gene_id %in% tep_tes,'TEP','other')) %>%
   filter(!str_detect(gene_id,'[-_]LTR'))
 
 # get absolute depths at each pos and pct for each allele at each pos
@@ -97,20 +97,19 @@ df2 <- df %>%
   group_by(subsample, gene_id, pos, sex) %>%
   slice_max(ratio, n=1, with_ties = F) %>%
   ungroup() %>%
-  mutate(gep = fct_relevel(gep, c("tep","other")))
+  mutate(gep = fct_relevel(gep, c("TEP","other")))
 
 g1 <- df2 %>% 
   filter(sex == "male") %>% 
   group_by(subsample, gene_id, gep, pos) %>%
   summarise(ratio = mean(ratio)) %>%
   ggplot(aes(gep, ratio)) +
-  geom_boxplot(aes(fill=gep)) +
+  geom_boxplot(fill="darkgray", outlier.shape = NA) +
   #geom_jitter() +
   stat_compare_means(label.y.npc = 0.9) +
   #stat_compare_means(method.args = list(alternative = "greater")) +
   theme_gte21() +
-  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
-  scale_fill_brewer(type='qual', name='GEP') +
+  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('')
   guides(fill=F)
 
 g2 <- ggplot(df2, aes(gep, ratio)) +
@@ -119,7 +118,7 @@ g2 <- ggplot(df2, aes(gep, ratio)) +
   stat_compare_means(label.y.npc = 0.7) +
   theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
-  scale_fill_brewer(type='qual', name='GEP') +
+  scale_fill_brewer(type='qual', name='Variant class') +
   facet_grid(sex~subsample)
 
 g3 <- df2 %>% 
@@ -127,7 +126,7 @@ g3 <- df2 %>%
   group_by(subsample, gene_id, gep, pos) %>%
   summarise(ratio = mean(ratio)) %>%
   ggplot(aes(gep, ratio)) +
-  geom_boxplot(aes(fill=gep)) +
+  geom_boxplot(fill="darkgray") +
   #geom_jitter() +
   stat_compare_means(label.y.npc = 0.7) +
   #stat_compare_means(method.args = list(alternative = "greater")) +

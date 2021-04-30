@@ -238,3 +238,13 @@ rule collect_male_snp_vcf:
         """
         cp {input} {output}
         """
+
+rule collect_mod_scores:
+    input:
+        "results/finalized/larval-w1118-testes/optimal_gep_membership/",
+        "results/finalized/optimal-gep-params/larval-w1118-testes.json"
+    output:
+        "results/finalized/x-dataset-comparison/mod_scores.csv.gz",
+        "results/finalized/x-dataset-comparison/te_expression.csv.gz"
+    script:
+        "../scripts/collect_mod_scores.py"

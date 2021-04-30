@@ -42,7 +42,7 @@ levs <- obstmp %>%
   pull(clusters2) %>% unique %>%
   set_names(.,.) %>%
   map(~str_remove(.,'\\d+\\/')) %>%
-  {names(.)[order(unlist(.))]}
+  {names(.)[order(unlist(.))]} 
 
 col <- list(cell_types=RColorBrewer::brewer.pal(length(levs),'Set3') %>%
               set_names(levs))
@@ -66,7 +66,7 @@ Heatmap(te_expr_mat[,obstmp$X1],
         column_title_gp = gpar(fontsize=12),
         row_names_gp = gpar(fontsize = 2),show_row_names = F,
         show_column_dend = F, show_row_dend = F,
-        column_split = factor(pull(obstmp,'clusters2'),levels=levs),
+        column_split = factor(pull(obstmp,'clusters2'),levels=levs) %>% fct_reorder(.,as.numeric(str_extract(.,"\\d+"))),
         use_raster = T,
         heatmap_height = unit(4.7,units = "in"),
         width=unit(8.7,units="in"),

@@ -86,34 +86,29 @@ g3 <- dat %>%
   geom_col(aes(fill=tep)) +
   theme_gte21() +
   theme(axis.text.x = element_text(angle=90, hjust=1, size=rel(1))) +
-  xlab("") + ylab("log2(M/F)") +
+  xlab("") + ylab("log2(M/F copies)") +
   scale_fill_gte21("binary")
 
 g2 <- dat %>% 
   ggplot(aes(est.copies.male,est.copies.female, label=sequence)) +
-  geom_point(aes(color=tep, size=m.f.ratio)) +
-  theme(aspect.ratio = 1) +
+  geom_point(aes(color=tep)) +
   geom_abline(intercept = 0, slope = 1) +
   theme_gte21() +
   scale_y_log10() +
   scale_x_log10() +
   facet_wrap(~tep) +
-  theme(aspect.ratio = 1) +
   scale_color_gte21("binary",name="GEP") +
-  scale_size(name="M/F")
+  scale_size(name="M/F copies")
 
 g1 <- dat %>%
   ggplot(aes(tep,est.copies.male/est.copies.female, label=sequence))+
-  geom_boxplot(outlier.shape = 22, aes(fill=tep)) +
+  geom_boxplot(outlier.shape = NA, fill="darkgray") +
   #geom_jitter(width = 0.1, alpha = 0.5) +
-  theme(aspect.ratio = 1) +
-  stat_compare_means(size=rel(5)) +
+  stat_compare_means(label.y.npc = 0.9) +
   xlab('') +
   theme_gte21() +
-  theme(aspect.ratio = 1.5) +
-  scale_fill_gte21("binary",name="GEP") +
   guides(fill=F) +
-  ylab("M/F")
+  ylab("M/F copies")
 
 agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g1)

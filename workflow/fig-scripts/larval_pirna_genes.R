@@ -1,6 +1,7 @@
 library(tidyverse)
 library(arrow)
 library(ragg)
+library(ggtext)
 
 source("workflow/fig-scripts/theme.R")
 
@@ -61,17 +62,20 @@ df <- df %>%
   group_by(clusters.rename, gene_symbol) %>%
   summarize(pct.expressing = sum(expression > 0)/n(), mean.expression=mean(expression))
 
+df <- df %>% mutate(gene_symbol = paste0("*",gene_symbol,"*"))
+
 g <- df %>%
   ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
-  scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_fill_fermenter(palette = 8, direction = 1, name='mean(log-norm UMIs)', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   theme_gte21()  +
   theme(axis.text.x = element_text(angle=90, hjust=1)) +
   theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
   theme(aspect.ratio = 2) +
   coord_flip() +
-  xlab('') + ylab('')
+  xlab('') + ylab('') +
+  theme(axis.text.y = element_markdown())
 
 agg_png(snakemake@output[['png']], width=20, height =10, units = 'in', scaling = 1, bitsize = 16, res = 300, background = 'transparent')
 print(g)

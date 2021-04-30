@@ -67,9 +67,9 @@ rule larval_raw_te_umis:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output
     output:
-        png = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.png",
-        ggp = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.ggp.rds",
-        dat = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.dat.tsv"
+        png = "results/figs/larval_raw_te_umis/larval_raw_te_umis.png",
+        ggp = "results/figs/larval_raw_te_umis/larval_raw_te_umis.ggp.rds",
+        dat = "results/figs/larval_raw_te_umis/larval_raw_te_umis.dat.tsv"
     script:
         "../fig-scripts/larval_raw_te_umis.R"
 
@@ -197,6 +197,7 @@ rule larval_y_gene_dotplot:
         png3 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.png",
         ggp = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds",
         ggp_eachm = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.ggp.rds",
+        ggp_tpaf = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.ggp.rds",
         dat = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.dat.tsv"
     script:
         "../fig-scripts/larval_y_gene_dotplot.R"
@@ -298,6 +299,8 @@ rule comparison_with_mahadevaraju:
     output:
         png = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.png",
         ggp = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.ggp.rds",
+        png2 = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.n_cells.png",
+        ggp2 = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.n_cells.ggp.rds",
         dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv"
     script:
         "../fig-scripts/comparison_with_mahadevaraju.R"
@@ -323,8 +326,24 @@ rule larval_scrna_basic_qc_stats:
     script:
         "../fig-scripts/larval_scrna_basic_qc_stats.R"
 
+rule all_dataset_tep_scores:
+    input:
+        rules.collect_mod_scores.output
+    output:
+        png_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.png",
+        ggp_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.ggp.rds",
+        dat_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.dat.tsv",
+    script:
+        "../fig-scripts/all_dataset_tep_scores.R"
 
-
+rule chimerics:
+    output:
+        png = "results/figs/chimerics/chimerics.png",
+        ggp = "results/figs/chimerics/chimerics.ggp.rds",
+        png2 = "results/figs/chimerics/chimerics.supporting_reads.png",
+        ggp2 = "results/figs/chimerics/chimerics.supporting_reads.ggp.rds",
+    script:
+        "../fig-scripts/chimerics.R"
 
 #
 # rule larval_chromatin_mod_umap:

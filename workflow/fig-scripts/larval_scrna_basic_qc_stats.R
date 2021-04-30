@@ -22,7 +22,7 @@ g.dubs <- obs %>%
   ggplot(aes(clusters.rename, doublet_score, fill=clusters.rename)) +
   geom_violin() +
   theme_gte21() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1, vjust=1)) +
   scale_fill_gte21() +
   guides(fill=F) +
   xlab("") + ylab('Scrublet score (post-filtering)')
@@ -31,7 +31,7 @@ g.batch <- obs %>%
   ggplot(aes(clusters.rename, fill=batch)) +
   geom_bar(position='stack') +
   theme_gte21() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=90, hjust=1, vjust=0.5)) +
+  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1, vjust=1)) +
   scale_fill_brewer(type='qual', palette = 3) +
   xlab("") + ylab('N cells')
 
@@ -39,7 +39,7 @@ g.n_genes <- obs %>%
   ggplot(aes(clusters.rename, n_genes, fill=clusters.rename)) +
   geom_violin() +
   theme_gte21() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1)) +
   scale_fill_gte21() +
   guides(fill=F) +
   xlab("") + ylab('detected genes')
@@ -48,7 +48,7 @@ g.log1p_umis <- obs %>%
   ggplot(aes(clusters.rename, log1p_total_counts, fill=clusters.rename)) +
   geom_violin() +
   theme_gte21() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(axis.text.x = element_text(angle=45, hjust=1,vjust=1)) +
   scale_fill_gte21() +
   guides(fill=F) +
   xlab("") + ylab('log1p(UMIs)')
@@ -57,17 +57,17 @@ g.percent_mito <- obs %>%
   ggplot(aes(clusters.rename, percent_mito, fill=clusters.rename)) +
   geom_violin() +
   theme_gte21() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(axis.text.x = element_text(angle=45, hjust=1,vjust=1)) +
   scale_fill_gte21() +
   scale_y_continuous(labels=scales::percent) +
   guides(fill=F) +
-  xlab("") + ylab('% Mitochondrial gene UMIs (post-filtering)')
+  xlab("") + ylab('% Mitochondrial gene UMIs (post-filtering)') 
 
 g.phase <- obs %>%
   ggplot(aes(clusters.rename, fill=phase)) +
   geom_bar(position='stack') +
   theme_gte21() +
-  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  theme(axis.text.x = element_text(angle=45, hjust=1,vjust=1)) +
   scale_fill_brewer(type='qual', palette = 3) +
   xlab("") + ylab('N cells')
 
