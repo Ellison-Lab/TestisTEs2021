@@ -1,6 +1,7 @@
 library(tidyverse)
 library(ggtext)
 library(patchwork)
+library(magick)
 
 extrafont::loadfonts()
 
@@ -10,10 +11,7 @@ y_genes <- read_rds('results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.gg
 tes <- read_rds("results/figs/larval_fish_candidate_umis/larval_fish_candidate_umis.ggp.rds") +
   theme(axis.title.y=element_text(size=rel(0.5)))
 
-ph <- ggplot() +
-  annotate(geom='text', x=2, y=2, label = "RNA-FISH") +
-  theme_void() +
-  theme(panel.border = element_rect(color='black', fill=NA, size=5))
+ph <- image_read("/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4-2.slices_1_1.representative.png") %>% image_ggplot()
 
 
 layout <-"
