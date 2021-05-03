@@ -6,9 +6,9 @@ library(patchwork)
 
 source("workflow/fig-scripts/theme.R")
 
-chimerics <- read_rds("results/figs/chimerics/chimerics.ggp.rds") + theme(axis.text.x = element_text(vjust=1))
+chimerics <- read_rds("results/figs/chimerics/chimerics.ggp.rds") + theme(axis.text.x = element_text(vjust=1)) + theme(axis.text.x = element_text(face="italic"))
 
-chimerics_supporting_reads <- read_rds("results/figs/chimerics/chimerics.supporting_reads.ggp.rds") 
+chimerics_supporting_reads <- read_rds("results/figs/chimerics/chimerics.supporting_reads.ggp.rds") + theme(axis.text.x = element_text(face="italic"))
 
 full_length_box <- read_rds("results/figs/w1118_full_length_tx/w1118_full_length_tx.heat.ggp.rds")
 
@@ -21,13 +21,15 @@ normal <- read_rds("results/figs/larval_normalized_te_umis/larval_normalized_te_
 layout <-"
 AABB
 AABB
-AACC
-AACC
-DDEE
-DDFF
+CCDD
+CCDD
+CCEE
+CCEE
+CCFF
+CCFF
 "
 
-p <- full_length_heat + full_length_box + chimerics + chimerics_supporting_reads + raw + normal + plot_annotation(tag_levels = 'A') +  
+p <- raw + normal + full_length_heat + full_length_box + chimerics + chimerics_supporting_reads +  plot_annotation(tag_levels = 'A') +  
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

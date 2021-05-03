@@ -24,7 +24,7 @@ ABE
 CDE
 "
 
-p <- tidal + larrac + w1118_copies_box + male_expr  +  pirna + plot_annotation(tag_levels = 'A') +
+p <- larrac + w1118_copies_box + male_expr + tidal + pirna + plot_annotation(tag_levels = 'A') +
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

@@ -32,6 +32,14 @@ g <-  ggplot(df, aes(reorder(module, n_tes), fill=repClass)) +
   theme_gte21() +
   xlab("") + ylab('N')
 
+
+df %>% group_by(module, repClass) %>%
+  summarise(count=n()) %>%
+  group_by(module) %>%
+  mutate(pct = count/sum(count)) %>%
+  filter(module==27)
+
+
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)
 dev.off()

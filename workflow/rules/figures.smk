@@ -231,6 +231,8 @@ rule larracuente_y_ins_barchart:
     output:
         png = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.png",
         ggp = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.ggp.rds",
+        png2 = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.png",
+        ggp2 = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.ggp.rds",
         dat = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.dat.tsv"
     script:
         "../fig-scripts/larracuente_y_ins_barchart.R"

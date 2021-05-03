@@ -6,12 +6,13 @@ output:
   pdf_document:
     latex_engine: xelatex
 sansfont: Arial
+mainfont: Arial
 header-includes:
 - \AtBeginDocument{\let\maketitle\relax}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, warning = F, message = F)
+knitr::opts_chunk$set(echo = F, warning = F, message = F, dev = "png", dpi = 200)
 ```
 
 ```{r, include=F}
@@ -29,7 +30,7 @@ extrafont::loadfonts(quiet=TRUE)
 read_rds("~/work/TestisTEs2021/results/panels/figure1.rds")
 ```
 
-*Figure 1: Identification of testis cell populations.* **A)** UMAP projection groups transcriptionally similar cells in 2D space. Cells are colored by assigned cell type. **B)** Dot plot shows expression of selected marker genes used for cell type assignment. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **C)** Cell counts within each cell type cluster. Spermatocytes are the most abundant cell type by our analysis approach. 
+*Figure 1: Identification of testis cell populations.* **A)** UMAP projection groups transcriptionally similar cells in 2D space. Cells are colored by assigned cell type. **B)** Dot plot shows expression of selected marker genes used for cell type assignment. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **C)** Cell counts within each cell type cluster.
 
 \newpage
 
@@ -45,7 +46,7 @@ read_rds("~/work/TestisTEs2021/results/panels/figure2.rds")
 read_rds("~/work/TestisTEs2021/results/panels/figure3.rds")
 ```
 
-*Figure 3: A TE-enriched gene expression program.* **A)** UMAP projection colored by GEP-27 expression score. Expression score is derived from the consensus (averaged) ICA source matrix. **B)** Tallies of TE classes found in each GEP containing at least 1 TE. GEP-27 contains over 300 total features including 75 transposable elements. In comparison, the next most transposable element-enriched GEP contains approximately 20 TEs. GEP-27 TEs are predominantly retrotransposons. **C)** Composition of GEP-27.  GEP-27 is predominantly host-genes. 
+*Figure 3: A TE-enriched gene expression program is expressed primarily in cluster 3/Spermatocytes.* **A)** UMAP projection colored by GEP-27 expression score. Expression score is derived from the consensus (averaged) ICA source matrix. **B)** Tallies of TE classes found in each GEP containing at least 1 TE. GEP-27 contains almost four-fold more TEs than the next most TE-rich GEP and is predominately composed of LTR retrotransposons (59%%), LINE (29%) and DNA (9%) elements **C)** GEP-27 contains over 300 total features, the vast majority of which are either protein-coding genes (68%), TEs (18.6%), or non-coding RNAs (12%).
 
 \newpage
 
@@ -54,7 +55,7 @@ read_rds("~/work/TestisTEs2021/results/panels/figure3.rds")
 read_rds("~/work/TestisTEs2021/results/panels/figure4.rds")
 ```
 
-*Figure 4.  TEP co-occurs with Y chromosome transcriptional activity.* **A)** Dot plot shows mean normalized expression of Y-linked genes in each cluster. Dot size corresponds to the proportion of cells in each cluster with detectable expression of each Y-linked gene. Y-linked genes, especially fertility factors kl-3 and kl-5, are highly expressed by cluster 3/Spermatocyte. **B)** Violin plot shows normalized expression of EAChm is largely confined to cluster 3/Spermatocyte. **C)** Normalized expression of ACCORD2 and QUASIMODO2 is largely confined to cluster 3/Spermatocyte. **D)** Multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis shows QUASIMODO2 and EAChm expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: EAChm; green: ACCORD2; blue: DAPI. 
+*Figure 4.  TEP co-occurs with Y chromosome transcriptional activity.* **A)** Violin plot shows normalized expression of *EAChm* is largely confined to cluster 3/Spermatocyte. **C)** Normalized expression of *ACCORD2* and *QUASIMODO2* is largely confined to cluster 3/Spermatocyte. **D)** Multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis shows *ACCORD2* and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: *ACCORD2*; blue: DAPI. **B)** Dot plot shows mean normalized expression of Y-linked genes in each cluster. Dot size corresponds to the proportion of cells in each cluster with detectable expression of each Y-linked gene. Y-linked genes, especially fertility factors *kl-3* and *kl-5*, are highly expressed by cluster 3/Spermatocyte.   
 
 \newpage
 
@@ -62,7 +63,7 @@ read_rds("~/work/TestisTEs2021/results/panels/figure4.rds")
 read_rds("~/work/TestisTEs2021/results/panels/figure5.rds")
 ```
 
-*Figure 5. TEP-TEs are enriched on the Y chromosome.* **A)** Boxplot showing per-megabase polymorphic insertions of TEP-TEs versus non-TEP-TEs. TEP-TEs are depleted from the X compared to other TEs. Wilcoxon rank-sum test, P = 0.029. Polymorphic insertion data is derived from TIDAL-Fly DGRP data (see Methods). **B)** A higher proportion of TEP-TE insertions are found on the Y chromosome compared to non-TEP-TEs. Chi-square test, P = 2.29e-292. To better estimate Y-linked insertions despite the incomplete Y-assembly in the reference sequence, insertions were mapped from a heterochromatin-enriched assembly (see Methods). **C)** Ratios of male and female copy number for individual TEs estimated from w1118 WGS coverage. TEP-TEs are present at higher copy number in the male genome Wilcoxon rank-sum test, P=0.0035. This indicates that on average each TEP-TE family is relatively enriched on the Y chromosome, versus non-TEP-TEs. **D)** Ratio of w1118 testis RNA-seq depth to WGS depth for each TE’s most over-expressed Y-linked allele. In comparison, the reference allele is expressed proportionately to DNA copy number (see Supplementary Figures). On average, TEP-TEs have at least one Y-linked allele that is over-expressed relative to DNA copy number, compared to non-TEP-TEs. Wilcoxon rank-sum test, P=1.7e-07. 
+*Figure 5. TEP-TEs are enriched on the Y chromosome.* **A)** A higher proportion of TEP-TE insertions are found on the Y chromosome compared to non-TEP-TEs. Chi-square test, P = 2.29e-292. To better estimate Y-linked insertions despite the incomplete Y-assembly in the reference sequence, insertions were mapped from a heterochromatin-enriched assembly (see Methods). **B)**  Ratios of male and female copy number for individual TEs estimated from w1118 WGS coverage. TEP-TEs are present at higher copy number in the male genome Wilcoxon rank-sum test, P=0.0035. **C)** Allele specific analysis of TE expression (see **Methods**) shows that Y-linked copies of TEP TEs are overexpressed relative to their DNA copy number and this overexpression is significantly larger than that of non-TEP-TEs Wilcoxon rank-sum test, P=1.7e-07.  **D)** Boxplot showing the ratios of X-linked versus autosomal polymorphic insertions for each TE in the TIDAL-fly (ref) database. TEP-TEs are depleted from the X compared to other TEs with polymorphic insertions. Wilcoxon rank-sum test, P = 0.029. **E)**  Dot plot shows expression of selected piRNA pathway genes. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker.
 
 \newpage
 
@@ -79,7 +80,7 @@ read_rds("~/work/TestisTEs2021/results/panels/supp1.rds")
 read_rds("~/work/TestisTEs2021/results/panels/supp2.rds")
 ```
 
-*Supplementary Figure 2. TE expression in scRNA.* **A)** Heatmaps show distribution of sense-strand poly-A RNA-seq signal for detected host genes (left) and detected TEs (right) in bins comprising the full length of the respective features. poly-A RNA-seq data generated by Mahadevaraju et al 2021 (see *Methods*). **B)** Boxplots show standard deviations for expression across bins for host genes (gray) and TEs (red). Three of four replicates show no significant difference in variability of poly-A signal across bins within features (Wilcoxon rank-sum test P>0.05). Replicate 3 shows a significant difference (Wilcoxon rank-sum test, P=0.039). **C)** Barplot shows number of genic fusions reproducibly found in poly-A RNA-seq data. **D)** For each TE introduced in **C**, the y-axis position of each point represents the number of uniquely-mapping chimeric reads detected by STAR that support each breakpoint (see **Methods**). **E**) Violin plots show distributions of raw TE-mapping UMI counts in each L3 *w1118* cell cluster. TE counts vary significantly among the clusters (Kruskal-Wallis, p < 2.2e-16). **F**) Violin plots show distributions of depth normalized TE-mapping UMI counts in each L3 *w1118* cell cluster. TE counts vary significantly among the clusters (Kruskal-Wallis, p < 2.2e-16).
+*Supplementary Figure 2. TE expression in scRNA.* **A**) Violin plots show distributions of raw TE-mapping UMI counts in each L3 *w1118* cell cluster. TE counts vary significantly among the clusters (Kruskal-Wallis, p < 2.2e-16). **B**) Violin plots show distributions of depth normalized TE-mapping UMI counts in each L3 *w1118* cell cluster. TE counts vary significantly among the clusters (Kruskal-Wallis, p < 2.2e-16). **C)** Heatmaps show distribution of sense-strand poly-A RNA-seq signal for detected host genes (left) and detected TEs (right) in bins comprising the full length of the respective features. poly-A RNA-seq data generated by Mahadevaraju et al 2021 (see *Methods*). **D)** Boxplots show standard deviations of expression across bins for host genes (gray) and TEs (red). Three of four replicates show no significant difference in variability of poly-A signal across bins within features (Wilcoxon rank-sum test P>0.05). Replicate 3 shows a significant difference (Wilcoxon rank-sum test, P=0.039). **E)** Bar plot shows number of genic fusions reproducibly found in poly-A RNA-seq data. **F)** For each TE introduced in **C**, the y-axis position of each point represents the number of uniquely-mapping chimeric reads detected by STAR that support each breakpoint (see **Methods**). 
 
 \newpage
 
@@ -96,34 +97,34 @@ read_rds("~/work/TestisTEs2021/results/panels/supp3.rds")
 read_rds("~/work/TestisTEs2021/results/panels/supp4.rds")
 ```
 
-*Supplementary Figure 4. Redundancy and TE content of GEPs.* **A)** Clustering of GEPs by cell usage score (mixing matrix). **B)** Clustering of GEPs by gene membership score (mixing matrix). For **A**,**BB** `1-Pearson's R` is used as a distance metric. **C)** Breakdown of specific DNA TE, LINE, and LTR TE families in GEP-27.
+*Supplementary Figure 4. Redundancy and TE content of GEPs.* **A)** Clustering of GEPs by cell usage score (mixing matrix). **B)** Clustering of GEPs by gene membership score (mixing matrix). For **A**,**B** `1-Pearson's R` is used as a distance metric. **C)** Breakdown of specific DNA TE, LINE, and LTR TE families in GEP-27.
 
 
 \newpage
 
-```{r, fig.dim=c(7,8), out.height="4in", out.width="7in", fig.align="center"}
-image_read('/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_1.split_channels.png') %>% image_ggplot()
+```{r, fig.dim=c(3.5,4), out.height="4in", out.width="7in", fig.align="center", dpi=72, dev="png"}
+image_read('/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_1.split_channels.png',strip = T, density = 200) %>% image_ggplot()
 ```
 
-*Supplementary Figure 5. ACCORD2 and EAChm expression in L3 testes.*
-Representative slice of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis. Image is split by color channel. ACCORD2 and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: QUASIMODO2; blue: DAPI. 
+*Supplementary Figure 5. _ACCORD2_ and _EAChm_ expression in L3 testes.*
+Representative slice of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis. Image is split by color channel. *ACCORD2* and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: *ACCORD2*; blue: DAPI. 
 
 \newpage
 
-```{r, fig.dim=c(7,8), out.height="5in", out.width="7in", fig.align='center'}
-image_read('/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_30.montage.slices_1_30.montage.png') %>% image_ggplot()
+```{r, fig.dim=c(3.5,4), out.height="5in", out.width="7in", fig.align='center', dev="png"}
+image_read('/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_30.montage.slices_1_30.montage.png',strip = T,density = 200) %>% image_ggplot()
 ```
 
-*Supplementary Figure 6. ACCORD2 and EAChm expression in L3 testes.* 
-Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis. ACCORD2 and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: QUASIMODO2; blue: DAPI. 
+*Supplementary Figure 6. _ACCORD2_ and _EAChm_ expression in L3 testes.* 
+Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis. ACCORD2 and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: *ACCORD2*; blue: DAPI. 
 
 \newpage
 
-```{r, fig.dim=c(7,8), out.height="5in", out.width="7in", fig.align='center'}
-image_read('/media/mlawlor/T7/microscopy_figs/210215_quasimodo2_calfluor610_eachm_quasar670_slide2_2p.slices_1_19.montage.png') %>% image_ggplot()
+```{r, fig.dim=c(3.5,4), out.height="5in", out.width="7in", fig.align='center', dev="png"}
+image_read('/media/mlawlor/T7/microscopy_figs/210215_quasimodo2_calfluor610_eachm_quasar670_slide2_2p.slices_1_19.montage.png',strip = T,density = 200) %>% image_ggplot()
 ```
 
-*Supplementary Figure 7. QUASIMODO2 and EAChm expression in L3 testes.* Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 testis. QUASIMODO2 and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: QUASIMODO2; blue: DAPI. 
+*Supplementary Figure 7. _QUASIMODO2_ and _EAChm_ expression in L3 testes.* Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar *w1118* testis. *QUASIMODO2* and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: *QUASIMODO2*; blue: DAPI. 
 
 \newpage
 
@@ -132,4 +133,4 @@ read_rds("~/work/TestisTEs2021/results/panels/supp5.rds")
 ```
 
 *Supplementary Figure 8. TEP-TEs are enriched on the Y-chromosome.* 
-**A)** Dot plot shows expression of selected effectors of spermatocyte transcriptional programs. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **B)** Bar plot shows proportion of Y chromosome genes or other genes that are assigned to the TE-enriched Program or other GEPs. Chi-square test P=1.7e-05. **C)** Scatter plot shows estimated male copies (x-axis) versus estimated female copies (y-axis) of TEP-TEs and TEs assigned to other GEPs or not assigned to a GEP. **D)** Bars represent the ratios of male to female estimated copies for the top 10 male- and female-enriched TEs. Bars are colored by membership in TEP.
+**A)** Dot plot shows expression of selected effectors of spermatocyte transcriptional programs. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **B)** Bar plot shows proportion of Y chromosome genes or other genes that are assigned to the TE-enriched Program or other GEPs. Chi-square test P=1.7e-05. **C)** Barplot shows percentage of TEP or non-TEP TEs with at least 1 linked insertion detected by RepeatMasker in the heterochromatin-enriched assembly described by Chang and Larracuente 2019. **D)** Bars represent the ratios of male to female estimated copies for the top 10 male- and female-enriched TEs. Bars are colored by membership in TEP.

@@ -21,6 +21,9 @@ message("here")
 #   theme(aspect.ratio = NULL) + facet_wrap(~gene_symbol, ncol = 1) +
 #   theme(axis.text.x = element_text(angle = 45, hjust=1, vjust=1))
 
+tep_y_at_least_1 <- read_rds("results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.ggp.rds") + 
+  theme(axis.title = element_text(size=rel(1)), axis.title.y = element_text(size=rel(1)))
+
 y_gene_enr_datalist <- read_rds("results/figs/larval_y_gene_enr/larval_y_gene_enr.ggp.rds")
 
 pval <- y_gene_enr_datalist[[2]] %>% round(.,6) %>% paste0("P=",.) %>% str_wrap(.,width = 20)
@@ -42,22 +45,27 @@ y_copies <- read_rds("results/figs/w1118_y_linked_copies/w1118_y_linked_copies.2
   theme(axis.text = element_text(size=rel(0.7)))
 
 y_copies_2 <- read_rds("results/figs/w1118_y_linked_copies/w1118_y_linked_copies.3.ggp.rds") + theme(aspect.ratio = NULL) +
-  theme(legend.position = c(0.94,0.21), legend.title = element_blank(), legend.margin = margin(1,1,1,1), legend.text = element_text(size=rel(1))) +
-  theme(axis.title.y = element_text(size=rel(0.5), margin = margin()), axis.text.y = element_text(margin = margin()))
+  theme(legend.position = "right") +
+  #theme(legend.position = c(0.94,0.21), legend.title = element_blank(), legend.margin = margin(1,1,1,1), legend.text = element_text(size=rel(1))) +
+  theme(axis.title.y = element_text(size=rel(0.5), margin = margin()), axis.text.y = element_text(margin = margin()), axis.text.x = element_text(face="italic"))
+
+y_linked_expr <- read_rds("results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.paired.ggp.rds") + 
+  theme(aspect.ratio = NULL) +
+  theme(axis.title.y = element_text(size=rel(0.5)))
 
 
 layout <-"
 AAAAA
 AAAAA
 AAAAA
-CCDDD
-CCDDD
-EEEEE
-EEEEE
+CCCDD
+CCCDD
+EEEFF
+EEEFF
 "
 
 
-p <- tpaf +  y_gene_enr + y_copies + y_copies_2 + plot_annotation(tag_levels = 'A') + 
+p <- tpaf +  y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + plot_annotation(tag_levels = 'A') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

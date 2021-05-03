@@ -126,7 +126,7 @@ g3 <- df2 %>%
   group_by(subsample, gene_id, gep, pos) %>%
   summarise(ratio = mean(ratio)) %>%
   ggplot(aes(gep, ratio)) +
-  geom_boxplot(fill="darkgray") +
+  geom_boxplot(fill="darkgray", outlier.shape = NA) +
   #geom_jitter() +
   stat_compare_means(label.y.npc = 0.7) +
   #stat_compare_means(method.args = list(alternative = "greater")) +
@@ -139,11 +139,11 @@ print(g1)
 dev.off()
 
 agg_png(snakemake@output[['png2']], width=12, height =12, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
-print(g2)
+print(g3)
 dev.off()
 
 
 saveRDS(g1,snakemake@output[['ggp']])
-saveRDS(g2,snakemake@output[['ggp2']])
+saveRDS(g3,snakemake@output[['ggp2']])
 
 write_tsv(df2,snakemake@output[['dat']])

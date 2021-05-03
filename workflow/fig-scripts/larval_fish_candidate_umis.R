@@ -90,8 +90,8 @@ g <- tep_te_expr_df %>%
   left_join(collect(w1118.obs), by=c(index='X1',clusters='clusters')) %>%
   left_join(rename.table) %>%
   filter(gene_id %in% c("QUASIMODO2","ACCORD2","FBgn0036470")) %>%
-  mutate(gene_id = ifelse(gene_id == "FBgn0036470", "*EAChm*",gene_id)) %>%
-  mutate(gene_id=fct_relevel(gene_id, "QUASIMODO2","ACCORD2","*EAChm*")) %>%
+  mutate(gene_id = ifelse(gene_id == "FBgn0036470", "EAChm",gene_id)) %>%
+  mutate(gene_id=fct_relevel(gene_id, "QUASIMODO2","ACCORD2","EAChm")) %>%
   ggplot(aes(clusters.rename, expression, fill=clusters.rename)) +
   geom_violin(scale = "width") +
   scale_fill_gte21() +
