@@ -82,7 +82,8 @@ rule supp3:
     input:
         rules.larval_cica_grid_heatmap.output,
         rules.larval_gep_size_histogram.output,
-        rules.all_dataset_tep_scores.output
+        rules.all_dataset_tep_scores.output,
+        rules.larval_ica_optimized_enr.output
     output:
         "results/panels/supp3.pdf",
         "results/panels/supp3.rds"

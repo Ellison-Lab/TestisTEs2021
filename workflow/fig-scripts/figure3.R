@@ -27,13 +27,13 @@ piech <- read_rds('results/figs/larval_tep_pie/larval_tep_pie.ggp.rds') +
 
 
 layout <-"
-AAAAAABBBB
-AAAAAACCC#
-AAAAAACCC#
+AAAACCCCCC
+BBB#CCCCCC
+BBB#CCCCCC
 "
 
 
-p <- umap + barch + piech +
+p <- barch + piech + umap + 
   plot_annotation(tag_levels = 'A', theme=theme(plot.caption = element_text(hjust=0, family="Arial"))) +
   plot_layout(design = layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))

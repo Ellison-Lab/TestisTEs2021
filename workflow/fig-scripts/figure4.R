@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggtext)
 library(patchwork)
 library(magick)
+library(ggforce)
 
 extrafont::loadfonts()
 
@@ -14,6 +15,12 @@ tes <- read_rds("results/figs/larval_fish_candidate_umis/larval_fish_candidate_u
 
 ph <- image_read("/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4-2.slices_1_1.representative.png") %>% image_ggplot()
 
+ph <- ph + geom_ellipse(aes(x0=1650, y0=1950, a=1550,b=1950, angle=pi*0.9), linetype=2, color="white")
+
+ph <- ph + 
+  annotate("text",300,3950, label="DAPI", color="blue") + 
+  annotate("text",1700,3950, label="EAChm", color="red") + 
+  annotate("text",3400,3950, label="ACCORD2", color="green")
 
 layout <-"
 AAABBBB
@@ -22,7 +29,6 @@ AAABBBB
 CCCBBBB
 CCCBBBB
 "
-
 
 p <- tes + y_genes + ph + 
   plot_annotation(tag_levels = 'A', theme=theme(plot.caption = element_text(hjust=0))) +

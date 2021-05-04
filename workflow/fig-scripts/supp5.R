@@ -15,11 +15,16 @@ tpaf <- read_rds("results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.
   guides(size=guide_legend(title="Prop. expressing")) +
   theme(axis.text.x = element_text(angle = 45, hjust=1, vjust=1))
   
-message("here")
-
 # late_sperm <- read_rds("results/figs/larval_later_sperm_marker_umis/larval_later_sperm_marker_umis.ggp.rds") + 
 #   theme(aspect.ratio = NULL) + facet_wrap(~gene_symbol, ncol = 1) +
 #   theme(axis.text.x = element_text(angle = 45, hjust=1, vjust=1))
+
+enr <- read_rds("results/figs/larval_tep_go_enrichment/larval_tep_go_enrichment.ggp.rds") + 
+  theme(axis.title.x = element_text(size=rel(0.5)), aspect.ratio = NULL) +
+  #scale_y_discrete(position = "right", label = function(x) str_trunc(x, 25)) +
+  theme(axis.text.y = element_blank(), axis.ticks.y=element_blank()) +
+  geom_text(aes(x=0.25, label=Term), size=rel(2), hjust=0)
+
 
 tep_y_at_least_1 <- read_rds("results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.ggp.rds") + 
   theme(axis.title = element_text(size=rel(1)), axis.title.y = element_text(size=rel(1)))
@@ -58,14 +63,16 @@ layout <-"
 AAAAA
 AAAAA
 AAAAA
-CCCDD
-CCCDD
+BBBCC
+BBBCC
+BBBDD
+BBBDD
 EEEFF
 EEEFF
 "
 
 
-p <- tpaf +  y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + plot_annotation(tag_levels = 'A') + 
+p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + plot_annotation(tag_levels = 'A') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

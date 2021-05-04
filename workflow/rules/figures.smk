@@ -166,6 +166,17 @@ rule larval_tep_go_enrichment:
     script:
         "../fig-scripts/larval_tep_go_enrichment.R"
 
+rule larval_ica_optimized_enr:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_ica_optimized_enr/larval_ica_optimized_enr.png",
+        ggp = "results/figs/larval_ica_optimized_enr/larval_ica_optimized_enr.ggp.rds",
+        dat = "results/figs/larval_ica_optimized_enr/larval_ica_optimized_enr.dat.tsv"
+    script:
+        "../fig-scripts/larval_ica_optimized_enr.R"
+
 rule larval_gep_corr_heatmap:
     input:
         FINAL_DATASETS_FILES,
@@ -194,9 +205,7 @@ rule larval_y_gene_dotplot:
     output:
         png = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.png",
         png2 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.png",
-        png3 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.png",
         ggp = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds",
-        ggp_eachm = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.ggp.rds",
         ggp_tpaf = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.ggp.rds",
         dat = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.dat.tsv"
     script:

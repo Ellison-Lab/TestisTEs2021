@@ -18,7 +18,7 @@ w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format
 ylinked <- unique(gtf %>% filter(seqnames == 'Y' & type == 'mRNA') %>% pull(gene_symbol)) %>%
   tibble(gene_symbol = ., group='y-linked')
 
-tmac <- c('aly','wuc','tomb') %>% tibble(gene_symbol = ., group='tMAC')
+tmac <- c('aly','wuc','tomb',"kmg") %>% tibble(gene_symbol = ., group='tMAC')
 ttaf <- c('sa','nht','mia','can','Taf12L') %>% tibble(gene_symbol = ., group='tTAF')
 tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
 tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
@@ -58,7 +58,7 @@ g <- dat2 %>%
 
 
 g2 <-  dat2 %>%
-  filter(group %in% c("tBRD","tPAF","tTAF")) %>%
+  filter(group %in% c("tBRD","tPAF","tTAF","tMAC")) %>%
   ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_fermenter(palette = 8, direction = 1, name='mean(log-norm UMIs)', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
@@ -70,18 +70,6 @@ g2 <-  dat2 %>%
   coord_flip() +
   xlab('') + ylab('')
 
-g3 <-  dat %>%
-  left_join(male.meiosis1.associated) %>%
-  filter(group %in% c("TEP-HI")) %>%
-  ggplot(aes(clusters.rename, expression, fill=clusters.rename)) +
-  geom_violin(scale = "width") +
-  scale_fill_gte21() +
-  theme_gte21()  +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
-  theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
-  xlab('') + ylab('') +
-  ylab('EAChm log1p(Normalized UMIs)') + xlab('') +guides(fill=F)
-
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g)
 dev.off()
@@ -90,11 +78,7 @@ agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling 
 print(g2)
 dev.off()
 
-agg_png(snakemake@output[['png3']], width=19, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
-print(g3)
-dev.off()
 
 saveRDS(g,snakemake@output[['ggp']])
 saveRDS(g2,snakemake@output[['ggp_tpaf']])
-saveRDS(g3,snakemake@output[['ggp_eachm']])
 write_tsv(dat2,snakemake@output[['dat']])

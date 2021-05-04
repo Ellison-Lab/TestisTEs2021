@@ -29,7 +29,8 @@ df <- w1118.gep_enr %>%
   filter(cluster == tep.name) %>%
   group_by(ont) %>%
   slice_max(score, n=10) %>%
-  mutate(rnk = dense_rank(score))
+  mutate(rnk = dense_rank(score)) %>%
+  filter(ont == "MF")
 
 g <-  df %>%
   ggplot(aes(score, reorder(Term, rnk))) +
