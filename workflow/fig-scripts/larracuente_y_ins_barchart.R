@@ -4,6 +4,8 @@ library(ragg)
 library(GenomicRanges)
 library(jsonlite)
 
+source("workflow/fig-scripts/theme.R")
+
 te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
@@ -60,20 +62,41 @@ df <- hetchrom.ins.5 %>%
   group_by(GEP) %>%
   mutate(percent = n/sum(n))
 
-g <-ggplot(df, aes(GEP,percent,fill=chrom)) +
+g <- df %>% 
+  mutate(GEP=as.factor(GEP)) %>%
+  mutate(GEP = fct_relevel(GEP,"TEP","other")) %>%
+  ggplot(aes(GEP,percent,fill=chrom)) +
   geom_col(color='white') +
-  theme_classic() +
+  theme_gte21() +
+  scale_fill_gte21("binary",reverse = T) +
   theme(aspect.ratio = 1) +
-  xlab('insertions') +
-  scale_y_continuous(expand=c(0,0)) +
-  scale_fill_viridis_d(option = 'C',direction = -1)
+  ylab('Insertion percentage') +
+  scale_y_continuous(labels = scales::percent)
+
+
+g2 <- hetchrom.ins.5 %>%
+  group_by(GEP, merged_te) %>%
+  summarise(has.y.linked = any(chrom == "Y"), .groups = "drop_last") %>%
+  summarise(pct.has.y = sum(has.y.linked)/n()) %>%
+  ggplot(aes(GEP,pct.has.y)) +
+  geom_col(color='white') +
+  theme_gte21() +
+  ylab('At least 1 Y insertion') +
+  scale_y_continuous(labels = scales::percent)
+  
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)
 dev.off()
 
+agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
+print(g2)
+dev.off()
+
 saveRDS(g,snakemake@output[['ggp']])
-write_tsv(df,snakemake@output[['dat']])
+saveRDS(g2,snakemake@output[['ggp2']])
+
+write_tsv(hetchrom.ins.5,snakemake@output[['dat']])
 
 
 run_chisq_y <- function(top_tes,other_tes) {

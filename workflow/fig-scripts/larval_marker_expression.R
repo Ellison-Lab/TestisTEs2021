@@ -2,6 +2,8 @@ library(tidyverse)
 library(arrow)
 library(ragg)
 
+source("workflow/fig-scripts/theme.R")
+
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
   mutate(clusters.rename = fct_reorder(clusters.rename,as.numeric(str_extract(clusters.rename,"\\d+")))) %>%
   arrange(clusters.rename)
@@ -35,13 +37,10 @@ dat2 <- dat %>%
 
 g <- ggplot(dat2, aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
-  scale_fill_fermenter(palette = 8, direction = 1, name='mean Log1p normalized UMIs', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  scale_size(range=c(0, rel(5)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  theme_minimal()  +
-  theme(legend.position = 'bottom') +
-  theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  theme(axis.text.y = element_text(size=rel(1.2),)) +
-  theme(aspect.ratio = 2, legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  scale_fill_gte21(palette = "diverging", discrete = F, name = "Mean expression") +
+  scale_size(range=c(0, rel(5)), name='Proportion expressing') +
+  theme_gte21() +
+  theme(axis.text.x = element_text(angle=90, hjust=1, size=rel(0.8))) +
   coord_flip() +
   xlab('') + ylab('')
 

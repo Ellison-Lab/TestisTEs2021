@@ -3,11 +3,13 @@ library(arrow)
 library(ragg)
 library(jsonlite)
 
+source("workflow/fig-scripts/theme.R")
+
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
+
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
 
 te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
-
 
 tep.name <- w1118.gep_membership %>%
   filter(qval < optimal_ica[['qval']]) %>%
@@ -28,13 +30,11 @@ df <- w1118.gep_membership %>%
   group_by(module) %>% tally()
 
 g <- ggplot(df, aes(n)) +
-  geom_histogram(aes(fill=..count..), color='black') +
-  theme_classic() +
-  scale_y_continuous(expand = c(0,0)) +
-  scale_fill_fermenter(direction = 1, palette = 13) +
+  geom_histogram(color='black') +
+  theme_gte21() +
+  scale_y_continuous(expand = expand_scale(mult = c(0,0), add = c(0,1))) +
   theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0)) +
   xlab('module sizes')
-
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

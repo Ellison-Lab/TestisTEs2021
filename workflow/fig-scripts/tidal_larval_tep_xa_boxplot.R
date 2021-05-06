@@ -1,18 +1,24 @@
 library(tidyverse)
 library(arrow)
 library(ragg)
+library(ggpubr)
+
+
+source("workflow/fig-scripts/theme.R")
 
 df <-  open_dataset("results/finalized/larval-w1118-testes/xa_ratio/", format='arrow') %>% collect() %>% 
   filter(comparison=='chrX_Auto_ratio') %>%
   mutate(GEP = fct_relevel(GEP,c("TEP","other")))
 
 g <- ggplot(df, aes(GEP,ratio), fill='white') +
-  stat_boxplot(outlier.shape=NA, aes(fill=GEP)) +
-  ggpubr::stat_compare_means(aes(label = paste("p =",..p.format..)),method = 'wilcox.test',paired = F, size=rel(3)) +
-  theme_classic() + 
+  stat_boxplot(outlier.shape=NA, fill="darkgray") +
+  ggpubr::stat_compare_means(method = 'wilcox.test',paired = F, size=rel(4),label.y = 2.5, label.x=1) +
+  theme_gte21() + 
   theme(aspect.ratio = 1) +
   ylab('X/A (insertions per mb)') +
-  scale_fill_brewer(type='qual', name='GEP')
+  #scale_fill_brewer(type='qual', name='GEP') +
+  coord_cartesian(ylim=c(0,3)) +
+  theme(axis.title.x = element_blank())
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g)

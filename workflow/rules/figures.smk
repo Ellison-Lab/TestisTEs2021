@@ -67,9 +67,9 @@ rule larval_raw_te_umis:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output
     output:
-        png = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.png",
-        ggp = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.ggp.rds",
-        dat = "results/figs/larval_normalized_te_umis/larval_raw_te_umis.dat.tsv"
+        png = "results/figs/larval_raw_te_umis/larval_raw_te_umis.png",
+        ggp = "results/figs/larval_raw_te_umis/larval_raw_te_umis.ggp.rds",
+        dat = "results/figs/larval_raw_te_umis/larval_raw_te_umis.dat.tsv"
     script:
         "../fig-scripts/larval_raw_te_umis.R"
 
@@ -166,6 +166,17 @@ rule larval_tep_go_enrichment:
     script:
         "../fig-scripts/larval_tep_go_enrichment.R"
 
+rule larval_ica_optimized_enr:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/larval_ica_optimized_enr/larval_ica_optimized_enr.png",
+        ggp = "results/figs/larval_ica_optimized_enr/larval_ica_optimized_enr.ggp.rds",
+        dat = "results/figs/larval_ica_optimized_enr/larval_ica_optimized_enr.dat.tsv"
+    script:
+        "../fig-scripts/larval_ica_optimized_enr.R"
+
 rule larval_gep_corr_heatmap:
     input:
         FINAL_DATASETS_FILES,
@@ -194,8 +205,8 @@ rule larval_y_gene_dotplot:
     output:
         png = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.png",
         png2 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.png",
-        png3 = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.eachm.png",
         ggp = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds",
+        ggp_tpaf = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.ggp.rds",
         dat = "results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.dat.tsv"
     script:
         "../fig-scripts/larval_y_gene_dotplot.R"
@@ -229,6 +240,8 @@ rule larracuente_y_ins_barchart:
     output:
         png = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.png",
         ggp = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.ggp.rds",
+        png2 = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.png",
+        ggp2 = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.ggp.rds",
         dat = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.dat.tsv"
     script:
         "../fig-scripts/larracuente_y_ins_barchart.R"
@@ -297,6 +310,8 @@ rule comparison_with_mahadevaraju:
     output:
         png = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.png",
         ggp = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.ggp.rds",
+        png2 = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.n_cells.png",
+        ggp2 = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.n_cells.ggp.rds",
         dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv"
     script:
         "../fig-scripts/comparison_with_mahadevaraju.R"
@@ -322,8 +337,24 @@ rule larval_scrna_basic_qc_stats:
     script:
         "../fig-scripts/larval_scrna_basic_qc_stats.R"
 
+rule all_dataset_tep_scores:
+    input:
+        rules.collect_mod_scores.output
+    output:
+        png_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.png",
+        ggp_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.ggp.rds",
+        dat_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.dat.tsv",
+    script:
+        "../fig-scripts/all_dataset_tep_scores.R"
 
-
+rule chimerics:
+    output:
+        png = "results/figs/chimerics/chimerics.png",
+        ggp = "results/figs/chimerics/chimerics.ggp.rds",
+        png2 = "results/figs/chimerics/chimerics.supporting_reads.png",
+        ggp2 = "results/figs/chimerics/chimerics.supporting_reads.ggp.rds",
+    script:
+        "../fig-scripts/chimerics.R"
 
 #
 # rule larval_chromatin_mod_umap:

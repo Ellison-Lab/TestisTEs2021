@@ -3,6 +3,8 @@ library(readxl)
 library(arrow)
 library(ragg)
 
+source("workflow/fig-scripts/theme.R")
+
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv')
 
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
@@ -14,59 +16,58 @@ w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='a
 obs <- w1118.obs %>% collect() %>%
   left_join(rename.table)
 
-
 obs <- obs %>% dplyr::select(X1, batch, doublet_score, n_genes, log1p_total_counts, percent_mito, phase, clusters.rename)
 
 g.dubs <- obs %>%
   ggplot(aes(clusters.rename, doublet_score, fill=clusters.rename)) +
   geom_violin() +
-  theme_classic() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1)) +
-  scale_fill_brewer(type='qual', palette = 3) +
+  theme_gte21() +
+  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1, vjust=1)) +
+  scale_fill_gte21() +
   guides(fill=F) +
   xlab("") + ylab('Scrublet score (post-filtering)')
 
 g.batch <- obs %>%
   ggplot(aes(clusters.rename, fill=batch)) +
   geom_bar(position='stack') +
-  theme_classic() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1)) +
+  theme_gte21() +
+  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1, vjust=1)) +
   scale_fill_brewer(type='qual', palette = 3) +
   xlab("") + ylab('N cells')
 
 g.n_genes <- obs %>%
   ggplot(aes(clusters.rename, n_genes, fill=clusters.rename)) +
   geom_violin() +
-  theme_classic() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1)) +
-  scale_fill_brewer(type='qual', palette = 3) +
+  theme_gte21() +
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1)) +
+  scale_fill_gte21() +
   guides(fill=F) +
   xlab("") + ylab('detected genes')
 
 g.log1p_umis <- obs %>%
   ggplot(aes(clusters.rename, log1p_total_counts, fill=clusters.rename)) +
   geom_violin() +
-  theme_classic() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1)) +
-  scale_fill_brewer(type='qual', palette = 3) +
+  theme_gte21() +
+  theme(axis.text.x = element_text(angle=45, hjust=1,vjust=1)) +
+  scale_fill_gte21() +
   guides(fill=F) +
   xlab("") + ylab('log1p(UMIs)')
 
 g.percent_mito <- obs %>%
   ggplot(aes(clusters.rename, percent_mito, fill=clusters.rename)) +
   geom_violin() +
-  theme_classic() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1)) +
-  scale_fill_brewer(type='qual', palette = 3) +
+  theme_gte21() +
+  theme(axis.text.x = element_text(angle=45, hjust=1,vjust=1)) +
+  scale_fill_gte21() +
   scale_y_continuous(labels=scales::percent) +
   guides(fill=F) +
-  xlab("") + ylab('% Mitochondrial gene UMIs (post-filtering)')
+  xlab("") + ylab('% Mitochondrial gene UMIs (post-filtering)') 
 
 g.phase <- obs %>%
   ggplot(aes(clusters.rename, fill=phase)) +
   geom_bar(position='stack') +
-  theme_classic() +
-  theme(aspect.ratio = 0.5, axis.text.x = element_text(angle=45, hjust=1)) +
+  theme_gte21() +
+  theme(axis.text.x = element_text(angle=45, hjust=1,vjust=1)) +
   scale_fill_brewer(type='qual', palette = 3) +
   xlab("") + ylab('N cells')
 

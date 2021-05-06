@@ -1,20 +1,42 @@
 library(tidyverse)
-
+library(ggtext)
 library(patchwork)
+library(magick)
+library(ggforce)
 
-y_genes <- read_rds('results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds')
+extrafont::loadfonts()
 
-late_sperm <- read_rds("results/figs/larval_later_sperm_marker_umis/larval_later_sperm_marker_umis.ggp.rds")
+y_genes <- read_rds('results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds') +
+  theme(aspect.ratio = NULL, strip.text = element_blank())
 
-ph <- ggplot() +
-  annotate(geom='text', x=2, y=2, label = "RNA-FISH") +
-  theme_void() +
-  theme(panel.border = element_rect(color='black', fill=NA, size=5))
+tes <- read_rds("results/figs/larval_fish_candidate_umis/larval_fish_candidate_umis.ggp.rds") +
+  theme(axis.title.y=element_text(size=rel(0.5))) +
+  theme(strip.text = element_text(face="italic"))
 
-p <- y_genes + late_sperm + ph + plot_annotation(tag_levels = 'A', theme=theme(plot.caption = element_text(hjust=0)))
+ph <- image_read("/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4-2.slices_1_1.representative.png") %>% image_ggplot()
+
+ph <- ph + geom_ellipse(aes(x0=1650, y0=1950, a=1550,b=1950, angle=pi*0.9), linetype=2, color="white")
+
+ph <- ph + 
+  annotate("text",300,3950, label="DAPI", color="blue") + 
+  annotate("text",1700,3950, label="EAChm", color="red") + 
+  annotate("text",3400,3950, label="ACCORD2", color="green")
+
+layout <-"
+AAABBBB
+AAABBBB
+AAABBBB
+CCCBBBB
+CCCBBBB
+"
+
+p <- tes + y_genes + ph + 
+  plot_annotation(tag_levels = 'A', theme=theme(plot.caption = element_text(hjust=0))) +
+  plot_layout(design = layout) &
+  theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 
 
-ggsave(snakemake@output[[1]], p, width = 10, height = 5, scale = 2)
+ggsave(snakemake@output[[1]], p, width = 10, height = 10)
 
-
+saveRDS(p,file=snakemake@output[[2]])
 

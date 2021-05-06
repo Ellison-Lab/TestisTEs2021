@@ -2,6 +2,9 @@ library(tidyverse)
 library(arrow)
 library(ragg)
 library(jsonlite)
+library(ggrepel)
+
+source("workflow/fig-scripts/theme.R")
 
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
 
@@ -9,11 +12,12 @@ rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
   mutate(clusters.rename = fct_reorder(clusters.rename,as.numeric(str_extract(clusters.rename,"\\d+")))) %>%
   arrange(clusters.rename)
 
-te.lookup <- read_tsv('~/work/TestisTpn/data/te_id_lookup.curated.tsv.txt')
-
+te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
 w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='arrow')
+
 w1118.gep_usage <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_usage/", format='arrow')
+
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
 
 tep.name <- w1118.gep_membership %>%
@@ -57,11 +61,10 @@ umap_labs <- w1118.obs %>%
 
 g <-  ggplot(df, aes(X_umap1,X_umap2)) +
   geom_point(size=0.75, aes(color=usage)) +
-  scale_color_gradient2(low='steelblue', mid='lightgray',high='tomato', midpoint = 0.04) +
-  theme_classic() +
-  coord_fixed()  +
-  geom_text(data=umap_labs, aes(x + sign(5-x) *2, y, label=clusters.rename), face='bold', size=rel(3)) +
-  theme(aspect.ratio = 1) +
+  theme_gte21() +
+  scale_color_gte21(palette = "diverging", discrete = F,name=str_wrap("Module score",width = 1)) +
+  coord_fixed() +
+  geom_text_repel(data=umap_labs, aes(x + sign(5-x) * 3, y, label=clusters.rename), face='bold', size=rel(4)) +
   xlab("UMAP1") + ylab("UMAP2")
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')

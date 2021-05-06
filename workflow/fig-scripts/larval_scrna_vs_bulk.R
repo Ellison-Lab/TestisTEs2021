@@ -4,9 +4,10 @@ library(ggpointdensity)
 library(arrow)
 library(ragg)
 
+source("workflow/fig-scripts/theme.R")
+
 combine_transposon_bits <- function(tnm,mat) {
   raw_tn <- tnm[str_detect(tnm,"-I") | str_detect(tnm,"-LTR") | str_detect(tnm,"_I") | str_detect(tnm,"_LTR")]
-  
   
   summed_mat <- raw_tn %>% 
     split(.,str_extract(.,regex("[[:alnum:]]+(?=[-_])"))) %>%
@@ -33,13 +34,12 @@ combine_transposon_bits <- function(tnm,mat) {
   rbind(mat[!rownames(mat) %in% raw_tn,],summed_mat)
 }
 
-
 larv_bulk_01 <- read_tsv("results/finalized/larval-polya/larval_testes_cleaned_papain_01.tsv")
 larv_bulk_02 <- read_tsv("results/finalized/larval-polya/larval_testes_papain_02.tsv")
 larv_bulk_03 <- read_tsv("results/finalized/larval-polya/larval_testes_papain_03.tsv")
 larv_bulk_04 <- read_tsv("results/finalized/larval-polya/larval_testes_papain_04.tsv")
 
-larv_bulk <- bind_rows(list(larv_bulk_01, larv_bulk_02, larv_bulk_03, larv_bulk_04), .id="replicate") %>%
+larv_bulk <- bind_rows(list(`bulk rep 1`=larv_bulk_01, `bulk rep 2`=larv_bulk_02, `bulk rep 3`=larv_bulk_03, `bulk rep 4` =larv_bulk_04), .id="replicate") %>%
   gather(logic, count, -replicate, -gene_id)
 
 larv_bulk <- filter(larv_bulk , 
@@ -66,7 +66,6 @@ pseudobulk <- open_dataset("results/finalized/larval-w1118-testes/expr/", format
   group_by(gene_id) %>%
   summarize(scRNA = sum(scRNA))
 
-
 df <- full_join(larv_bulk, pseudobulk, by="gene_id")
 
 df <- df %>%
@@ -82,9 +81,9 @@ g1 <- ggplot(df,aes(scRNA,bulk)) +
   geom_pointdensity()+
   stat_cor(label.sep = "\n", method='spearman') +
   #guides(color=F) +
-  theme_classic() +
+  theme_gte21() +
   theme(aspect.ratio = 1) +
-  scale_color_distiller(type = 'seq', palette = 4)
+  scale_color_gte21("diverging", discrete = F, limits = c(0,500), oob=scales::squish, name="Density")
 
 g2 <- df %>%
   filter(!str_detect(gene_id,"FBgn")) %>%
@@ -93,8 +92,9 @@ ggplot(aes(scRNA,bulk)) +
   geom_point(color='red') +
   stat_cor(label.sep = "\n", method='spearman') +
   #guides(color=F) +
-  theme_classic() +
-  theme(aspect.ratio = 1)
+  theme_gte21() +
+  theme(aspect.ratio = 1) +
+  scale_color_gte21("diverging", discrete = F, limits = c(0,500), oob=scales::squish, name="Density")
 
 
 agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')

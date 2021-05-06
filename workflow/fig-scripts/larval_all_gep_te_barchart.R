@@ -3,6 +3,8 @@ library(arrow)
 library(ragg)
 library(jsonlite)
 
+source("workflow/fig-scripts/theme.R")
+
 optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
 
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
@@ -20,18 +22,23 @@ df <- w1118.gep_membership %>%
   group_by(module) %>%
   mutate(n_tes=n()) %>%
   filter(n_tes > 1) %>%
-  mutate(repClass=replace_na(repClass,replace = 'other')) %>%
-  mutate(module=paste0("GEP-",module))
+  mutate(repClass=replace_na(repClass,replace = 'other')) #%>%
+  #mutate(module=paste0("GEP-",module))
 
   
 g <-  ggplot(df, aes(reorder(module, n_tes), fill=repClass)) +
   geom_bar(position='stack') +
-  scale_fill_brewer(type='qual',palette=6, name='') +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle=90, hjust = 1, vjust=0.5)) +
-  #theme(aspect.ratio = 0.3,legend.position = 'bottom', axis.text.x = element_text(angle=45, hjust=90, vjust=0.5)) +
-  xlab("") + ylab('N') +
-  scale_y_continuous(expand=c(0,0))
+  scale_fill_brewer(type='qual',palette=6, name="TE class") +
+  theme_gte21() +
+  xlab("") + ylab('N')
+
+
+df %>% group_by(module, repClass) %>%
+  summarise(count=n()) %>%
+  group_by(module) %>%
+  mutate(pct = count/sum(count)) %>%
+  filter(module==27)
+
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

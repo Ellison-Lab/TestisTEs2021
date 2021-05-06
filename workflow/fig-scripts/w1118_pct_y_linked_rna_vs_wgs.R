@@ -6,6 +6,8 @@ library(jsonlite)
 library(ragg)
 library(VariantAnnotation)
 
+source("workflow/fig-scripts/theme.R")
+
 snps <- readVcfAsVRanges("results/finalized/wgs/w1118_male/snps.vcf") %>% as_tibble()
 
 allele.lookup <- snps %>%
@@ -64,7 +66,7 @@ df <- df %>%
 df <- te.lookup %>% dplyr::select(merged_te, gene_id) %>% distinct() %>%
   right_join(df, by=c(gene_id = 'seqnames')) %>%
   complete(gene_id, subsample) %>%
-  mutate(gep=ifelse(gene_id %in% tep_tes,'tep','other')) %>%
+  mutate(gep=ifelse(gene_id %in% tep_tes,'TEP','other')) %>%
   filter(!str_detect(gene_id,'[-_]LTR'))
 
 # get absolute depths at each pos and pct for each allele at each pos
@@ -95,44 +97,53 @@ df2 <- df %>%
   group_by(subsample, gene_id, pos, sex) %>%
   slice_max(ratio, n=1, with_ties = F) %>%
   ungroup() %>%
-  mutate(gep = fct_relevel(gep, c("tep","other")))
+  mutate(gep = fct_relevel(gep, c("TEP","other")))
 
 g1 <- df2 %>% 
   filter(sex == "male") %>% 
   group_by(subsample, gene_id, gep, pos) %>%
   summarise(ratio = mean(ratio)) %>%
   ggplot(aes(gep, ratio)) +
-  geom_boxplot(aes(fill=gep)) +
+  geom_boxplot(fill="darkgray", outlier.shape = NA) +
   #geom_jitter() +
-  stat_compare_means(label.y.npc = 0.7) +
+  stat_compare_means(label.y.npc = 0.9) +
   #stat_compare_means(method.args = list(alternative = "greater")) +
-  theme_classic() +
-  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
-  geom_hline(yintercept = 1) +
-  scale_fill_brewer(type='qual', name='GEP')
+  theme_gte21() +
+  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('')
+  guides(fill=F)
 
 g2 <- ggplot(df2, aes(gep, ratio)) +
   geom_boxplot(aes(fill=sex)) +
   #geom_jitter() +
   stat_compare_means(label.y.npc = 0.7) +
-  #stat_compare_means(method.args = list(alternative = "greater")) +
-  theme_classic() +
+  theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
-  geom_hline(yintercept = 1) +
-  scale_fill_brewer(type='qual', name='GEP') +
+  scale_fill_brewer(type='qual', name='Variant class') +
   facet_grid(sex~subsample)
 
+g3 <- df2 %>% 
+  filter(sex != "male") %>% 
+  group_by(subsample, gene_id, gep, pos) %>%
+  summarise(ratio = mean(ratio)) %>%
+  ggplot(aes(gep, ratio)) +
+  geom_boxplot(fill="darkgray", outlier.shape = NA) +
+  #geom_jitter() +
+  stat_compare_means(label.y.npc = 0.7) +
+  #stat_compare_means(method.args = list(alternative = "greater")) +
+  theme_gte21() +
+  theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
+  scale_fill_brewer(type='qual', name='GEP')
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g1)
 dev.off()
 
 agg_png(snakemake@output[['png2']], width=12, height =12, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
-print(g2)
+print(g3)
 dev.off()
 
 
 saveRDS(g1,snakemake@output[['ggp']])
-saveRDS(g2,snakemake@output[['ggp2']])
+saveRDS(g3,snakemake@output[['ggp2']])
 
 write_tsv(df2,snakemake@output[['dat']])
