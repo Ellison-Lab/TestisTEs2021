@@ -26,11 +26,15 @@ tes <- geps %>%
 
 tes.no_ltrs <- tes[!str_detect(tes,'[-_]LTR')]
 
-genes_gr <- gtf %>% filter(str_detect(gene_id,"FBgn") & type == "mRNA") %>%
-  split(.$gene_id) %>%
-  map(GRanges) %>%
-  map(GenomicRanges::reduce) %>%
-  GRangesList() %>% unlist()
+genes_gr <- gtf %>% 
+  filter(seqnames!=transcript_id) %>%
+  group_by(gene_id) %>%
+  filter(length(unique(transcript_id))==1) %>%
+  filter(str_detect(gene_id,"FBgn") & ("mRNA" %in% type)) %>%
+  filter(type == "mRNA") %>%
+  GRanges()
+
+names(genes_gr) <- genes_gr$gene_id
 
 tes_gr <- gtf %>% filter(gene_id %in% tes.no_ltrs) %>% GRanges()
 
@@ -42,14 +46,14 @@ gr <- gr %>% tile(width=50) %>% unlist()
 
 gr$gene_symbol <- names(gr) %>% str_extract(".+(?=\\.)")
 
-bws_fw <- Sys.glob('~/amarel-scratch/TE-proj-reorg/gte21-chimeric-rnaseq/results/bigwigs/larval_testes_*.strand-forward.rpkm.bw') %>%
+bws_fw <- Sys.glob('results/finalized/bigwigs/polya-rna/larval_testes_*.strand-forward.rpkm.bw') %>%
   set_names(.,str_extract(.,'(?<=bigwigs\\/).+(?=\\.strand-)')) %>%
   map(import, which=gr) %>%
   map_df(as_tibble, .id='replicate') %>%
   mutate_if(is.factor,as.character) %>%
   mutate(strand = "-")
 
-bws_rev <- Sys.glob('~/amarel-scratch/TE-proj-reorg/gte21-chimeric-rnaseq/results/bigwigs/larval_testes_*.strand-reverse.rpkm.bw') %>%
+bws_rev <- Sys.glob('results/finalized/bigwigs/polya-rna/larval_testes_*.strand-reverse.rpkm.bw') %>%
   set_names(.,str_extract(.,'(?<=bigwigs\\/).+(?=\\.strand-)')) %>%
   map(import, which=gr) %>%
   map_df(as_tibble, .id='replicate') %>%
