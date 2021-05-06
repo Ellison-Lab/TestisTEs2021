@@ -208,6 +208,17 @@ rule copy_total_rna_te_bws:
         cp {input} results/finalized/bigwigs/total-rna/
         """
 
+rule copy_polya_rna_bws:
+    input:
+        larval_polya(expand("results/bigwigs/{s}.strand-{t}.rpkm.bw",s=['larval_testes_cleaned_papain_01','larval_testes_papain_02','larval_testes_papain_03','larval_testes_papain_04'],t=['forward','reverse']))
+    output:
+        expand("results/finalized/bigwigs/polya-rna/{s}.strand-{t}.rpkm.bw",s=['larval_testes_cleaned_papain_01','larval_testes_papain_02','larval_testes_papain_03','larval_testes_papain_04'],t=['forward','reverse'])
+    shell:
+        """
+        cp {input} results/finalized/bigwigs/polya-rna/
+        """
+
+
 rule collect_larval_polya_expr:
     input:
         larval_polya("results/star/{larval_polya_sample}/")

@@ -111,6 +111,7 @@ FINAL_DATASETS_FILES = expand("results/finalized/{g}/{d}",g="larval-w1118-testes
 FINAL_DATASETS_FILES += expand("results/finalized/larval-polya/{l}.tsv",l=["larval_testes_cleaned_papain_01","larval_testes_papain_02","larval_testes_papain_03","larval_testes_papain_04"])
 FINAL_DATASETS_FILES += expand("results/finalized/optimal-gep-params/{g}.json",g=config.get('SCRNA_GROUPS'))
 FINAL_DATASETS_FILES += expand("results/finalized/bigwigs/total-rna/{s}.{sub}.tes.strand-{t}.rpkm.bw",s=['w1118_testes'],sub=['rep1','rep2','rep3','rep4'],t=['forward','reverse'])
+FINAL_DATASETS_FILES += expand("results/finalized/bigwigs/polya-rna/{s}.strand-{t}.rpkm.bw",s=['larval_testes_cleaned_papain_01','larval_testes_papain_02','larval_testes_papain_03','larval_testes_papain_04'],t=['forward','reverse'])
 FINAL_DATASETS_FILES += ["results/finalized/wgs/w1118_male/snps.vcf"]
 
 rule all:
