@@ -13,7 +13,7 @@ tpaf <- read_rds("results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.tpaf.
   theme(legend.position = "right", legend.box = "vertical", legend.direction = "vertical") +
   guides(fill=guide_legend(title="log-norm UMIs")) +
   guides(size=guide_legend(title="Prop. expressing")) +
-  theme(axis.text.x = element_text(angle = 45, hjust=1, vjust=1))
+  theme(axis.text.x = element_text(angle = 25, hjust=1, vjust=1))
   
 # late_sperm <- read_rds("results/figs/larval_later_sperm_marker_umis/larval_later_sperm_marker_umis.ggp.rds") + 
 #   theme(aspect.ratio = NULL) + facet_wrap(~gene_symbol, ncol = 1) +

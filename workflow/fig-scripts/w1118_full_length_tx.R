@@ -31,20 +31,19 @@ genes_gr <- gtf %>%
   group_by(gene_id) %>%
   filter(length(unique(transcript_id))==1) %>%
   filter(str_detect(gene_id,"FBgn") & ("mRNA" %in% type)) %>%
-  filter(type == "mRNA") %>%
-  GRanges()
+  filter(type %in% c("exon","5UTR","3UTR")) %>%
+  split(.$gene_id) %>%
+  map(~GRanges(.)) %>%
+  map(~GenomicRanges::reduce(.)) %>%
+  GRangesList()
 
-names(genes_gr) <- genes_gr$gene_id
+tes_gr <- gtf %>% filter(gene_id %in% tes.no_ltrs) %>% GRanges() %>% split(.,.$gene_symbol) %>% GRangesList()
 
-tes_gr <- gtf %>% filter(gene_id %in% tes.no_ltrs) %>% GRanges()
+gr <- c(genes_gr, tes_gr)
 
-names(tes_gr) <- tes_gr$transcript_id
+gr <- gr %>% as.list() %>% map(~tile(.,width=50)) %>% map(unlist) %>% GRangesList() %>% unlist()
 
-gr <- c(genes_gr,tes_gr)
-
-gr <- gr %>% tile(width=50) %>% unlist()
-
-gr$gene_symbol <- names(gr) %>% str_extract(".+(?=\\.)")
+gr$gene_id <- names(gr)
 
 bws_fw <- Sys.glob('results/finalized/bigwigs/polya-rna/larval_testes_*.strand-forward.rpkm.bw') %>%
   set_names(.,str_extract(.,'(?<=bigwigs\\/).+(?=\\.strand-)')) %>%
@@ -70,29 +69,29 @@ plot_df <- as_tibble(gr) %>%
   mutate(queryHits = row_number()) %>% 
   left_join(ol_df) %>% 
   left_join(bws, by = "subjectHits") %>% 
-  dplyr::select(replicate, chr = seqnames.x, start=start.x, end=end.x, strand=strand.x, strand.y, gene_symbol, score) %>%
+  dplyr::select(replicate, chr = seqnames.x, start=start.x, end=end.x, strand=strand.x, strand.y, gene_id, score) %>%
   filter(strand==strand.y) %>%
   dplyr::select(-strand.y) %>%
-  group_by(gene_symbol, replicate) %>%
+  group_by(gene_id, replicate) %>%
   mutate(end = end - min(start), start = start - min(start)) %>% 
   mutate(pos = start/max(end)) %>%
   ungroup() %>% 
-  group_by(gene_symbol) %>%
+  group_by(gene_id) %>%
   filter(sum(score) > 0) %>% ungroup() %>%
-  mutate(type = ifelse(str_detect(gene_symbol,"FBgn"),"Gene","TE"))
+  mutate(type = ifelse(str_detect(gene_id,"FBgn"),"Gene","TE"))
 
 plot_df.summ <- plot_df %>% 
-  group_by(gene_symbol, pos, type) %>%
+  group_by(gene_id, pos, type) %>%
   summarize(score = mean(score), .groups = "drop") %>%
   mutate(bin = floor(pos * 10)/10) %>%
-  group_by(gene_symbol, bin, type) %>%
+  group_by(gene_id, bin, type) %>%
   summarize(score=mean(score),.groups = "drop")
 
-NEW.ORDER <- group_by(plot_df.summ, gene_symbol) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(gene_symbol)
+NEW.ORDER <- group_by(plot_df.summ, gene_id) %>% summarise(score = mean(score)) %>% arrange(score) %>% pull(gene_id)
 
 g1 <- plot_df.summ %>%
-  mutate(gene_symbol = fct_relevel(gene_symbol, NEW.ORDER)) %>%
-  ggplot(aes(bin,gene_symbol,fill=log2(score + 1))) +
+  mutate(gene_id = fct_relevel(gene_id, NEW.ORDER)) %>%
+  ggplot(aes(bin,gene_id,fill=log2(score + 1))) +
   geom_raster(interpolate=F) +
   #scale_fill_viridis_c(name='scaled fpkm') +
   scale_fill_distiller(type='seq',palette = 3, name='fpkm', direction = 1) +
@@ -103,7 +102,7 @@ g1 <- plot_df.summ %>%
   theme_gte21() +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.line.y=element_blank(), strip.placement = "outside")
 
-g2 <- plot_df %>% group_by(replicate, gene_symbol, type) %>%
+g2 <- plot_df %>% group_by(replicate, gene_id, type) %>%
   summarise(`std. dev.` = sd(score),.groups = "drop") %>%
   ggplot(aes(type, `std. dev.`, fill=type)) +
   geom_boxplot(outlier.shape = NA) +

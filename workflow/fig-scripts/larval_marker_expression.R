@@ -11,7 +11,7 @@ rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
 w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='arrow')
 w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format='arrow')
 
-markers2display <- c('vas','bam','aly','sa', 'Fas3','tj','Wnt4','rdo','ems')
+markers2display <- c('vas','bam','aly','sa',"can", 'Fas3','tj','Wnt4','rdo','ems')
 
 dat <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
        ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers2display) %>% collect()}) %>%
@@ -38,7 +38,7 @@ dat2 <- dat %>%
 g <- ggplot(dat2, aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_gte21(palette = "diverging", discrete = F, name = "Mean expression") +
-  scale_size(range=c(0, rel(5)), name='Proportion expressing') +
+  scale_size(range=c(0, rel(4)), name='Proportion expressing') +
   theme_gte21() +
   theme(axis.text.x = element_text(angle=90, hjust=1, size=rel(0.8))) +
   coord_flip() +

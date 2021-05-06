@@ -10,7 +10,7 @@ lookup <- read_tsv("results/figs/celltype_rename_table.tsv") %>%
   deframe()
 
 df <- read_csv("results/finalized/x-dataset-comparison/mod_scores.csv.gz", col_types = c("ccdddc")) %>%
-  mutate(clusters = ifelse(clusters %in% 0:20,lookup[clusters],clusters))
+  mutate(clusters = ifelse(dataset=="larval",lookup[clusters],clusters))
 
 expression <- read_csv("results/finalized/x-dataset-comparison/te_expression.csv.gz", col_types = c("ccdc"))
 
