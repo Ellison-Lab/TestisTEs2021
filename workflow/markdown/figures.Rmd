@@ -121,11 +121,16 @@ Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 
 \newpage
 
 ```{r, fig.dim=c(3.5,4), out.height="5in", out.width="7in", fig.align='center', dev="png"}
-image_read('/media/mlawlor/T7/microscopy_figs/210215_quasimodo2_calfluor610_eachm_quasar670_slide2_2p.slices_1_19.montage.png',strip = T,density = 200) %>% image_ggplot()
+s7a <- image_read('/media/mlawlor/T7/microscopy_figs/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_1.representative.png',strip = T,density = 200) %>% image_ggplot()
+
+#s7b <- image_read('/media/mlawlor/T7/microscopy_figs/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_22_x2.montage.png',strip = T,density = 200) %>% image_ggplot()
+
+s7a
+
 ```
 
-*Supplementary Figure 7. _QUASIMODO2_ and _EAChm_ expression in L3 testes.* 
-Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar *w1118* testis. *QUASIMODO2* and *EAChm* expression is detected in the middle region of the testis, where primary spermatocytes are located. Red: *EAChm*; green: *QUASIMODO2*; blue: DAPI. 
+*Supplementary Figure 7. _QUASIMODO2_ expression in L3 testes.* 
+Representative RNA-FISH z-slice in whole-mount 3rd larval instar *w1118* testis. *QUASIMODO2* expression is detected in the middle region of the testis, where primary spermatocytes are located. Green: *QUASIMODO2*; blue: DAPI. 
 
 \newpage
 

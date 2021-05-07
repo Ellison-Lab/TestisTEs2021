@@ -34,7 +34,7 @@ pheatmap::pheatmap(w1118.usage.cor,
                    color = my.colors,
                    cluster_rows = w1118.usage.hc.geps, 
                    cluster_cols = w1118.usage.hc.geps, treeheight_row = F,treeheight_col = 10,fontsize_col = 2,
-                   border_color = NA, cellwidth = 3, cellheight = 3, show_rownames = F)
+                   border_color = NA, cellwidth = 3, cellheight = 3, show_rownames = F, show_colnames=F)
 dev.off()
 
 agg_png(snakemake@output[['png2']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
@@ -42,5 +42,5 @@ pheatmap::pheatmap(w1118.membership.cor,
                    color = my.colors,
                    cluster_rows = w1118.membership.hc.geps, 
                    cluster_cols = w1118.membership.hc.geps, treeheight_row = F,treeheight_col = 10,fontsize_col = 2,
-                   border_color = NA, cellwidth = 3, cellheight = 3, show_rownames = F)
+                   border_color = NA, cellwidth = 3, cellheight = 3, show_rownames = F,show_colnames=F)
 dev.off()

@@ -48,7 +48,7 @@ rule figure5:
         rules.larracuente_y_ins_barchart.output,
         rules.w1118_pct_y_linked_rna_vs_wgs.output,
         rules.w1118_y_linked_copies.output,
-        rules.larval_pirna_genes.output
+        rules.larval_pirna_genes.output,
     output:
         "results/panels/figure5.pdf",
         "results/panels/figure5.rds"
@@ -107,6 +107,7 @@ rule supp5:
         rules.larval_y_gene_enr.output,
         rules.larval_y_gene_dotplot.output,
         rules.w1118_y_linked_copies.output,
+        rules.larval_tep_go_enrichment.output,
     output:
         "results/panels/supp5.pdf",
         "results/panels/supp5.rds"
