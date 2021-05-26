@@ -36,6 +36,7 @@ hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", 
 # get 1 range for each purported insertion
 hetchrom.ins.2 <- hetchrom.ins %>%
   collect() %>%
+  filter(repeat.pct.missing < 0.1) %>% # keep only nearly full length TEs - need to be strict to test for potentially functional copies.
   dplyr::select(chr,start,end,`repeat`,ins_id) %>%
   distinct() %>%
   GRanges()
@@ -47,7 +48,7 @@ hetchrom.ins.3 <- split(hetchrom.ins.2, hetchrom.ins.2$ins_id) %>%
 hetchrom.ins.4 <-  mutate(hetchrom.ins.3, `repeat`=str_extract(ins_id,regex('.+(?=\\.)'))) %>%
   mutate(queryHits = row_number()) %>%
   left_join(te.lookup, by=c(`repeat`='gene_id')) %>%
-  filter(is.na(component) | component %in% c(2,3,4)) %>% # removes ltr portion
+  filter(is.na(component) | component %in% c(2,3,4)) %>% # removes ltr portion, because we want to test for at least potentially functional TEs
   filter(!is.na(merged_te)) %>%
   mutate(chrom = map_chr(as.character(seqnames), ~str_split(.,regex("_"))[[1]][1])) %>%
   mutate(chrom = ifelse(str_detect(chrom,'^Contig'),'unmapped contig', chrom))
