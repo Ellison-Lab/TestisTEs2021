@@ -246,6 +246,17 @@ rule larracuente_y_ins_barchart:
     script:
         "../fig-scripts/larracuente_y_ins_barchart.R"
 
+rule larracuente_y_intronic_ins:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png1 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_ins.png",
+        png2 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_ins_by_consensus.png",
+        png3 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_tep_ins.png",
+    script:
+        "../fig-scripts/larracuente_y_intronic_ins.R"
+
 
 rule w1118_y_linked_copies:
     input:

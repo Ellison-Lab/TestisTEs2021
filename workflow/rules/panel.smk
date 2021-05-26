@@ -126,6 +126,7 @@ rule panels:
         rules.supp3.output,
         rules.supp4.output,
         rules.supp5.output,
+        rules.larracuente_y_intronic_ins.output
     output:
         "results/collected/collected.pdf"
     script:
