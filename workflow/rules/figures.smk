@@ -367,6 +367,14 @@ rule chimerics:
     script:
         "../fig-scripts/chimerics.R"
 
+rule arriba_total_rna_fusions:
+    output:
+        png = "results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.png",
+        ggp = "results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.ggp.rds",
+        dat = "results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.dat.tsv",
+    script:
+        "../fig-scripts/arriba_total_rna_fusions.R"
+
 #
 # rule larval_chromatin_mod_umap:
 #     input:

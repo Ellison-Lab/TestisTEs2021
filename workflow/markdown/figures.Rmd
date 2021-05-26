@@ -142,3 +142,14 @@ read_rds("~/work/TestisTEs2021/results/panels/supp5.rds")
 
 *Supplementary Figure 8. TEP-TEs are enriched on the Y-chromosome.* 
 **A)** Dot plot shows expression of selected effectors of spermatocyte transcriptional programs. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **B)** Bars show strength of top 10 enriched Gene Ontology Molecular Function terms for GEP-27. **C)** Bar plot shows proportion of Y chromosome genes or other genes that are assigned to the TE-enriched Program or other GEPs. Chi-square test P=1.7e-05. **D)** Barplot shows percentage of TEP or non-TEP TEs with at least 1 Y-linked insertion detected by RepeatMasker in the heterochromatin-enriched assembly described by Chang and Larracuente 2019. **E)** Bars represent the ratios of male to female estimated copies for the top 10 male- and female-enriched TEs. Bars are colored by membership in TEP. **F)** Allele specific analysis of TE expression (see **Methods**) shows that non-Y-linked copies of TEP TEs are expressed proportionately to their DNA copy number. Wilcoxon rank-sum test, P=0.24.
+
+\newpage
+
+```{r, fig.dim=c(10,10), out.height="7in", out.width="7in"}
+read_rds("~/work/TestisTEs2021/results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.ggp.rds")
+```
+
+*Supplementary Figure 9. Detected fusions between TEP-TEs and Y-linked genes* 
+Fusions between TEP-TEs and Y-linked genes detected by the Arriba fusion caller in 2 or more *w1118* testis total RNA-seq replicates. Y-axis shows the percentage of reads that align to the breakpoint that support the fusion call (split reads and discordant pairs).
+
+
