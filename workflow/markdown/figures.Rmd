@@ -63,7 +63,7 @@ read_rds("~/work/TestisTEs2021/results/panels/figure4.rds")
 read_rds("~/work/TestisTEs2021/results/panels/figure5.rds")
 ```
 
-*Figure 5. TEP-TEs are enriched on the Y chromosome.* **A)** A higher proportion of TEP-TE insertions are found on the Y chromosome compared to non-TEP-TEs. Chi-square test, P = 2.29e-292. To better estimate Y-linked insertions despite the incomplete Y-assembly in the reference sequence, insertions were mapped from a heterochromatin-enriched assembly (see **Methods**). **B)**  Ratios of male and female copy number for individual TEs estimated from w1118 WGS coverage. TEP-TEs are present at higher copy number in the male genome Wilcoxon rank-sum test, P=0.0035. **C)** Allele specific analysis of TE expression (see **Methods**) shows that Y-linked copies of TEP TEs are overexpressed relative to their DNA copy number and this overexpression is significantly larger than that of non-TEP-TEs Wilcoxon rank-sum test, P=1.7e-07.  **D)** Boxplot showing the ratios of X-linked versus autosomal polymorphic insertions for each TE in the TIDAL-fly (ref) database. TEP-TEs are depleted from the X compared to other TEs with polymorphic insertions. Wilcoxon rank-sum test, P = 0.029. **E)**  Dot plot shows expression of selected piRNA pathway genes. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker.
+*Figure 5. TEP-TEs are enriched on the Y chromosome.* **A)** A higher proportion of TEP-TE insertions are found on the Y chromosome compared to non-TEP-TEs. Chi-square test, P = 2.29e-292. To better estimate Y-linked insertions despite the incomplete Y-assembly in the reference sequence, insertions were mapped from a heterochromatin-enriched assembly (see **Methods**). **B)**  Ratios of male and female copy number for individual TEs estimated from w1118 WGS coverage. TEP-TEs are present at higher copy number in the male genome. Wilcoxon rank-sum test, P=0.0035. **C)** Allele specific analysis of TE expression (see **Methods**) shows that Y-linked copies of TEP TEs are overexpressed relative to their DNA copy number and this overexpression is significantly larger than that of non-TEP-TEs Wilcoxon rank-sum test, P=1.7e-07.  **D)** Boxplot showing the ratios of X-linked versus autosomal polymorphic insertions for each TE in the TIDAL-fly database. TEP-TEs are depleted from the X compared to other TEs with polymorphic insertions. Wilcoxon rank-sum test, P = 0.029. **E)**  Dot plot shows expression of selected piRNA pathway genes. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker.
 
 \newpage
 
@@ -145,7 +145,7 @@ read_rds("~/work/TestisTEs2021/results/panels/supp5.rds")
 
 \newpage
 
-```{r, fig.dim=c(10,10), out.height="7in", out.width="7in"}
+```{r, fig.dim=c(10,10), out.height="4in", out.width="7in", align="center", fig.align='center'}
 read_rds("~/work/TestisTEs2021/results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.ggp.rds")
 ```
 

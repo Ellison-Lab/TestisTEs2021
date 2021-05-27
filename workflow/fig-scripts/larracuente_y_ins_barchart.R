@@ -36,7 +36,6 @@ hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", 
 # get 1 range for each purported insertion
 hetchrom.ins.2 <- hetchrom.ins %>%
   collect() %>%
-  filter(repeat.pct.missing < 0.1) %>% # keep only nearly full length TEs - need to be strict to test for potentially functional copies.
   dplyr::select(chr,start,end,`repeat`,ins_id) %>%
   distinct() %>%
   GRanges()
