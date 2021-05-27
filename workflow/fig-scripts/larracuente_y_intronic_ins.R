@@ -96,7 +96,7 @@ hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", 
 
 hetchrom.ins.2 <- hetchrom.ins %>%
   collect() %>%
-  #filter(repeat.pct.missing < 0.1) %>% # don't filter here, need to be as loose as possible, because any tiny frag could cause TE-mapping reads
+  filter(str_detect(chr,"Y")) %>%
   dplyr::select(chr,start,end,`repeat`,ins_id) %>%
   distinct() %>%
   GRanges()

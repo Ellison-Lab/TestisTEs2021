@@ -63,7 +63,7 @@ read_rds("~/work/TestisTEs2021/results/panels/figure4.rds")
 read_rds("~/work/TestisTEs2021/results/panels/figure5.rds")
 ```
 
-*Figure 5. TEP-TEs are enriched on the Y chromosome.* **A)** A higher proportion of TEP-TE insertions are found on the Y chromosome compared to non-TEP-TEs. Chi-square test, P = 2.29e-292. To better estimate Y-linked insertions despite the incomplete Y-assembly in the reference sequence, insertions were mapped from a heterochromatin-enriched assembly (see **Methods**). **B)**  Ratios of male and female copy number for individual TEs estimated from w1118 WGS coverage. TEP-TEs are present at higher copy number in the male genome Wilcoxon rank-sum test, P=0.0035. **C)** Allele specific analysis of TE expression (see **Methods**) shows that Y-linked copies of TEP TEs are overexpressed relative to their DNA copy number and this overexpression is significantly larger than that of non-TEP-TEs Wilcoxon rank-sum test, P=1.7e-07.  **D)** Boxplot showing the ratios of X-linked versus autosomal polymorphic insertions for each TE in the TIDAL-fly (ref) database. TEP-TEs are depleted from the X compared to other TEs with polymorphic insertions. Wilcoxon rank-sum test, P = 0.029. **E)**  Dot plot shows expression of selected piRNA pathway genes. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker.
+*Figure 5. TEP-TEs are enriched on the Y chromosome.* **A)** A higher proportion of TEP-TE insertions are found on the Y chromosome compared to non-TEP-TEs. Chi-square test, P = 2.29e-292. To better estimate Y-linked insertions despite the incomplete Y-assembly in the reference sequence, insertions were mapped from a heterochromatin-enriched assembly (see **Methods**). **B)**  Ratios of male and female copy number for individual TEs estimated from w1118 WGS coverage. TEP-TEs are present at higher copy number in the male genome. Wilcoxon rank-sum test, P=0.0035. **C)** Allele specific analysis of TE expression (see **Methods**) shows that Y-linked copies of TEP TEs are overexpressed relative to their DNA copy number and this overexpression is significantly larger than that of non-TEP-TEs Wilcoxon rank-sum test, P=1.7e-07.  **D)** Boxplot showing the ratios of X-linked versus autosomal polymorphic insertions for each TE in the TIDAL-fly database. TEP-TEs are depleted from the X compared to other TEs with polymorphic insertions. Wilcoxon rank-sum test, P = 0.029. **E)**  Dot plot shows expression of selected piRNA pathway genes. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker.
 
 \newpage
 
@@ -142,3 +142,14 @@ read_rds("~/work/TestisTEs2021/results/panels/supp5.rds")
 
 *Supplementary Figure 8. TEP-TEs are enriched on the Y-chromosome.* 
 **A)** Dot plot shows expression of selected effectors of spermatocyte transcriptional programs. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **B)** Bars show strength of top 10 enriched Gene Ontology Molecular Function terms for GEP-27. **C)** Bar plot shows proportion of Y chromosome genes or other genes that are assigned to the TE-enriched Program or other GEPs. Chi-square test P=1.7e-05. **D)** Barplot shows percentage of TEP or non-TEP TEs with at least 1 Y-linked insertion detected by RepeatMasker in the heterochromatin-enriched assembly described by Chang and Larracuente 2019. **E)** Bars represent the ratios of male to female estimated copies for the top 10 male- and female-enriched TEs. Bars are colored by membership in TEP. **F)** Allele specific analysis of TE expression (see **Methods**) shows that non-Y-linked copies of TEP TEs are expressed proportionately to their DNA copy number. Wilcoxon rank-sum test, P=0.24.
+
+\newpage
+
+```{r, fig.dim=c(10,10), out.height="4in", out.width="7in", align="center", fig.align='center'}
+read_rds("~/work/TestisTEs2021/results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.ggp.rds")
+```
+
+*Supplementary Figure 9. Detected fusions between TEP-TEs and Y-linked genes* 
+Fusions between TEP-TEs and Y-linked genes detected by the Arriba fusion caller in 2 or more *w1118* testis total RNA-seq replicates. Y-axis shows the percentage of reads that align to the breakpoint that support the fusion call (split reads and discordant pairs).
+
+
