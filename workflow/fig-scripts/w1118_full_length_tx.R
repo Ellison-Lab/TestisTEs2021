@@ -6,7 +6,7 @@ library(ragg)
 
 source("workflow/fig-scripts/theme.R")
 
-gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
+gtf <- import('subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf') %>%
   as_tibble()
 
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
@@ -26,7 +26,7 @@ tes <- geps %>%
 
 tes.no_ltrs <- tes[!str_detect(tes,'[-_]LTR')]
 
-genes_gr <- gtf %>% 
+genes_gr <- gtf %>%
   filter(seqnames!=transcript_id) %>%
   group_by(gene_id) %>%
   filter(length(unique(transcript_id))==1) %>%
@@ -65,22 +65,22 @@ bws_gr <- GRanges(bws)
 
 ol_df <- findOverlaps(gr, bws_gr) %>% as_tibble()
 
-plot_df <- as_tibble(gr) %>% 
-  mutate(queryHits = row_number()) %>% 
-  left_join(ol_df) %>% 
-  left_join(bws, by = "subjectHits") %>% 
+plot_df <- as_tibble(gr) %>%
+  mutate(queryHits = row_number()) %>%
+  left_join(ol_df) %>%
+  left_join(bws, by = "subjectHits") %>%
   dplyr::select(replicate, chr = seqnames.x, start=start.x, end=end.x, strand=strand.x, strand.y, gene_id, score) %>%
   filter(strand==strand.y) %>%
   dplyr::select(-strand.y) %>%
   group_by(gene_id, replicate) %>%
-  mutate(end = end - min(start), start = start - min(start)) %>% 
+  mutate(end = end - min(start), start = start - min(start)) %>%
   mutate(pos = start/max(end)) %>%
-  ungroup() %>% 
+  ungroup() %>%
   group_by(gene_id) %>%
   filter(sum(score) > 0) %>% ungroup() %>%
   mutate(type = ifelse(str_detect(gene_id,"FBgn"),"Gene","TE"))
 
-plot_df.summ <- plot_df %>% 
+plot_df.summ <- plot_df %>%
   group_by(gene_id, pos, type) %>%
   summarize(score = mean(score), .groups = "drop") %>%
   mutate(bin = floor(pos * 10)/10) %>%

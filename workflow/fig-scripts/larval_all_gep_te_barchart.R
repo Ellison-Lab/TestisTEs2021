@@ -9,7 +9,7 @@ optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-test
 
 w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
 
-te.lookup <- read_tsv('~/work/TestisTpn/data/te_id_lookup.curated.tsv.txt')
+te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
 
 df <- w1118.gep_membership %>%
@@ -25,7 +25,7 @@ df <- w1118.gep_membership %>%
   mutate(repClass=replace_na(repClass,replace = 'other')) #%>%
   #mutate(module=paste0("GEP-",module))
 
-  
+
 g <-  ggplot(df, aes(reorder(module, n_tes), fill=repClass)) +
   geom_bar(position='stack') +
   scale_fill_brewer(type='qual',palette=6, name="TE class") +

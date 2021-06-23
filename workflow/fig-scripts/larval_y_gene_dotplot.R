@@ -5,7 +5,7 @@ library(rtracklayer)
 
 source("workflow/fig-scripts/theme.R")
 
-gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
+gtf <- import('subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf') %>%
   as_tibble()
 
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
@@ -37,7 +37,7 @@ dat <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.lis
   mutate(ord = dense_rank(gene_symbol)) %>%
   mutate(gene_symbol = fct_relevel(gene_symbol, markers2display))
 
-dat2 <- dat %>% 
+dat2 <- dat %>%
   group_by(clusters.rename, gene_symbol) %>%
   summarize(pct.expressing = sum(expression > 0)/n(), mean.expression=mean(expression)) %>%
   left_join(male.meiosis1.associated)

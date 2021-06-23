@@ -4,7 +4,7 @@ library(jsonlite)
 library(arrow)
 library(ragg)
 
-gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
+gtf <- import('subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf') %>%
   as_tibble()
 
 te.lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
@@ -42,7 +42,7 @@ tep.name <- geps %>%
 
 feature_types <- c('mRNA','ncRNA','snRNA','pre_miRNA','miRNA','pseudogene','snoRNA')
 
-feature_df <- gtf %>% 
+feature_df <- gtf %>%
   mutate(type=as.character(type)) %>%
   filter(type %in% feature_types) %>%
   dplyr::select(gene_id,type) %>%

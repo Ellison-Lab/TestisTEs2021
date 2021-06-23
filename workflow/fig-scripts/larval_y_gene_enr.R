@@ -15,7 +15,7 @@ w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='a
 
 w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr/", format='arrow')
 
-gtf <- import('~/work/TestisTpn/data/combined.fixed.gtf') %>%
+gtf <- import('subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf') %>%
   as_tibble()
 
 rename.table <- read_tsv('results/figs/celltype_rename_table.tsv') %>%
@@ -40,12 +40,12 @@ tep.name <- geps %>%
   head(1) %>%
   pull(module) %>% as.character()
 
-#tep_genes <- geps %>% 
+#tep_genes <- geps %>%
 #  filter(qval < optimal_ica[['qval']]) %>%
 #  filter(module == tep.name) %>% pull(X1)
 
 ylinked <- gtf %>%
-  filter(seqnames == 'Y' & type == 'mRNA') %>% 
+  filter(seqnames == 'Y' & type == 'mRNA') %>%
   dplyr::select(seqnames, gene_symbol, gene_id) %>%
   distinct() %>%
   filter(gene_id %in% geps$X1)
@@ -66,7 +66,7 @@ non_tep <- geps %>%
   filter(!X1 %in% tep$X1) %>%
   dplyr::select(X1, chrom, GEP) %>%
   distinct()
-  
+
 df <- bind_rows(tep, non_tep) %>%
   group_by(chrom, GEP) %>%
   tally() %>%
@@ -104,5 +104,3 @@ dev.off()
 
 saveRDS(list(g1,pval),snakemake@output[['ggp']])
 write_tsv(df,snakemake@output[['dat']])
-
-
