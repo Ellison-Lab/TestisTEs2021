@@ -25,3 +25,6 @@
 [submodule "subworkflows/gte21-chimeric-rnaseq"]
 	path = subworkflows/gte21-chimeric-rnaseq
 	url = https://github.com/mal2017/gte21-chimeric-rnaseq
+[submodule "subworkflows/gte21-total-rna-fusions"]
+	path = subworkflows/gte21-total-rna-fusions
+	url = https://github.com/mal2017/gte21-total-rna-fusions.git
