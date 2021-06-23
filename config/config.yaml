@@ -1,9 +1,9 @@
 MAIN_CONFIG: /scratch/mal456/TE-proj-reorg/TestisTEs2021/config/config.yaml #/media/mlawlor/work/TestisTEs2021/config/config.yaml
 # alignment options
-GENOME_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel-all-chromosome-r6.22.fasta.masked #/media/mlawlor/work/data/genome/dmel-all-chromosome-r6.22.fasta.masked
-TRANSPOSON_FASTA: /projects/genetics/ellison_lab/genomes/dna/masked/dmel_repbase_lib.fasta #/media/mlawlor/work/data/genome/dmel_repbase_lib.fasta
+GENOME_FASTA: resources/dmel-all-chromosome-r6.22.fasta.masked #/media/mlawlor/work/data/genome/dmel-all-chromosome-r6.22.fasta.masked
+TRANSPOSON_FASTA: resources/dmel_repbase_lib.fasta #/media/mlawlor/work/data/genome/dmel_repbase_lib.fasta
 GENE_GTF: ftp://ftp.flybase.net/releases/FB2018_03/dmel_r6.22/gtf/dmel-all-r6.22.gtf.gz
-HETCHROM_FASTA: /scratch/mal456/hetchrom_dmel_scaffold2_V5.fasta #/media/mlawlor/work/data/genome/hetchrom_dmel_scaffold2_V5.fasta
+HETCHROM_FASTA: resources/hetchrom_dmel_scaffold2_V5.fasta #/media/mlawlor/work/data/genome/hetchrom_dmel_scaffold2_V5.fasta
 HETCHROM_GTF: /scratch/mal456/hetchrom_dmel_scaffold2_V5.gtf
 TIDAL: http://www.bio.brandeis.edu/laulab/Tidal_Fly/Tidal_Fly_v1Archive20150930.zip
 TIDAL_ANNO: https://github.com/laulabbrandeis/TIDAL/raw/master/annotation.tar.gz

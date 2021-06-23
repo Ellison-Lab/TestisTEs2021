@@ -1,2 +1,5 @@
 *.smk linguist-language=Python
 Snakefile linguist-language=Python
+resources/dmel-all-chromosome-r6.22.fasta.masked filter=lfs diff=lfs merge=lfs -text
+resources/dmel_repbase_lib.fasta filter=lfs diff=lfs merge=lfs -text
+resources/hetchrom_dmel_scaffold2_V5.fasta filter=lfs diff=lfs merge=lfs -text
