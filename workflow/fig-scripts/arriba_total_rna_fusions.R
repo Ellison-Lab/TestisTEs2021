@@ -32,7 +32,7 @@ tep.members <- w1118.gep_membership %>%
   pull(X1)
 
 
-arriba_df <- Sys.glob("~/amarel-scratch/TE-proj-reorg/gte21-total-rna-fusions/results/arriba/w1118_testes_*/fusions.tsv") %>%
+arriba_df <- Sys.glob("subworkflows/gte21-total-rna-fusions/results/arriba/w1118_testes_*/fusions.tsv") %>%
   set_names(.,str_extract(.,"(?<=arriba\\/).+(?=\\/)")) %>%
   map_df(read_tsv,.id = "replicate")
 

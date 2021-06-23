@@ -14,9 +14,9 @@ tep_genes = tep.loc[["FBgn" in x for x in tep["X1"]]]
 
 tep_tes = tep.loc[[("FBgn" not in x) for x in tep["X1"]]]
 
-ral517 = sc.read_h5ad("/home/mlawlor/amarel-scratch/TE-proj-reorg/TestisTEs2021/subworkflows/gte21-scrna/results/scanpy/adult-ral517-testes/celltypes.h5ad")
-wt= sc.read_h5ad("/home/mlawlor/amarel-scratch/TE-proj-reorg/TestisTEs2021/subworkflows/gte21-scrna/results/scanpy/adult-wt-testes/celltypes.h5ad")
-larv= sc.read_h5ad("/home/mlawlor/amarel-scratch/TE-proj-reorg/TestisTEs2021/subworkflows/gte21-scrna/results/scanpy/larval-w1118-testes/celltypes.h5ad")
+ral517 = sc.read_h5ad("subworkflows/gte21-scrna/results/scanpy/adult-ral517-testes/celltypes.h5ad")
+wt= sc.read_h5ad("subworkflows/gte21-scrna/results/scanpy/adult-wt-testes/celltypes.h5ad")
+larv= sc.read_h5ad("subworkflows/gte21-scrna/results/scanpy/larval-w1118-testes/celltypes.h5ad")
 
 
 ##

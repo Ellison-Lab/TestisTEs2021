@@ -6,12 +6,12 @@ library(arrow)
 library(ragg)
 
 source("workflow/fig-scripts/theme.R")
-chimerics <- Sys.glob("~/amarel-scratch/TE-proj-reorg/gte21-chimeric-rnaseq/results/breakpoints/*.breakpoint-depths.csv") %>%
+chimerics <- Sys.glob("subworkflows/gte21-chimeric-rnaseq/results/breakpoints/*.breakpoint-depths.csv") %>%
   map_df(read_csv)
 
 lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
 
-gtf <- import("~/amarel-scratch/TE-proj-reorg/TestisTEs2021/subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf")
+gtf <- import("subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf")
 
 genes <- gtf[gtf$type == "mRNA"]
 
