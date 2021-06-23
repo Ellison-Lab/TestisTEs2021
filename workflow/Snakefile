@@ -96,6 +96,12 @@ subworkflow larval_polya:
     snakefile:
         "../subworkflows/gte21-chimeric-rnaseq/workflow/Snakefile"
 
+subworkflow total_rna_fusions:
+    workdir:
+        "../subworkflows/gte21-total-rna-fusions/"
+    snakefile:
+        "../subworkflows/gte21-total-rna-fusions/workflow/Snakefile"
+
 # variables
 RANDOM_SEED = config.get("RANDOM_SEED",2020)
 random.seed(RANDOM_SEED)
@@ -113,6 +119,7 @@ FINAL_DATASETS_FILES += expand("results/finalized/optimal-gep-params/{g}.json",g
 FINAL_DATASETS_FILES += expand("results/finalized/bigwigs/total-rna/{s}.{sub}.tes.strand-{t}.rpkm.bw",s=['w1118_testes'],sub=['rep1','rep2','rep3','rep4'],t=['forward','reverse'])
 FINAL_DATASETS_FILES += expand("results/finalized/bigwigs/polya-rna/{s}.strand-{t}.rpkm.bw",s=['larval_testes_cleaned_papain_01','larval_testes_papain_02','larval_testes_papain_03','larval_testes_papain_04'],t=['forward','reverse'])
 FINAL_DATASETS_FILES += ["results/finalized/wgs/w1118_male/snps.vcf"]
+FINAL_DATASETS_FILES += total_rna_fusions(expand("results/arriba/w1118_testes_{s}/fusions.tsv",s=["01","02","03","04"]))
 
 rule all:
     input:
