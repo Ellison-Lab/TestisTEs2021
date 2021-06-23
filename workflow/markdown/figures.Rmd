@@ -105,7 +105,7 @@ read_rds("results/panels/supp4.rds")
 \newpage
 
 ```{r, fig.dim=c(3.5,4), out.height="4in", out.width="7in", fig.align="center", dpi=72, dev="png"}
-image_read('/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_1.split_channels.png',strip = T, density = 200) %>% image_ggplot()
+image_read('resources/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_1.split_channels.png',strip = T, density = 200) %>% image_ggplot()
 ```
 
 *Supplementary Figure 5. _ACCORD2_ and _EAChm_ expression in L3 testes.*
@@ -114,7 +114,7 @@ Representative slice of multiplexed RNA-FISH in whole-mount 3rd larval instar w1
 \newpage
 
 ```{r, fig.dim=c(3.5,4), out.height="5in", out.width="7in", fig.align='center', dev="png"}
-image_read('/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_30.montage.slices_1_30.montage.png',strip = T,density = 200) %>% image_ggplot()
+image_read('resources/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_30.montage.slices_1_30.montage.png',strip = T,density = 200) %>% image_ggplot()
 ```
 
 *Supplementary Figure 6. _ACCORD2_ and _EAChm_ expression in L3 testes.*
@@ -123,9 +123,9 @@ Z-slices montage of multiplexed RNA-FISH in whole-mount 3rd larval instar w1118 
 \newpage
 
 ```{r, fig.dim=c(3.5,4), out.height="5in", out.width="7in", fig.align='center', dev="png"}
-s7a <- image_read('/media/mlawlor/T7/microscopy_figs/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_1.representative.png',strip = T,density = 200) %>% image_ggplot()
+s7a <- image_read('resources/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_1.representative.png',strip = T,density = 200) %>% image_ggplot()
 
-#s7b <- image_read('/media/mlawlor/T7/microscopy_figs/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_22_x2.montage.png',strip = T,density = 200) %>% image_ggplot()
+#s7b <- image_read('resources/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_22_x2.montage.png',strip = T,density = 200) %>% image_ggplot()
 
 s7a
 
