@@ -9,6 +9,8 @@ For processing of raw data, the pipeline requires
 * **Cellranger** v3.1.0
 * **snakemake** v6.1.0
 * **mamba** v0.9.1
+* **peppy** v0.31.0
+* **biopython** 1.78
 
 Each of these may be installed in a 3-5 minutes with a standard internet connection.
 
@@ -97,12 +99,10 @@ Alternatively, these submodules can be separately cloned and run separately.
 
 Altogether, these repositories can be downloaded in 2-3 minutes.
 
-As before, when repos are downloaded separately absolute local paths in the `config.yaml`
- file and `subsamples_table.csv`'s should be updated as appropriate.
-
 ## Demo/Instructions
 
-This workflow is not a single standalone tool and is therefore not suited to demo'ing with a small dataset. However the full workflow can be run within 1-3 days on a HPC cluster with modest resource requests.
+This workflow is not standalone tool and is therefore not suited to demo'ing with a small dataset.
+However the full workflow can be run within 1-3 days on a HPC cluster with modest resource requests.
 
 A dry run can be initiated via the code below. Exclude `-n` for actual run to produce arrow format files under `results/finalized`.
 These hold processed data in a space efficient file format and are easily importable to R as dataframes via the **arrow** package)
@@ -112,11 +112,11 @@ for **scanpy** reproducibility, per
 [this issue report](https://github.com/theislab/scanpy/issues/313).
 
 ```bash
-PYTHONHASHSEED=0 snakemake --use-conda --profile {your system} --cores {n} -kpn
+PYTHONHASHSEED=0 snakemake --use-conda --profile {your system} --cores {n} --config MAIN_CONFIG=config/config.yaml -kp -n
 ```
 Figures can be run via the below command, where {figure name} follows the pattern
 "figure1" or "supp1." This will generate PDFs and `.rds` files under `results/panels`.
 
 ```bash
-PYTHONHASHSEED=0 snakemake {figure name} --use-conda --profile {your system} --cores {n} -kpn
+PYTHONHASHSEED=0 snakemake {figure name} --use-conda --profile {your system} --cores {n} --config MAIN_CONFIG=config/config.yaml -kp -n
 ```
