@@ -102,6 +102,8 @@ As before, when repos are downloaded separately absolute local paths in the `con
 
 ## Demo/Instructions
 
+This workflow is not a single standalone tool and is therefore not suited to demo'ing with a small dataset. However the full workflow can be run within 1-3 days on a HPC cluster with modest resource requests.
+
 A dry run can be initiated via the code below. Exclude `-n` for actual run to produce arrow format files under `results/finalized`.
 These hold processed data in a space efficient file format and are easily importable to R as dataframes via the **arrow** package)
 
