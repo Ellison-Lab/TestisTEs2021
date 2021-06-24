@@ -71,8 +71,8 @@ subworkflow hetchrom_y:
         "../subworkflows/gte21-y-hetchrom/"
     snakefile:
         "../subworkflows/gte21-y-hetchrom/workflow/Snakefile"
-    configfile:
-        MAIN_CONFIG
+    #configfile:
+    #    MAIN_CONFIG
 
 subworkflow transposon_variants:
     workdir:
