@@ -3,6 +3,7 @@ library(tidyverse, quietly = T)
 library(jsonlite)
 library(arrow)
 library(GenomicRanges)
+library(rtracklayer)
 
 te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
@@ -92,39 +93,54 @@ y_tep_intron_gr <- tep_intron_gr[str_detect(seqnames(tep_intron_gr),"Y")]  %>% G
 #  get insertions
 # ------------------------------------------
 
-hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format='arrow')
+# hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format='arrow')
+# 
+# hetchrom.ins.2 <- hetchrom.ins %>%
+#   collect() %>%
+#   filter(str_detect(chr,"Y")) %>%
+#   dplyr::select(chr,start,end,`repeat`,ins_id) %>%
+#   distinct() %>%
+#   GRanges()
+# 
+# # get 1 range for each purported insertion
+# hetchrom.ins.3 <- split(hetchrom.ins.2, hetchrom.ins.2$ins_id) %>%
+#   lapply(FUN = function(x) GRanges(seqnames = seqnames(x), ranges=IRanges(start=min(start(x)),end = max(end(x)),names = unique(x$ins_id)),strand = strand(x)[1]) %>% .[1]) %>%
+#   map_df(as_tibble, .id='ins_id') 
+# 
+# hetchrom.ins.4 <-  mutate(hetchrom.ins.3, `repeat`=str_extract(ins_id,regex('.+(?=\\.)'))) %>%
+#   mutate(queryHits = row_number()) %>%
+#   left_join(te.lookup, by=c(`repeat`='gene_id')) %>%
+#   #filter(is.na(component) | component %in% c(2,3,4)) %>% # don't filter here, need to be as loose as possible, because any solor LTR could cause TE-mapping reads
+#   filter(!is.na(merged_te)) %>%
+#   mutate(chrom = map_chr(as.character(seqnames), ~str_split(.,regex("_"))[[1]][1])) %>%
+#   mutate(chrom = ifelse(str_detect(chrom,'^Contig'),'unmapped contig', chrom))
+# 
+# hetchrom.ins.5 <- hetchrom.ins.4 %>% 
+#   mutate(GEP = ifelse(merged_te %in% tep.members,'TEP','other')) %>%
+#   relocate(-ins_id)
 
-hetchrom.ins.2 <- hetchrom.ins %>%
-  collect() %>%
-  filter(str_detect(chr,"Y")) %>%
-  dplyr::select(chr,start,end,`repeat`,ins_id) %>%
-  distinct() %>%
-  GRanges()
+fa <- import("resources/dmel_repbase_lib.fasta")
 
-# get 1 range for each purported insertion
-hetchrom.ins.3 <- split(hetchrom.ins.2, hetchrom.ins.2$ins_id) %>%
-  lapply(FUN = function(x) GRanges(seqnames = seqnames(x), ranges=IRanges(start=min(start(x)),end = max(end(x)),names = unique(x$ins_id)),strand = strand(x)[1]) %>% .[1]) %>%
-  map_df(as_tibble, .id='ins_id') 
+names(fa) <- names(fa) %>% str_remove("#.+") 
 
-hetchrom.ins.4 <-  mutate(hetchrom.ins.3, `repeat`=str_extract(ins_id,regex('.+(?=\\.)'))) %>%
-  mutate(queryHits = row_number()) %>%
-  left_join(te.lookup, by=c(`repeat`='gene_id')) %>%
-  #filter(is.na(component) | component %in% c(2,3,4)) %>% # don't filter here, need to be as loose as possible, because any solor LTR could cause TE-mapping reads
-  filter(!is.na(merged_te)) %>%
-  mutate(chrom = map_chr(as.character(seqnames), ~str_split(.,regex("_"))[[1]][1])) %>%
-  mutate(chrom = ifelse(str_detect(chrom,'^Contig'),'unmapped contig', chrom))
+te_sizes <- width(fa) %>% set_names(names(fa)) %>% enframe(name = "te",value = "cons.length")
 
-hetchrom.ins.5 <- hetchrom.ins.4 %>% 
-  mutate(GEP = ifelse(merged_te %in% tep.members,'TEP','other')) %>%
-  relocate(-ins_id)
+ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format="arrow") %>% collect()
+
+ins <- ins %>% left_join(te_sizes) %>% mutate(prop.missing = (cons.length - ins.size)/cons.length)
+
+hetchrom.ins.5 <- ins %>%
+  #filter(prop.missing < 0.1) %>% # for intron fragments,even small pieces would contribute to RNA seq signal, so don't filter in this test
+  mutate(GEP = ifelse(te %in% tep.members,"TEP","other")) %>%
+  left_join(te.lookup, by=c(te="gene_id"))
 
 # get a list of tes with at least 1 y linked insertion
-has_y_ins <- hetchrom.ins.5 %>% filter(str_detect(seqnames,"Y")) %>% pull(merged_te) %>% unique
+has_y_ins <- hetchrom.ins.5 %>% filter(str_detect(chrom,"Y")) %>% pull(te) %>% unique
 
 ins_gr <- hetchrom.ins.5 %>% 
-  filter(str_detect(seqnames,"Y")) %>%
-  filter(merged_te %in% has_y_ins) %>%
-  dplyr::select(chr='seqnames',start,end, `repeat`, merged_te, GEP) %>% GRanges()
+  filter(str_detect(chrom,"Y")) %>%
+  filter(te %in% has_y_ins) %>%
+  dplyr::select(chrom,start,end, te, merged_te, GEP) %>% GRanges()
 
 tep_ins <- ins_gr[ins_gr$GEP == "TEP"] %>% split(.,.$merged_te) %>% GenomicRanges::reduce(ignore.strand=T) %>% unlist()
 other_ins <- ins_gr[ins_gr$GEP != "TEP"] %>% split(.,.$merged_te) %>% GenomicRanges::reduce(ignore.strand=T) %>% unlist()
