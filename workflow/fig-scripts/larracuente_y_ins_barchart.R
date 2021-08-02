@@ -3,6 +3,7 @@ library(arrow)
 library(ragg)
 library(GenomicRanges)
 library(jsonlite)
+library(rtracklayer)
 
 source("workflow/fig-scripts/theme.R")
 
@@ -31,33 +32,55 @@ tep.members <- w1118.gep_membership %>%
   filter(as.character(module)==tep.name) %>%
   pull(X1)
 
-hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format='arrow')
+# hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format='arrow')
+# 
+# # get 1 range for each purported insertion
+# hetchrom.ins.2 <- hetchrom.ins %>%
+#   collect() %>%
+#   dplyr::select(chr,start,end,`repeat`,ins_id) %>%
+#   distinct() %>%
+#   GRanges()
+# 
+# hetchrom.ins.3 <- split(hetchrom.ins.2, hetchrom.ins.2$ins_id) %>%
+#   lapply(FUN = function(x) GRanges(seqnames = seqnames(x), ranges=IRanges(start=min(start(x)),end = max(end(x)),names = unique(x$ins_id)),strand = strand(x)[1]) %>% .[1]) %>%
+#   map_df(as_tibble, .id='ins_id') 
+# 
+# hetchrom.ins.4 <-  mutate(hetchrom.ins.3, `repeat`=str_extract(ins_id,regex('.+(?=\\.)'))) %>%
+#   mutate(queryHits = row_number()) %>%
+#   left_join(te.lookup, by=c(`repeat`='gene_id')) %>%
+#   filter(is.na(component) | component %in% c(2,3,4)) %>% # removes ltr portion, because we want to test for at least potentially functional TEs
+#   filter(!is.na(merged_te)) %>%
+#   mutate(chrom = map_chr(as.character(seqnames), ~str_split(.,regex("_"))[[1]][1])) %>%
+#   mutate(chrom = ifelse(str_detect(chrom,'^Contig'),'unmapped contig', chrom))
+# 
+# hetchrom.ins.5 <- hetchrom.ins.4 %>% 
+#   mutate(GEP = ifelse(merged_te %in% tep.members,'TEP','other')) %>%
+#   relocate(-ins_id)
+# 
+# df <- hetchrom.ins.5 %>%
+#   mutate(chrom=ifelse(chrom=='Y','Y','other')) %>%
+#   count(chrom,GEP) %>%
+#   group_by(GEP) %>%
+#   mutate(percent = n/sum(n))
 
-# get 1 range for each purported insertion
-hetchrom.ins.2 <- hetchrom.ins %>%
-  collect() %>%
-  dplyr::select(chr,start,end,`repeat`,ins_id) %>%
-  distinct() %>%
-  GRanges()
+fa <- import("resources/dmel_repbase_lib.fasta")
 
-hetchrom.ins.3 <- split(hetchrom.ins.2, hetchrom.ins.2$ins_id) %>%
-  lapply(FUN = function(x) GRanges(seqnames = seqnames(x), ranges=IRanges(start=min(start(x)),end = max(end(x)),names = unique(x$ins_id)),strand = strand(x)[1]) %>% .[1]) %>%
-  map_df(as_tibble, .id='ins_id') 
+names(fa) <- names(fa) %>% str_remove("#.+") 
 
-hetchrom.ins.4 <-  mutate(hetchrom.ins.3, `repeat`=str_extract(ins_id,regex('.+(?=\\.)'))) %>%
-  mutate(queryHits = row_number()) %>%
-  left_join(te.lookup, by=c(`repeat`='gene_id')) %>%
-  filter(is.na(component) | component %in% c(2,3,4)) %>% # removes ltr portion, because we want to test for at least potentially functional TEs
-  filter(!is.na(merged_te)) %>%
-  mutate(chrom = map_chr(as.character(seqnames), ~str_split(.,regex("_"))[[1]][1])) %>%
-  mutate(chrom = ifelse(str_detect(chrom,'^Contig'),'unmapped contig', chrom))
+te_sizes <- width(fa) %>% set_names(names(fa)) %>% enframe(name = "te",value = "cons.length")
 
-hetchrom.ins.5 <- hetchrom.ins.4 %>% 
-  mutate(GEP = ifelse(merged_te %in% tep.members,'TEP','other')) %>%
-  relocate(-ins_id)
+ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format="arrow") %>% collect()
 
-df <- hetchrom.ins.5 %>%
-  mutate(chrom=ifelse(chrom=='Y','Y','other')) %>%
+ins <- ins %>% left_join(te_sizes) %>% mutate(prop.missing = (cons.length - ins.size)/cons.length)
+
+ins <- ins %>%
+  #group_by(ins.id) %>%
+  #filter(sum(del.pct) < 0.1) %>%
+  filter(prop.missing < 0.1) %>%
+  mutate(GEP = ifelse(te %in% tep.members,"TEP","other"))
+
+df <- ins %>%
+  mutate(chrom=ifelse(str_detect(chrom,'Y'),'Y','other')) %>%
   count(chrom,GEP) %>%
   group_by(GEP) %>%
   mutate(percent = n/sum(n))
@@ -74,9 +97,9 @@ g <- df %>%
   scale_y_continuous(labels = scales::percent)
 
 
-g2 <- hetchrom.ins.5 %>%
-  group_by(GEP, merged_te) %>%
-  summarise(has.y.linked = any(chrom == "Y"), .groups = "drop_last") %>%
+g2 <- ins %>%
+  group_by(GEP, te) %>%
+  summarise(has.y.linked = any(str_detect(chrom, "Y")), .groups = "drop_last") %>%
   summarise(pct.has.y = sum(has.y.linked)/n()) %>%
   ggplot(aes(GEP,pct.has.y)) +
   geom_col(color='white') +
@@ -96,12 +119,12 @@ dev.off()
 saveRDS(g,snakemake@output[['ggp']])
 saveRDS(g2,snakemake@output[['ggp2']])
 
-write_tsv(hetchrom.ins.5,snakemake@output[['dat']])
+write_tsv(ins,snakemake@output[['dat']])
 
 
 run_chisq_y <- function(top_tes,other_tes) {
-  topmod_ins_gr <- top_tes[,1:3] %>% GRanges()
-  othermod_ins_gr <- other_tes[,1:3] %>% GRanges()
+  topmod_ins_gr <- top_tes[,1:4] %>% GRanges()
+  othermod_ins_gr <- other_tes[,1:4] %>% GRanges()
   
   
   top_in_y<-sum(str_detect(seqnames(topmod_ins_gr),'Y'))
@@ -117,5 +140,5 @@ run_chisq_y <- function(top_tes,other_tes) {
   list(contingency=x, tbl = broom::tidy(chisq.test(x)))
 }
 
-res_y <- run_chisq_y(filter(hetchrom.ins.5,GEP=='TEP'),filter(hetchrom.ins.5,GEP=='other'))
+res_y <- run_chisq_y(filter(ins,GEP=='TEP'),filter(ins,GEP=='other'))
 
