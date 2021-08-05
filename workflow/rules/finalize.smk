@@ -259,3 +259,13 @@ rule collect_mod_scores:
         "results/finalized/x-dataset-comparison/te_expression.csv.gz"
     script:
         "../scripts/collect_mod_scores.py"
+
+rule collect_pirna_kd_rnaseq:
+    input:
+        pirna_kd_rnaseq("results/deseq2/pirna_kd_vs_control.res.tsv")
+    output:
+        "results/finalized/pirna_kd_rnaseq/pirna_kd_vs_control.res.tsv"
+    shell:
+        """
+        cp {input} {output}
+        """

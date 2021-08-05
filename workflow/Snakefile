@@ -102,6 +102,12 @@ subworkflow total_rna_fusions:
     snakefile:
         "../subworkflows/gte21-total-rna-fusions/workflow/Snakefile"
 
+subworkflow pirna_kd_rnaseq:
+    workdir:
+        "../subworkflows/gte21-pirna-kd-rnaseq/"
+    snakefile:
+        "../subworkflows/gte21-pirna-kd-rnaseq/workflow/Snakefile"
+
 # variables
 RANDOM_SEED = config.get("RANDOM_SEED",2020)
 random.seed(RANDOM_SEED)
@@ -120,6 +126,7 @@ FINAL_DATASETS_FILES += expand("results/finalized/bigwigs/total-rna/{s}.{sub}.te
 FINAL_DATASETS_FILES += expand("results/finalized/bigwigs/polya-rna/{s}.strand-{t}.rpkm.bw",s=['larval_testes_cleaned_papain_01','larval_testes_papain_02','larval_testes_papain_03','larval_testes_papain_04'],t=['forward','reverse'])
 FINAL_DATASETS_FILES += ["results/finalized/wgs/w1118_male/snps.vcf"]
 FINAL_DATASETS_FILES += total_rna_fusions(expand("results/arriba/w1118_testes_{s}/fusions.tsv",s=["01","02","03","04"]))
+FINAL_DATASETS_FILES += "results/finalized/pirna_kd_rnaseq/pirna_kd_vs_control.res.tsv"
 
 rule all:
     input:

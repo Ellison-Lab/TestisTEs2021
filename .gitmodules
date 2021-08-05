@@ -28,3 +28,6 @@
 [submodule "subworkflows/gte21-total-rna-fusions"]
 	path = subworkflows/gte21-total-rna-fusions
 	url = https://github.com/mal2017/gte21-total-rna-fusions.git
+[submodule "subworkflows/gte21-pirna-kd-rnaseq"]
+	path = subworkflows/gte21-pirna-kd-rnaseq
+	url = https://github.com/mal2017/gte21-pirna-kd-rnaseq
