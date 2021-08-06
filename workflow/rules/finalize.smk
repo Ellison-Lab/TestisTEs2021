@@ -269,3 +269,13 @@ rule collect_pirna_kd_rnaseq:
         """
         cp {input} {output}
         """
+
+rule collect_total_rna_fusions:
+    input:
+        total_rna_fusions("results/arriba/w1118_testes_{total_rna_fusions_sample}/fusions.tsv")
+    output:
+        "results/arriba/w1118_testes_{total_rna_fusions_sample}.fusions.tsv"
+    shell:
+        """
+        cp {input} {output}
+        """
