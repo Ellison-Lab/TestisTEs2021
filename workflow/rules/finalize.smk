@@ -274,7 +274,7 @@ rule collect_total_rna_fusions:
     input:
         total_rna_fusions("results/arriba/w1118_testes_{total_rna_fusions_sample}/fusions.tsv")
     output:
-        "results/arriba/w1118_testes_{total_rna_fusions_sample}.fusions.tsv"
+        "results/finalized/arriba/w1118_testes_{total_rna_fusions_sample}.fusions.tsv"
     shell:
         """
         cp {input} {output}

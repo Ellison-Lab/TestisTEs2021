@@ -129,6 +129,8 @@ FINAL_DATASETS_FILES += ["results/finalized/wgs/w1118_male/snps.vcf"]
 FINAL_DATASETS_FILES += expand("results/finalized/arriba/w1118_testes_{s}.fusions.tsv",s=["01","02","03","04"])
 FINAL_DATASETS_FILES += ["results/finalized/pirna_kd_rnaseq/pirna_kd_vs_control.res.tsv"]
 
+localrules: all, collect_total_rna_fusions
+
 rule all:
     input:
         FINAL_DATASETS_FILES
