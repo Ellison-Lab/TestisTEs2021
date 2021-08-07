@@ -30,7 +30,7 @@ tep.members <- w1118.gep_membership %>%
   filter(as.character(module)==tep.name) %>%
   pull(X1)
 
-custom_gtf <- rtracklayer::import("~/amarel-scratch/TE-proj-reorg/TestisTEs2021/subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf") %>%
+custom_gtf <- rtracklayer::import("subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf") %>%
   as_tibble() %>%
   dplyr::select(gene_id, Blast_hit="gene_symbol") %>%
   distinct()
@@ -222,3 +222,20 @@ gt::gtsave(gt_ins, snakemake@output[["png1"]])
 gt::gtsave(gt_consensus, snakemake@output[["png2"]])
 
 gt::gtsave(gt_tep_ins, snakemake@output[["png3"]])
+
+# Export stats info -----------------------------------------------------------------------------------
+
+stats.raw <- list(`enr. in chrY TEP-gene introns`=y_tep_intron_test,
+     `enr. in chrY gene introns`=y_intron_test, 
+     `enr. for at last 1 chrY intron insertion`=y_intron_at_least_test) %>%
+  map_df(broom::tidy,.id="comparison")
+
+
+stats.export <- stats.raw %>%
+  mutate(script= "larracuente_y_intronic_ins.R") %>%
+  mutate(desc = "enrichment in Y gene introns") %>%
+  mutate(func = "stats::fisher.test") %>%
+  mutate(ci = map2_chr(conf.low,conf.high,~paste(round(.x,digits = 3),round(.y,digits=3),sep=" - "))) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic=estimate, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

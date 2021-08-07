@@ -26,3 +26,19 @@ dev.off()
 
 saveRDS(g,snakemake@output[['ggp']])
 write_tsv(df,snakemake@output[['dat']])
+
+
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- wilcox.test(y~x,data=g$layers[[2]]$compute_aesthetics(data=g$data, plot=g)) %>%
+  broom::tidy()
+
+stats.export <- raw.stats %>%
+  mutate(script= "tidal_larval_te_xa_boxplot.R") %>%
+  mutate(desc = "compare chrX/Autosome insertion ratio") %>%
+  mutate(func = "stats::wilcox.test/ggpubr::stat_compare_means") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = "TEP TEs vs. other TEs") %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

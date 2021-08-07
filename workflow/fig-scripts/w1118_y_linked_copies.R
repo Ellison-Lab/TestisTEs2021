@@ -129,3 +129,17 @@ saveRDS(g3,snakemake@output[['ggp3']])
 
 write_tsv(dat,snakemake@output[['dat']])
 
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- wilcox.test(y~x,data=g1$layers[[2]]$compute_aesthetics(data=g1$data, plot=g1)) %>%
+  broom::tidy()
+
+stats.export <- raw.stats %>%
+  mutate(script= "w1118_y_linked_copies.R") %>%
+  mutate(desc = "compare M/F estimated copies") %>%
+  mutate(func = "stats::wilcox.test/ggpubr::stat_compare_means") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = "TEP TEs vs. other TEs") %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

@@ -49,3 +49,20 @@ dev.off()
 
 saveRDS(g,snakemake@output[['ggp']])
 write_tsv(df,snakemake@output[['dat']])
+
+
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- kruskal.test(y~x,data=g$layers[[2]]$compute_aesthetics(data=g$data, plot=g)) %>%
+  broom::tidy()
+
+stats.export <- raw.stats %>%
+  mutate(script= "larval_normalized_te_umis.R") %>%
+  mutate(desc = "normalized UMI counts") %>%
+  mutate(func = "stats::kruskal.test/ggpubr::stat_compare_means") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = "Inter-cluster expression") %>%
+  mutate(alternative=NA) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

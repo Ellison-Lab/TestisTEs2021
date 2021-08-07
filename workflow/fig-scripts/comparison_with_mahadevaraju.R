@@ -89,3 +89,14 @@ saveRDS(g,snakemake@output[['ggp']])
 saveRDS(g2,snakemake@output[['ggp2']])
 write_tsv(cor.df,snakemake@output[['dat']])
 
+# Export stats info -----------------------------------------------------------------------------------
+
+stats.export <- cor.df %>%
+  mutate(script= "comparison_with_mahadevaraju.R") %>%
+  mutate(desc = "correlation of cluster expression across datasets") %>%
+  mutate(func = "stats::cor.test") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = paste("Mahadevaraju vs. this study:",x)) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic=estimate, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

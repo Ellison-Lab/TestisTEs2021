@@ -37,6 +37,7 @@ rule larval_scrna_vs_bulk:
         ggp1 = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.ggp.rds",
         ggp2 = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.tes.ggp.rds",
         dat = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.dat.tsv",
+        stats = "results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.stats.tsv",
     script:
         "../fig-scripts/larval_scrna_vs_bulk.R"
 
@@ -58,7 +59,8 @@ rule larval_normalized_te_umis:
     output:
         png = "results/figs/larval_normalized_te_umis/larval_normalized_te_umis.png",
         ggp = "results/figs/larval_normalized_te_umis/larval_normalized_te_umis.ggp.rds",
-        dat = "results/figs/larval_normalized_te_umis/larval_normalized_te_umis.dat.tsv"
+        dat = "results/figs/larval_normalized_te_umis/larval_normalized_te_umis.dat.tsv",
+        stats = "results/figs/larval_normalized_te_umis/larval_normalized_te_umis.stats.tsv"
     script:
         "../fig-scripts/larval_normalized_te_umis.R"
 
@@ -69,7 +71,8 @@ rule larval_raw_te_umis:
     output:
         png = "results/figs/larval_raw_te_umis/larval_raw_te_umis.png",
         ggp = "results/figs/larval_raw_te_umis/larval_raw_te_umis.ggp.rds",
-        dat = "results/figs/larval_raw_te_umis/larval_raw_te_umis.dat.tsv"
+        dat = "results/figs/larval_raw_te_umis/larval_raw_te_umis.dat.tsv",
+        stats = "results/figs/larval_raw_te_umis/larval_raw_te_umis.stats.tsv"
     script:
         "../fig-scripts/larval_raw_te_umis.R"
 
@@ -194,7 +197,8 @@ rule larval_y_gene_enr:
     output:
         png = "results/figs/larval_y_gene_enr/larval_y_gene_enr.png",
         ggp = "results/figs/larval_y_gene_enr/larval_y_gene_enr.ggp.rds",
-        dat = "results/figs/larval_y_gene_enr/larval_y_gene_enr.dat.tsv"
+        dat = "results/figs/larval_y_gene_enr/larval_y_gene_enr.dat.tsv",
+        stats = "results/figs/larval_y_gene_enr/larval_y_gene_enr.stats.tsv"
     script:
         "../fig-scripts/larval_y_gene_enr.R"
 
@@ -229,7 +233,8 @@ rule tidal_larval_tep_xa_boxplot:
     output:
         png = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.png",
         ggp = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.ggp.rds",
-        dat = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.dat.tsv"
+        dat = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.dat.tsv",
+        stats = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.stats.tsv"
     script:
         "../fig-scripts/tidal_larval_tep_xa_boxplot.R"
 
@@ -242,7 +247,8 @@ rule larracuente_y_ins_barchart:
         ggp = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.ggp.rds",
         png2 = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.png",
         ggp2 = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.at_least_1.ggp.rds",
-        dat = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.dat.tsv"
+        dat = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.dat.tsv",
+        stats = "results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.stats.tsv"
     script:
         "../fig-scripts/larracuente_y_ins_barchart.R"
 
@@ -254,6 +260,7 @@ rule larracuente_y_intronic_ins:
         png1 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_ins.png",
         png2 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_ins_by_consensus.png",
         png3 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_tep_ins.png",
+        stats = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_tep_ins.stats.tsv",
     script:
         "../fig-scripts/larracuente_y_intronic_ins.R"
 
@@ -269,7 +276,8 @@ rule w1118_y_linked_copies:
         ggp2 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.2.ggp.rds",
         png3 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.3.png",
         ggp3 = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.3.ggp.rds",
-        dat = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.dat.tsv"
+        dat = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.dat.tsv",
+        stats = "results/figs/w1118_y_linked_copies/w1118_y_linked_copies.stats.tsv"
     script:
         "../fig-scripts/w1118_y_linked_copies.R"
 
@@ -282,7 +290,8 @@ rule w1118_pct_y_linked_rna_vs_wgs:
         png2 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.paired.png",
         ggp = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.ggp.rds",
         ggp2 = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.box.paired.ggp.rds",
-        dat = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.dat.tsv"
+        dat = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.dat.tsv",
+        stats = "results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_linked_rna_vs_wgs.stats.tsv"
     script:
         "../fig-scripts/w1118_pct_y_linked_rna_vs_wgs.R"
 
@@ -308,7 +317,8 @@ rule w1118_full_length_tx:
         ggp1 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.line.ggp.rds",
         png2 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.heat.png",
         ggp2 = "results/figs/w1118_full_length_tx/w1118_full_length_tx.heat.ggp.rds",
-        dat = "results/figs/w1118_full_length_tx/w1118_full_length_tx.dat.tsv"
+        dat = "results/figs/w1118_full_length_tx/w1118_full_length_tx.dat.tsv",
+        stats = "results/figs/w1118_full_length_tx/w1118_full_length_tx.stats.tsv"
     script:
         "../fig-scripts/w1118_full_length_tx.R"
 
@@ -323,7 +333,8 @@ rule comparison_with_mahadevaraju:
         ggp = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.ggp.rds",
         png2 = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.n_cells.png",
         ggp2 = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.n_cells.ggp.rds",
-        dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv"
+        dat = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.dat.tsv",
+        stats = "results/figs/comparison_with_mahadevaraju/comparison_with_mahadevaraju.stats.tsv"
     script:
         "../fig-scripts/comparison_with_mahadevaraju.R"
 
@@ -355,6 +366,7 @@ rule all_dataset_tep_scores:
         png_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.png",
         ggp_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.ggp.rds",
         dat_tes = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.dat.tsv",
+        stats = "results/figs/all_dataset_tep_scores/all_dataset_tep_scores.stats.tsv",
     script:
         "../fig-scripts/all_dataset_tep_scores.R"
 
@@ -400,3 +412,23 @@ rule arriba_total_rna_fusions:
 #     script:
 #         "../fig-scripts/larval_chrom_modifiers_umis.R"
 #
+
+
+rule collect_computed_statistics:
+    input:
+        rules.larval_scrna_vs_bulk.output.stats,
+        rules.larval_normalized_te_umis.output.stats,
+        rules.larval_raw_te_umis.output.stats,
+        rules.larval_y_gene_enr.output.stats,
+        rules.tidal_larval_tep_xa_boxplot.output.stats,
+        rules.larracuente_y_ins_barchart.output.stats,
+        rules.larracuente_y_intronic_ins.output.stats,
+        rules.w1118_y_linked_copies.output.stats,
+        rules.w1118_pct_y_linked_rna_vs_wgs.output.stats,
+        rules.w1118_full_length_tx.output.stats,
+        rules.comparison_with_mahadevaraju.output.stats,
+        rules.all_dataset_tep_scores.output.stats,
+    output:
+        stats="results/figs/collect_computed_statistics/collect_computed_statistics.stats.tsv"
+    script:
+        "../fig-scripts/collect_computed_statistics.R"

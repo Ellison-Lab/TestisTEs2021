@@ -147,3 +147,18 @@ saveRDS(g1,snakemake@output[['ggp']])
 saveRDS(g3,snakemake@output[['ggp2']])
 
 write_tsv(df2,snakemake@output[['dat']])
+
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- wilcox.test(y~x,data=g1$layers[[2]]$compute_aesthetics(data=g1$data, plot=g1)) %>%
+  broom::tidy()
+
+stats.export <- raw.stats %>%
+  mutate(script= "w1118_pct_y_linked_rna_vs_wgs.R") %>%
+  mutate(desc = "compare RNA/WGS allele depth") %>%
+  mutate(func = "stats::wilcox.test/ggpubr::stat_compare_means") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = "TEP TEs vs. other TEs") %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

@@ -125,3 +125,22 @@ dev.off()
 saveRDS(g1,snakemake@output[['ggp1']])
 saveRDS(g2,snakemake@output[['ggp2']])
 write_tsv(bws,snakemake@output[['dat']])
+
+
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- plot_df %>% group_by(replicate, gene_id, type) %>%
+  summarise(`std. dev.` = sd(score),.groups = "drop") %>%
+  split(.,.$replicate) %>%
+  map_df(~broom::tidy(kruskal.test(`std. dev.`~type,data=.)), .id="comparison")
+
+stats.export <- raw.stats %>%
+  mutate(script= "w1118_full_length_tx.R") %>%
+  mutate(desc = "compare stdev across bins") %>%
+  mutate(func = "stats::wilcox.test/ggpubr::stat_compare_means") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = "positional high signal along length of TEs and genes") %>%
+  mutate(alternative=NA) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

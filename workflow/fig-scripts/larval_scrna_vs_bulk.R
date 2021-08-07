@@ -109,3 +109,23 @@ saveRDS(g1,snakemake@output[['ggp1']])
 saveRDS(g2,snakemake@output[['ggp2']])
 
 write_tsv(df,snakemake@output[['dat']])
+
+
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- list(`all features` = g1, `only TEs`=g2) %>%
+  map(~.$data) %>%
+  map(~split(.,.$bulk.replicate)) %>%
+  map(~map_df(.,~{broom::tidy(cor.test(x=.$scRNA, y=.$bulk,method = "spearman"),)},.id="comparison")) %>%
+  bind_rows(.id="comparison0")
+
+
+stats.export <- raw.stats %>%
+  mutate(script= "larval_scrna_vs_bulk.R") %>%
+  mutate(desc = "correlation of bulk replicates with scRNA") %>%
+  mutate(func = "stats::cor.test/ggpubr::stat_cor") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = paste(comparison,"vs scRNA using",comparison0)) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic=estimate, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

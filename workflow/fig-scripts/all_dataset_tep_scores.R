@@ -59,3 +59,22 @@ dev.off()
 saveRDS(g2,snakemake@output[['ggp_tes']])
 
 write_tsv(expr_corr_df,snakemake@output[['dat_tes']])  
+
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- g2$data %>%
+  split(.$clusters) %>%
+  #map(dplyr::select,c("ref","mean_expr"))
+  #map(~{cor.test(x=.$ref, y=.$mean.expr,method = "spearman")})
+  map_df(~{broom::tidy(cor.test(x=.$ref, y=.$mean.expr,method = "spearman"),)},.id="comparison")
+
+
+stats.export <- raw.stats %>%
+  mutate(script= "all_dataset_tep_scores.R") %>%
+  mutate(desc = "correlation of mean expression values between clusters/datasets") %>%
+  mutate(func = "stats::cor.test/ggpubr::stat_cor") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = paste("Witt et al. Wild Strain vs",comparison)) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic=estimate, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

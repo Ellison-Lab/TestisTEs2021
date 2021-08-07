@@ -142,3 +142,17 @@ run_chisq_y <- function(top_tes,other_tes) {
 
 res_y <- run_chisq_y(filter(ins,GEP=='TEP'),filter(ins,GEP=='other'))
 
+# Export stats info -----------------------------------------------------------------------------------
+
+raw.stats <- res_y$tbl
+
+stats.export <- raw.stats %>%
+  mutate(script= "larracuente_y_ins_barchart.R") %>%
+  mutate(desc = "overrepresentation of TEs on Y") %>%
+  mutate(func = "stats::chisq.test") %>%
+  mutate(ci = NA) %>%
+  mutate(comparison = "TEP-TEs vs other") %>%
+  mutate(alternative=NA) %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])

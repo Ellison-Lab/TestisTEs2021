@@ -83,14 +83,15 @@ g1 <- df %>%
   scale_y_continuous(labels=scales::percent) +
   ylab("") + xlab("genomic location")
 
-pval <- df %>%
+fish_res <- df %>%
   spread(chrom,n) %>%
   arrange(desc(GEP)) %>%
   dplyr::select(GEP,Y, other) %>%
   column_to_rownames("GEP") %>%
   fisher.test() %>%
-  tidy() %>%
-  pull(p.value)
+  tidy()
+
+pval <-  pull(fish_res,p.value)
 
 g1 <- g1
 
@@ -104,3 +105,15 @@ dev.off()
 
 saveRDS(list(g1,pval),snakemake@output[['ggp']])
 write_tsv(df,snakemake@output[['dat']])
+
+# Export stats info -----------------------------------------------------------------------------------
+
+stats.export <- fish_res %>%
+  mutate(script= "larval_y_gene_enr.R") %>%
+  mutate(desc = "Y gene enrichment in TEP") %>%
+  mutate(func = "stats::fisher.test") %>%
+  mutate(ci = map2_chr(conf.low,conf.high,~paste(round(.x,digits = 3),round(.y,digits=3),sep=" - "))) %>%
+  mutate(comparison = "TEP vs other") %>%
+  dplyr::select(script, comparison, desc, method, func, alternative,p.value,statistic=estimate, ci)
+
+write_tsv(stats.export,snakemake@output[['stats']])
