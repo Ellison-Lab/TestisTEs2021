@@ -432,3 +432,17 @@ rule collect_computed_statistics:
         stats="results/figs/collect_computed_statistics/collect_computed_statistics.stats.tsv"
     script:
         "../fig-scripts/collect_computed_statistics.R"
+
+rule collect_diffs:
+    input:
+        diffs = scrna("results/scanpy/{group}/diffs.csv.gz"),
+        rename = rules.celltype_rename_table.output.tsv,
+    output:
+        tsv = "results/finalized/{group}.diffs.tsv.gz"
+    resources:
+        time=40,
+        mem=24000,
+    conda:
+        "../envs/r_arrow.yaml"
+    script:
+        "../scripts/collect-diffs.R"
