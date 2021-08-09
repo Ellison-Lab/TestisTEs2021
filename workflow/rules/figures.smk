@@ -387,32 +387,27 @@ rule arriba_total_rna_fusions:
     script:
         "../fig-scripts/arriba_total_rna_fusions.R"
 
-#
-# rule larval_chromatin_mod_umap:
-#     input:
-#         FINAL_DATASETS_FILES,
-#         rules.celltype_rename_table.output
-#     output:
-#         png = "results/figs/larval_chromatin_mod_umap/larval_chromatin_mod_umap.png",
-#         ggp = "results/figs/larval_chromatin_mod_umap/larval_chromatin_mod_umap.ggp.rds",
-#         dat = "results/figs/larval_chromatin_mod_umap/larval_chromatin_mod_umap.dat.tsv"
-#     script:
-#         "../fig-scripts/larval_chromatin_mod_umap.R"
-#
-#
-#
-# rule larval_chrom_modifiers_umis:
-#     input:
-#         FINAL_DATASETS_FILES,
-#         rules.celltype_rename_table.output
-#     output:
-#         png = "results/figs/larval_chrom_modifiers_umis/larval_chrom_modifiers_umis.png",
-#         ggp = "results/figs/larval_chrom_modifiers_umis/larval_chrom_modifiers_umis.ggp.rds",
-#         dat = "results/figs/larval_chrom_modifiers_umis/larval_chrom_modifiers_umis.dat.tsv"
-#     script:
-#         "../fig-scripts/larval_chrom_modifiers_umis.R"
-#
+# ------------------------------------------------------------------------------
+# Stuff for revisions
+# ------------------------------------------------------------------------------
 
+rule flam_tep_enrichment:
+    output:
+        png = "results/figs/flam_tep_enrichment/flam_tep_enrichment.png",
+        ggp = "results/figs/flam_tep_enrichment/flam_tep_enrichment.ggp.rds",
+        dat = "results/figs/flam_tep_enrichment/flam_tep_enrichment.dat.tsv",
+        stats = "results/figs/flam_tep_enrichment/flam_tep_enrichment.stats.tsv",
+    script:
+        "../fig-scripts/flam-enrich.R"
+
+rule ovary_silenced_enrichment:
+    output:
+        png = "results/figs/ovary_silenced_enrichment/ovary_silenced_enrichment.png",
+        ggp = "results/figs/ovary_silenced_enrichment/ovary_silenced_enrichment.ggp.rds",
+        dat = "results/figs/ovary_silenced_enrichment/ovary_silenced_enrichment.dat.tsv",
+        stats = "results/figs/ovary_silenced_enrichment/ovary_silenced_enrichment.stats.tsv",
+    script:
+        "../fig-scripts/silenced-in-ovary.R"
 
 rule collect_computed_statistics:
     input:
@@ -428,6 +423,8 @@ rule collect_computed_statistics:
         rules.w1118_full_length_tx.output.stats,
         rules.comparison_with_mahadevaraju.output.stats,
         rules.all_dataset_tep_scores.output.stats,
+        rules.flam_tep_enrichment.output.stats,
+        rules.ovary_silenced_enrichment.output.stats
     output:
         stats="results/figs/collect_computed_statistics/collect_computed_statistics.stats.tsv"
     script:

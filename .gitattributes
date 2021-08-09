@@ -8,3 +8,4 @@ resources/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_1.split_channe
 resources/210215_accord2_calfluor610_eachm_quasar670_3p4.slices_1_30.montage.slices_1_30.montage.png filter=lfs diff=lfs merge=lfs -text
 resources/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_1.representative.png filter=lfs diff=lfs merge=lfs -text
 resources/210204_dapi_quasimodo2_calfluor61_eachm_quasar670p.slices_1_22_x2.montage.png filter=lfs diff=lfs merge=lfs -text
+resources/dmel-all-chromosome-r6.22.fasta.out.bed filter=lfs diff=lfs merge=lfs -text
