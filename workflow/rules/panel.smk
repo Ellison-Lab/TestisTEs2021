@@ -101,6 +101,16 @@ rule supp4:
     script:
         "../fig-scripts/supp4.R"
 
+rule supp4_5:
+    input:
+        rules.flam_tep_enrichment.output,
+        rules.ovary_silenced_enrichment.output
+    output:
+        "results/panels/supp4_5.pdf",
+        "results/panels/supp4_5.rds"
+    script:
+        "../fig-scripts/supp4-5.R"
+
 rule supp5:
     input:
         rules.larval_later_sperm_marker_umis.output,

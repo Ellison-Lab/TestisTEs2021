@@ -77,11 +77,11 @@ df <- lookup %>%
   mutate(prop = n/sum(n))
 
 g <- df %>%
-  ggplot(aes(GEP,prop,fill=silenced.in.ovary)) +
+  ggplot(aes(GEP,prop,fill=ifelse(silenced.in.ovary,"yes","no"))) +
   geom_col() +
   scale_y_continuous(labels = scales::percent) +
   ylab("") +
-  scale_fill_grey(limits=c(`T`,`F`), name="Silenced in ovary?") +
+  scale_fill_grey(limits=c("yes","no"), name="Silenced in ovary?") +
   theme_gte21()
 
 fish <- df %>% dplyr::select(GEP,silenced.in.ovary, n) %>% spread(silenced.in.ovary,n) %>%
