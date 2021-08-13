@@ -130,9 +130,9 @@ ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format="a
 ins <- ins %>% left_join(te_sizes) %>% mutate(prop.missing = (cons.length - ins.size)/cons.length)
 
 hetchrom.ins.5 <- ins %>%
+  left_join(te.lookup, by=c(te="gene_id")) %>%
   #filter(prop.missing < 0.1) %>% # for intron fragments,even small pieces would contribute to RNA seq signal, so don't filter in this test
-  mutate(GEP = ifelse(te %in% tep.members,"TEP","other")) %>%
-  left_join(te.lookup, by=c(te="gene_id"))
+  mutate(GEP = ifelse(merged_te %in% tep.members,"TEP","other"))
 
 # get a list of tes with at least 1 y linked insertion
 has_y_ins <- hetchrom.ins.5 %>% filter(str_detect(chrom,"Y")) %>% pull(te) %>% unique

@@ -74,10 +74,11 @@ ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format="a
 ins <- ins %>% left_join(te_sizes) %>% mutate(prop.missing = (cons.length - ins.size)/cons.length)
 
 ins <- ins %>%
+  left_join(te.lookup, by=c(te="gene_id")) %>%
   #group_by(ins.id) %>%
   #filter(sum(del.pct) < 0.1) %>%
   filter(prop.missing < 0.1) %>%
-  mutate(GEP = ifelse(te %in% tep.members,"TEP","other"))
+  mutate(GEP = ifelse(merged_te %in% tep.members,"TEP","other"))
 
 df <- ins %>%
   mutate(chrom=ifelse(str_detect(chrom,'Y'),'Y','other')) %>%
