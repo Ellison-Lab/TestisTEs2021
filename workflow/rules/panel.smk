@@ -135,8 +135,10 @@ rule panels:
         rules.supp2.output,
         rules.supp3.output,
         rules.supp4.output,
+        rules.supp4_5.output,
         rules.supp5.output,
-        rules.larracuente_y_intronic_ins.output
+        rules.larracuente_y_intronic_ins.output,
+        rules.collect_computed_statistics.output,
     output:
         "results/collected/collected.pdf"
     script:

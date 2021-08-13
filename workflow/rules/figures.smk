@@ -371,6 +371,9 @@ rule all_dataset_tep_scores:
         "../fig-scripts/all_dataset_tep_scores.R"
 
 rule chimerics:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output,
     output:
         png = "results/figs/chimerics/chimerics.png",
         ggp = "results/figs/chimerics/chimerics.ggp.rds",
@@ -380,6 +383,9 @@ rule chimerics:
         "../fig-scripts/chimerics.R"
 
 rule arriba_total_rna_fusions:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output,
     output:
         png = "results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.png",
         ggp = "results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.ggp.rds",
@@ -392,6 +398,9 @@ rule arriba_total_rna_fusions:
 # ------------------------------------------------------------------------------
 
 rule flam_tep_enrichment:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output,
     output:
         png = "results/figs/flam_tep_enrichment/flam_tep_enrichment.png",
         ggp = "results/figs/flam_tep_enrichment/flam_tep_enrichment.ggp.rds",
@@ -401,6 +410,9 @@ rule flam_tep_enrichment:
         "../fig-scripts/flam-enrich.R"
 
 rule ovary_silenced_enrichment:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output,
     output:
         png = "results/figs/ovary_silenced_enrichment/ovary_silenced_enrichment.png",
         ggp = "results/figs/ovary_silenced_enrichment/ovary_silenced_enrichment.ggp.rds",

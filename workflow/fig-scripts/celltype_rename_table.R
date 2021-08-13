@@ -12,5 +12,5 @@ tibble(clusters2 = c("0/Spermatocyte",
        "9/Spermatocyte"),
        clusters.rename = c("5/Spermatocyte","6/Spermatocyte","1/Spermatogonia",
                            "7/Cyst","8/Cyst","9/Pigment","10/TerminalEpithelial",
-                           "4/Spermatocyte","2/Spermatogonia","3/Spermatocyte")) %>%
+                           "4/Spermatocyte","2/TransitionalSpermatocyte","3/Spermatocyte")) %>%
   write_tsv(snakemake@output[['tsv']])
