@@ -59,6 +59,7 @@ rule supp1:
     input:
         rules.comparison_with_mahadevaraju.output,
         rules.larval_scrna_vs_bulk.output,
+        rules.spermatogonia_marker_expr.output,
         rules.larval_scrna_basic_qc_stats.output
     output:
         "results/panels/supp1.pdf",
@@ -81,6 +82,7 @@ rule supp2:
 rule supp3:
     input:
         rules.larval_cica_grid_heatmap.output,
+        rules.ica_reproducibility.output,
         rules.larval_gep_size_histogram.output,
         rules.all_dataset_tep_scores.output,
         rules.larval_ica_optimized_enr.output
@@ -138,6 +140,7 @@ rule panels:
         rules.supp4_5.output,
         rules.supp5.output,
         rules.larracuente_y_intronic_ins.output,
+        rules.arriba_total_rna_fusions.output,
         rules.collect_computed_statistics.output,
     output:
         "results/collected/collected.pdf"

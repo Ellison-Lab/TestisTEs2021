@@ -67,14 +67,15 @@ res %>%
   unique() -> is_silenced
 
 df <- lookup %>%
-  mutate(GEP = ifelse(merged_te %in% tep_tes,"TEP","other")) %>%
+  mutate(GEP = ifelse(merged_te %in% tep_tes,"module 27","other")) %>%
   mutate(silenced.in.ovary = gene_id %in% is_silenced) %>%
   filter(!str_detect(gene_id,"[-_]LTR")) %>%
   distinct() %>%
   group_by(GEP,silenced.in.ovary) %>%
   tally() %>%
   group_by(GEP) %>%
-  mutate(prop = n/sum(n))
+  mutate(prop = n/sum(n)) %>%
+  mutate(GEP = fct_rev(GEP))
 
 g <- df %>%
   ggplot(aes(GEP,prop,fill=ifelse(silenced.in.ovary,"yes","no"))) +
@@ -82,7 +83,8 @@ g <- df %>%
   scale_y_continuous(labels = scales::percent) +
   ylab("") +
   scale_fill_grey(limits=c("yes","no"), name="Silenced in ovary?") +
-  theme_gte21()
+  theme_gte21() +
+  xlab("module")
 
 fish <- df %>% dplyr::select(GEP,silenced.in.ovary, n) %>% spread(silenced.in.ovary,n) %>%
   arrange(desc(GEP)) %>%

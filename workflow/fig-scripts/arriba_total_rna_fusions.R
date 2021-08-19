@@ -108,8 +108,10 @@ g <- te_gene_fusion_df %>%
   filter(!str_detect(partner,",")) %>%
   filter(partner.chrom=="Y") %>%
   filter(te.gep == "TEP") %>%
+  mutate(partner.gep = ifelse(partner.gep == "TEP","module 27","other")) %>%
   mutate(id = paste(partner, merged_te,  sep=" // ")) %>%
   mutate(partner.gep = paste("fused to",partner.gep,"gene")) %>%
+  mutate(partner.gep = fct_rev(partner.gep)) %>%
   ggplot(aes(reorder(str_replace_all(id, "_(?=[Y])","\n"), te.percent.supporting),te.percent.supporting,fill=replicate)) +
   geom_col(position = "dodge") +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +

@@ -70,15 +70,17 @@ non_tep <- geps %>%
 df <- bind_rows(tep, non_tep) %>%
   group_by(chrom, GEP) %>%
   tally() %>%
-  ungroup()
+  ungroup() %>%
+  mutate(GEP = ifelse(GEP == "TEP","module 27","other"))
+  
 
 g1 <- df %>%
   group_by(chrom) %>%
   mutate(pct = n/sum(n)) %>%
-  ggplot(aes(chrom,pct, fill=GEP)) +
+  ggplot(aes(chrom,pct, fill=fct_rev(GEP))) +
   geom_col(position = "stack") +
   theme_gte21() +
-  scale_fill_gte21("binary",reverse = T) +
+  scale_fill_gte21("binary",reverse = T,name="module") +
   theme(aspect.ratio = 1) +
   scale_y_continuous(labels=scales::percent) +
   ylab("") + xlab("genomic location")
@@ -92,8 +94,6 @@ fish_res <- df %>%
   tidy()
 
 pval <-  pull(fish_res,p.value)
-
-g1 <- g1
 
 #pool <- geps %>%
 #  filter(str_detect(X1,"FBgn")) %>%

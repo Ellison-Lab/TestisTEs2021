@@ -29,7 +29,7 @@ df.per_cell <- df.per_cell %>%
 g <- ggplot(df.per_cell, aes(clusters.rename,UMIs)) +
   geom_violin(aes(fill=clusters.rename),draw_quantiles = c(0.5),scale = 'width') +
   theme_gte21() +
-  xlab("") + ylab('UMIs (raw)') +
+  xlab("") + ylab('TE-derived UMIs (raw)') +
   guides(fill=F) +
   scale_fill_gte21() +
   theme(plot.caption= element_text(hjust=0.5, face='italic'),

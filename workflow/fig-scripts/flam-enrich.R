@@ -55,7 +55,7 @@ n_tep <- length(tep_tes)
 not_flam_in_tep <- n_tep - flam_in_tep
 not_flam_not_in_tep <- length(unique(lookup$merged_te)) - flam_in_tep - flam_not_in_tep - not_flam_in_tep
 
-cont <- matrix(c(flam_in_tep, not_flam_in_tep, flam_not_in_tep, not_flam_not_in_tep),ncol = 2,dimnames = list(c("yes","no"),c("TEP","other")))
+cont <- matrix(c(flam_in_tep, not_flam_in_tep, flam_not_in_tep, not_flam_not_in_tep),ncol = 2,dimnames = list(c("yes","no"),c("module 27","other")))
 
 cont_df <- cont %>% as.data.frame() %>% rownames_to_column("cluster") %>%
   gather(module, count, -cluster) %>%

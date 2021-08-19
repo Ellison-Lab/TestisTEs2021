@@ -33,7 +33,7 @@ df <- df %>%
 g <- ggplot(df, aes(clusters.rename,expression)) +
   geom_violin(aes(fill=clusters.rename),draw_quantiles = c(0.5),scale = 'width') +
   theme_gte21() +
-  xlab("") + ylab('UMIs (norm)') +
+  xlab("") + ylab('TE-derived UMIs (norm)') +
   guides(fill=F) +
   scale_fill_gte21() +
   theme(aspect.ratio = 0.3) +

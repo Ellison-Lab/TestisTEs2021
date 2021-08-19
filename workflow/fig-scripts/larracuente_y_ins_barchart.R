@@ -78,7 +78,7 @@ ins <- ins %>%
   #group_by(ins.id) %>%
   #filter(sum(del.pct) < 0.1) %>%
   filter(prop.missing < 0.1) %>%
-  mutate(GEP = ifelse(merged_te %in% tep.members,"TEP","other"))
+  mutate(GEP = ifelse(merged_te %in% tep.members,"module 27","other"))
 
 df <- ins %>%
   mutate(chrom=ifelse(str_detect(chrom,'Y'),'Y','other')) %>%
@@ -88,14 +88,15 @@ df <- ins %>%
 
 g <- df %>% 
   mutate(GEP=as.factor(GEP)) %>%
-  mutate(GEP = fct_relevel(GEP,"TEP","other")) %>%
+  mutate(GEP = fct_relevel(GEP,"module 27","other")) %>%
   ggplot(aes(GEP,percent,fill=chrom)) +
   geom_col(color='white') +
   theme_gte21() +
   scale_fill_gte21("binary",reverse = T) +
   theme(aspect.ratio = 1) +
   ylab('Insertion percentage') +
-  scale_y_continuous(labels = scales::percent)
+  scale_y_continuous(labels = scales::percent) +
+  xlab("module")
 
 
 g2 <- ins %>%
@@ -106,7 +107,8 @@ g2 <- ins %>%
   geom_col(color='white') +
   theme_gte21() +
   ylab('At least 1 Y insertion') +
-  scale_y_continuous(labels = scales::percent)
+  scale_y_continuous(labels = scales::percent) +
+  xlab("module")
   
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
@@ -141,7 +143,7 @@ run_chisq_y <- function(top_tes,other_tes) {
   list(contingency=x, tbl = broom::tidy(chisq.test(x)))
 }
 
-res_y <- run_chisq_y(filter(ins,GEP=='TEP'),filter(ins,GEP=='other'))
+res_y <- run_chisq_y(filter(ins,GEP=='module 27'),filter(ins,GEP=='other'))
 
 # Export stats info -----------------------------------------------------------------------------------
 

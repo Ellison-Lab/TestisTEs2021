@@ -72,11 +72,11 @@ dat.auto <- left_join(copies.male, copies.female, by="sequence", suffix=c('.male
 
 dat <- left_join(copies.male, copies.female, by="sequence", suffix=c('.male','.female')) %>%
   filter(sequence %in% tes) %>%
-  mutate(tep = ifelse(sequence %in% tep_tes,'TEP','other')) %>%
+  mutate(tep = ifelse(sequence %in% tep_tes,'module 27','other')) %>%
   filter(!str_detect(sequence,'[-_]LTR')) %>%
   filter(est.copies.male >= 1 | est.copies.female > 1) %>%
   mutate(m.f.ratio = est.copies.male/est.copies.female) %>%
-  mutate(tep = fct_relevel(tep,c("TEP","other")))
+  mutate(tep = fct_relevel(tep,c("module 27","other")))
 
 g3 <- dat %>%
   group_by(sign(log2(m.f.ratio))) %>%
@@ -87,7 +87,7 @@ g3 <- dat %>%
   theme_gte21() +
   theme(axis.text.x = element_text(angle=90, hjust=1, size=rel(1))) +
   xlab("") + ylab("log2(M/F copies)") +
-  scale_fill_gte21("binary")
+  scale_fill_gte21("binary", name="module")
 
 g2 <- dat %>% 
   ggplot(aes(est.copies.male,est.copies.female, label=sequence)) +
@@ -97,7 +97,7 @@ g2 <- dat %>%
   scale_y_log10() +
   scale_x_log10() +
   facet_wrap(~tep) +
-  scale_color_gte21("binary",name="GEP") +
+  scale_color_gte21("binary",name="module") +
   scale_size(name="M/F copies")
 
 g1 <- dat %>%

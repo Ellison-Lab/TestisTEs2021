@@ -58,6 +58,10 @@ y_linked_expr <- read_rds("results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_
   theme(aspect.ratio = NULL) +
   theme(axis.title.y = element_text(size=rel(0.5)))
 
+chr4 <- read_rds("results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.4.ggp.rds") +
+  theme(axis.title.y = element_text(size=rel(0.5))) +
+  theme(aspect.ratio = NULL)
+
 
 layout <-"
 AAAAA
@@ -69,10 +73,13 @@ BBBDD
 BBBDD
 EEEFF
 EEEFF
+GG###
+GG###
 "
 
 
-p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + plot_annotation(tag_levels = 'A') + 
+p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + chr4 +
+  plot_annotation(tag_levels = 'A') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

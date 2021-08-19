@@ -55,21 +55,40 @@ mito <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc
 phase <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.phase.ggp.rds") + theme(aspect.ratio = NULL)+
   theme(axis.title = element_text(size=rel(1)))
 
+sperma_markers <- read_rds("results/figs/spermatogonia_marker_expr/spermatogonia_marker_expr.ggp.rds") + theme(aspect.ratio = NULL)+
+  theme(axis.title = element_text(size=rel(1)))
+
+
+
+# layout <-"
+# AABBCC
+# AABBCC
+# DDEEFF
+# DDEEFF
+# GGHHII
+# GGHHII
+# JJ####
+# JJ####
+# "
 
 layout <-"
 AABBCC
 AABBCC
-DDEEFF
-DDEEFF
-GGHHII
-GGHHII
-JJ####
-JJ####
+DDDEEE
+DDDEEE
+FFGG##
+FFGG##
 "
 
-p <- polya_all + polya_tes + corr_plot + n_cells + batch + dubs + umis + phase + n_genes + mito + plot_annotation(tag_levels = 'A') +  
-  plot_layout(design=layout) &
-  theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
+
+# p <- polya_all + polya_tes + corr_plot + n_cells + batch + dubs + umis + phase + n_genes + mito + plot_annotation(tag_levels = 'A') +  
+#   plot_layout(design=layout) &
+#   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
+
+p <- n_cells + corr_plot + sperma_markers + polya_all + polya_tes + batch + mito + plot_annotation(tag_levels = 'A') +  
+   plot_layout(design=layout) &
+   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
+
 
 
 ggsave(snakemake@output[[1]], p, width = 20, height = 25)

@@ -231,12 +231,14 @@ rule tidal_larval_tep_xa_boxplot:
         FINAL_DATASETS_FILES,
         rules.celltype_rename_table.output
     output:
-        png = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.png",
-        ggp = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.ggp.rds",
+        png1 = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.png",
+        ggp1 = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.ggp.rds",
+        png2 = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.4.png",
+        ggp2 = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.4.ggp.rds",
         dat = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.dat.tsv",
         stats = "results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.stats.tsv"
     script:
-        "../fig-scripts/tidal_larval_tep_xa_boxplot.R"
+        "../fig-scripts/tidal-fig-v2.R"
 
 rule larracuente_y_ins_barchart:
     input:
@@ -455,3 +457,26 @@ rule collect_diffs:
         "../envs/r_arrow.yaml"
     script:
         "../scripts/collect-diffs.R"
+
+rule ica_reproducibility:
+    input:
+        FINAL_DATASETS_FILES,
+    output:
+        png1 = "results/figs/ica_reproducibility/ica_reproducibility.pval.png",
+        ggp1 = "results/figs/ica_reproducibility/ica_reproducibility.pval.ggp.rds",
+        png2 = "results/figs/ica_reproducibility/ica_reproducibility.corr.png",
+        ggp2 = "results/figs/ica_reproducibility/ica_reproducibility.corr.ggp.rds",
+        dat = "results/figs/ica_reproducibility/ica_reproducibility.dat.tsv",
+    script:
+        "../fig-scripts/ica-repro.R"
+
+rule spermatogonia_marker_expr:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/spermatogonia_marker_expr/spermatogonia_marker_expr.png",
+        ggp = "results/figs/spermatogonia_marker_expr/spermatogonia_marker_expr.ggp.rds",
+        dat = "results/figs/spermatogonia_marker_expr/spermatogonia_marker_expr.dat.tsv"
+    script:
+        "../fig-scripts/spermatogonia-marker-expr.R"

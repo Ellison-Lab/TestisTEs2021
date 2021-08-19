@@ -97,7 +97,8 @@ df2 <- df %>%
   group_by(subsample, gene_id, pos, sex) %>%
   slice_max(ratio, n=1, with_ties = F) %>%
   ungroup() %>%
-  mutate(gep = fct_relevel(gep, c("TEP","other")))
+  mutate(gep = ifelse(gep == "TEP","module 27","other")) %>%
+  mutate(gep = fct_relevel(gep, c("module 27","other")))
 
 g1 <- df2 %>% 
   filter(sex == "male") %>% 

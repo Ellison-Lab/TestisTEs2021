@@ -21,7 +21,7 @@ ylinked <- unique(gtf %>% filter(seqnames == 'Y' & type == 'mRNA') %>% pull(gene
 tmac <- c('aly','wuc','tomb',"kmg") %>% tibble(gene_symbol = ., group='tMAC')
 ttaf <- c('sa','nht','mia','can','Taf12L') %>% tibble(gene_symbol = ., group='tTAF')
 tbrd <- c('tbrd-1','tbrd-2') %>% tibble(gene_symbol = ., group='tBRD')
-tplus <- c('tplus3a','tplus3b') %>% tibble(gene_symbol = ., group='tPAF')
+tplus <- c('tplus3a','tplus3b',"bol") %>% tibble(gene_symbol = ., group='tPAF')
 tep.marker <- c('EAChm') %>% tibble(gene_symbol = ., group='TEP-HI')
 
 male.meiosis1.associated <- bind_rows(ylinked, tmac, ttaf, tbrd, tplus, tep.marker)
@@ -62,7 +62,7 @@ g2 <-  dat2 %>%
   ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_fermenter(palette = 8, direction = 1, name='mean(log-norm UMIs)', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  scale_size(range=c(0, rel(2.5)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_size(range=c(0, rel(3.2)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   theme_gte21()  +
   theme(axis.text.x = element_text(angle=90, hjust=1), axis.text.y=element_text(face="italic")) +
   theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +

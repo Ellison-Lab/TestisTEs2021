@@ -164,7 +164,7 @@ ins_cont_tab <- matrix(c(n_tep_ins_y_introns, n_other_ins_y_introns, n_tep_ins_n
 
 colnames(ins_cont_tab) <- c("intron-overlapping","non-intron-overlapping")
 
-rownames(ins_cont_tab) <- c("TEP","other")
+rownames(ins_cont_tab) <- c("module 27","other")
 
 y_intron_test <- fisher.test(ins_cont_tab)
 
@@ -186,7 +186,7 @@ cont_tab <- matrix(c(n_tep_in_y_introns, n_other_in_y_introns, n_tep_not_in_y_in
 
 colnames(cont_tab) <- c(">0 intronic insertions","0 intronic insertions")
 
-rownames(cont_tab) <- c("TEP","other")
+rownames(cont_tab) <- c("module 27","other")
 
 y_intron_at_least_test <- fisher.test(cont_tab)
 
@@ -207,7 +207,7 @@ tep_ins_cont_tab <- matrix(c(n_tep_ins_y_tep_introns, n_other_ins_y_tep_introns,
 
 colnames(tep_ins_cont_tab) <- c("intron-overlapping","non-intron-overlapping")
 
-rownames(tep_ins_cont_tab) <- c("TEP","other")
+rownames(tep_ins_cont_tab) <- c("module 27","other")
 
 y_tep_intron_test <- fisher.test(tep_ins_cont_tab)
 

@@ -20,7 +20,7 @@ df <- w1118.gep_enr %>%
 g <- ggplot(df,aes(ont,pct.unique)) +
   geom_col() +
   scale_y_continuous(labels = scales::percent) +
-  ylab("Percent GEPs w/ unique enrichent") +
+  ylab("Percent modules w/ unique enrichent") +
   theme_gte21() +
   theme(axis.title.y = element_text(size=rel(0.5)), axis.title.x = element_blank())
 
