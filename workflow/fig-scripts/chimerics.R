@@ -46,7 +46,7 @@ g <- to_plot %>% dplyr::select(breakpoint_id, other_chr) %>%
   geom_col() +
   theme_gte21() +
   theme(axis.text.x = element_text(angle = 45, hjust=1, vjust = 1)) +
-  xlab("") + ylab("reproducible genic breakpoints") +
+  xlab("") + ylab("reproducible chimeric transcripts") +
   scale_y_continuous(expand = expand_scale(mult = c(0,0), add = c(0,1)))
 
 g2 <- to_plot %>%
@@ -59,7 +59,7 @@ g2 <- to_plot %>%
   geom_jitter(width = 0.1) +
   facet_wrap(~sample) +
   theme_gte21() +
-  xlab("") + ylab("supporting reads") +
+  xlab("") + ylab("reads supporting\nchimeric transcripts") +
   theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1))
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')

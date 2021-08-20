@@ -83,6 +83,6 @@ p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 
-ggsave(snakemake@output[[1]], p, width = 8, height = 10)
+ggsave(snakemake@output[[1]], p, width = 10, height = 12)
 
 saveRDS(p,file=snakemake@output[[2]])

@@ -40,7 +40,7 @@ g <- ggplot(dat2, aes(gene_symbol, clusters.rename)) +
   scale_fill_gte21(palette = "diverging", discrete = F, name = "Mean expression") +
   scale_size(range=c(0, rel(5)), name='Proportion expressing') +
   theme_gte21() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1), axis.text.y = element_text(face="italic")) +
   coord_flip() +
   xlab('') + ylab('')
 

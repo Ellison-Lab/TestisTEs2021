@@ -44,7 +44,7 @@ read_rds("results/panels/figure2.rds")
 
 ## Figure 3
 
-```{r, fig.dim=c(10,6), out.height="4.5in", out.width="7.5in"}
+```{r, fig.dim=c(10,6), out.height="4.5in", out.width="6.5in",fig.align="center"}
 read_rds("results/panels/figure3.rds")
 ```
 
@@ -103,7 +103,7 @@ read_rds("results/panels/supp4.rds")
 ## Supplementary Figure 5
 
 
-```{r, fig.dim=c(8,8), out.height="4in", out.width="4in",fig.align='center'}
+```{r, fig.dim=c(8,4), out.height="5in", out.width="5in",fig.align='center'}
 read_rds( "results/panels/supp4_5.rds")
 ```
 
@@ -141,7 +141,7 @@ s7a
 
 ## Supplementary Figure 9
 
-```{r, fig.dim=c(10,10), out.height="7in", out.width="7in"}
+```{r, fig.dim=c(10,12), out.height="7in", out.width="5.81in"}
 read_rds("results/panels/supp5.rds")
 ```
 
@@ -149,7 +149,7 @@ read_rds("results/panels/supp5.rds")
 
 ## Supplementary Figure 10
 
-```{r, fig.dim=c(10,10), out.height="3in", out.width="7in", align="center", fig.align='center'}
+```{r, fig.dim=c(10,7), out.height="3in", out.width="7in", align="center", fig.align='center'}
 read_rds("results/figs/arriba_total_rna_fusions/arriba_total_rna_fusions.ggp.rds")
 ```
 

@@ -44,12 +44,14 @@ tep.name <- geps %>%
 #  filter(qval < optimal_ica[['qval']]) %>%
 #  filter(module == tep.name) %>% pull(X1)
 
+expressed_genes <- unique(pull(collect(w1118.expr),"gene_id"))
+
 ylinked <- gtf %>%
   filter(seqnames == 'Y' & type == 'mRNA') %>%
   dplyr::select(seqnames, gene_symbol, gene_id) %>%
-  distinct() %>%
-  filter(gene_id %in% geps$X1)
-
+  filter(gene_id %in% expressed_genes) %>%
+  distinct()
+  
 tep <- geps %>%
   filter(qval < optimal_ica[['qval']]) %>%
   filter(str_detect(X1,"FBgn")) %>%

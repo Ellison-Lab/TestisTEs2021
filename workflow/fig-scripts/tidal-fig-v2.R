@@ -161,6 +161,10 @@ g2 <- sex_auto_ratio_df2 %>%
   coord_cartesian(ylim=c(0,3)) +
   theme(axis.title.x = element_blank())
 
+pct.reduction <- sex_auto_ratio_df2 %>% filter(comparison == "chrX_Auto_ratio") %>%
+  group_by(is_top_mod) %>%
+  summarise(ratio=median(ratio))
+
 # ========
 # export
 # =======

@@ -115,8 +115,8 @@ g <- te_gene_fusion_df %>%
   ggplot(aes(reorder(str_replace_all(id, "_(?=[Y])","\n"), te.percent.supporting),te.percent.supporting,fill=replicate)) +
   geom_col(position = "dodge") +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  xlab("breakpoint") +
-  ylab("% supporting") +scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) + theme_gte21() +
+  xlab("chimeric transcript") +
+  ylab("% supporting reads") +scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) + theme_gte21() +
   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
   facet_grid(.~partner.gep, scales = "free_x" ) +
   scale_fill_gte21()

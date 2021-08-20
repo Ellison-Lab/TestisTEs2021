@@ -24,14 +24,14 @@ ph <- ph +
   annotate("text",3400,3950, label="ACCORD2", color="green")
 
 layout <-"
-AAABBBB
-AAABBBB
-AAABBBB
-CCCBBBB
-CCCBBBB
+AAABBB
+AAABBB
+AAABBB
+CCCCCC
+CCCCCC
 "
 
-p <- tes + y_genes + ph +
+p <- tes + ph + y_genes + 
   plot_annotation(tag_levels = 'A', theme=theme(plot.caption = element_text(hjust=0))) +
   plot_layout(design = layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
