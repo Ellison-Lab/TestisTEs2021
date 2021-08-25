@@ -480,3 +480,14 @@ rule spermatogonia_marker_expr:
         dat = "results/figs/spermatogonia_marker_expr/spermatogonia_marker_expr.dat.tsv"
     script:
         "../fig-scripts/spermatogonia-marker-expr.R"
+
+rule te_expression_by_cluster:
+    input:
+        FINAL_DATASETS_FILES,
+        rules.celltype_rename_table.output
+    output:
+        png = "results/figs/te_expression_by_cluster/te_expression_by_cluster.png",
+        ggp = "results/figs/te_expression_by_cluster/te_expression_by_cluster.ggp.rds",
+        dat = "results/figs/te_expression_by_cluster/te_expression_by_cluster.dat.tsv"
+    script:
+        "../fig-scripts/te-expression-by-cluster.R"

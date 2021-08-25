@@ -12,8 +12,10 @@ rule figure1:
 rule figure2:
     input:
         rules.larval_te_heatmap.output,
+        rules.te_expression_by_cluster.output
     output:
         "results/panels/figure2.pdf",
+        "results/panels/figure2.expr-in-half.pdf",
         "results/panels/figure2.rds"
     script:
         "../fig-scripts/figure2.R"

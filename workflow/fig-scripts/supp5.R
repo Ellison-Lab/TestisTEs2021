@@ -38,16 +38,16 @@ y_gene_enr <- y_gene_enr_datalist[[1]] + theme(aspect.ratio = NULL) +
   theme(axis.title.x = element_text(size=rel(0.5))) +
   theme(legend.title = element_blank(), legend.text = element_text(size=rel(0.5)))
 
-y_copies <- read_rds("results/figs/w1118_y_linked_copies/w1118_y_linked_copies.2.ggp.rds") + 
-  theme(aspect.ratio = NULL) +
-  theme(axis.title = element_text(size=rel(1))) +
-  theme(legend.key.size = unit(0.1, "pt"), legend.text = element_text(size=rel(0.5)),
-        legend.title = element_text(size=rel(0.5)), 
-        legend.box.spacing = unit(1, "pt"), strip.text = element_text(size=rel(1))) + guides(color=F, size=F) + 
-  theme(aspect.ratio = 1) +
-  facet_wrap(~tep, ncol = 2) +
-  xlab("Male copies") + ylab("Female copies") +
-  theme(axis.text = element_text(size=rel(0.7)))
+#y_copies <- read_rds("results/figs/w1118_y_linked_copies/w1118_y_linked_copies.2.ggp.rds") + 
+#  theme(aspect.ratio = NULL) +
+#  theme(axis.title = element_text(size=rel(1))) +
+#  theme(legend.key.size = unit(0.1, "pt"), legend.text = element_text(size=rel(0.5)),
+#        legend.title = element_text(size=rel(0.5)), 
+#        legend.box.spacing = unit(1, "pt"), strip.text = element_text(size=rel(1))) + guides(color=F, size=F) + 
+#  theme(aspect.ratio = 1) +
+#  facet_wrap(~tep, ncol = 2) +
+#  xlab("Male copies") + ylab("Female copies") +
+#  theme(axis.text = element_text(size=rel(0.7)))
 
 y_copies_2 <- read_rds("results/figs/w1118_y_linked_copies/w1118_y_linked_copies.3.ggp.rds") + theme(aspect.ratio = NULL) +
   theme(legend.position = "right") +
@@ -58,9 +58,9 @@ y_linked_expr <- read_rds("results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_
   theme(aspect.ratio = NULL) +
   theme(axis.title.y = element_text(size=rel(0.5)))
 
-chr4 <- read_rds("results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.4.ggp.rds") +
-  theme(axis.title.y = element_text(size=rel(0.5))) +
-  theme(aspect.ratio = NULL)
+#chr4 <- read_rds("results/figs/tidal_larval_tep_xa_boxplot/tidal_larval_tep_xa_boxplot.4.ggp.rds") +
+#  theme(axis.title.y = element_text(size=rel(0.5))) +
+#  theme(aspect.ratio = NULL)
 
 
 layout <-"
@@ -71,14 +71,13 @@ BBBCC
 BBBCC
 BBBDD
 BBBDD
-EEEFF
-EEEFF
-GG###
-GG###
+EE###
+EE###
 "
 
 
-p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + y_copies_2 + y_linked_expr + chr4 +
+p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + #y_copies_2 + 
+  y_linked_expr + #chr4 +
   plot_annotation(tag_levels = 'A') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))

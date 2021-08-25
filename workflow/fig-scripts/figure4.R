@@ -29,6 +29,7 @@ AAABBB
 AAABBB
 CCCCCC
 CCCCCC
+CCCCCC
 "
 
 p <- tes + ph + y_genes + 

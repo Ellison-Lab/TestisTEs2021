@@ -30,6 +30,7 @@ tep.members <- w1118.gep_membership %>%
   filter(qval < optimal_ica[['qval']]) %>%
   collect() %>%
   filter(as.character(module)==tep.name) %>%
+  filter(!str_detect(X1,"FBgn")) %>%
   pull(X1)
 
 # hetchrom.ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format='arrow')
@@ -74,13 +75,13 @@ ins <- open_dataset("results/finalized/hetchrom_assembly_insertions/", format="a
 ins <- ins %>% left_join(te_sizes) %>% mutate(prop.missing = (cons.length - ins.size)/cons.length)
 
 ins <- ins %>%
-  left_join(te.lookup, by=c(te="gene_id")) %>%
+  left_join(te.lookup,. , by=c("gene_id"="te")) %>%
   #group_by(ins.id) %>%
-  #filter(sum(del.pct) < 0.1) %>%
-  filter(prop.missing < 0.1) %>%
+  #filter(sum(del.pct) < 0.1) %>% ungroup() %>%
   mutate(GEP = ifelse(merged_te %in% tep.members,"module 27","other"))
 
 df <- ins %>%
+  filter(prop.missing < 0.1) %>%
   mutate(chrom=ifelse(str_detect(chrom,'Y'),'Y','other')) %>%
   count(chrom,GEP) %>%
   group_by(GEP) %>%
@@ -99,16 +100,45 @@ g <- df %>%
   xlab("module")
 
 
-g2 <- ins %>%
-  group_by(GEP, te) %>%
-  summarise(has.y.linked = any(str_detect(chrom, "Y")), .groups = "drop_last") %>%
-  summarise(pct.has.y = sum(has.y.linked)/n()) %>%
-  ggplot(aes(GEP,pct.has.y)) +
-  geom_col(color='white') +
+has_y_ins <- ins %>% filter(str_detect(chrom,"Y") & prop.missing < 0.1) %>% pull(merged_te) %>% unique
+
+at_least_1_df <- te.lookup %>%
+  dplyr::select(merged_te) %>%
+  distinct() %>%
+  mutate(has.y.ins = merged_te %in% has_y_ins) %>%
+  mutate(module = ifelse(merged_te %in% tep.members,"module 27","other")) 
+
+g2 <- at_least_1_df %>%
+  #filter(merged_te %in% collect(w1118.gep_membership)$X1) %>%
+  group_by(module, has.y.ins) %>%
+  tally() %>%
+  group_by(module) %>%
+  mutate(pct.has.y = n/sum(n)) %>%
+  ungroup() %>%
+  filter(has.y.ins) %>%
+  ggplot(aes(module,pct.has.y)) +
+  geom_col(color="white") +
   theme_gte21() +
   ylab('At least 1 Y insertion') +
-  scale_y_continuous(labels = scales::percent) +
-  xlab("module")
+  scale_y_continuous(labels = scales::percent)
+
+# g2 <- ins %>%
+#   filter(prop.missing < 0.1) %>%
+#   dplyr::select(chrom,merged_te,ins.id,merged_te, GEP, prop.missing) %>%
+#   distinct() %>%
+#   left_join(te.lookup,.) %>%
+#   group_by(GEP, merged_te) %>%
+#   summarise(has.y.linked = any(str_detect(chrom, "Y") & prop.missing < 0.1), .groups = "drop_last") %>%
+#   mutate(has.y.linked = ifelse(is.na(has.y.linked),F,has.y.linked)) %>%
+#   #filter(GEP == "module 27") %>% pull(te) %>% unique()
+#   #filter(GEP == "module 27") %>% #pull(te) %>% unique() %>% {tep.members[!tep.members %in% .]}
+#   summarise(pct.has.y = sum(has.y.linked)/n(),n=sum(has.y.linked),n=n()) %>% 
+#   ggplot(aes(GEP,pct.has.y)) +
+#   geom_col(color='white') +
+#   theme_gte21() +
+#   ylab('At least 1 Y insertion') +
+#   scale_y_continuous(labels = scales::percent) +
+#   xlab("module")
   
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
@@ -122,12 +152,13 @@ dev.off()
 saveRDS(g,snakemake@output[['ggp']])
 saveRDS(g2,snakemake@output[['ggp2']])
 
-write_tsv(ins,snakemake@output[['dat']])
+#write_tsv(ins,snakemake@output[['dat']])
+write_tsv(at_least_1_df,snakemake@output[['dat']])
 
 
 run_chisq_y <- function(top_tes,other_tes) {
-  topmod_ins_gr <- top_tes[,1:4] %>% GRanges()
-  othermod_ins_gr <- other_tes[,1:4] %>% GRanges()
+  topmod_ins_gr <- top_tes[,12:14] %>% GRanges()
+  othermod_ins_gr <- other_tes[,12:14] %>% GRanges()
   
   
   top_in_y<-sum(str_detect(seqnames(topmod_ins_gr),'Y'))
@@ -143,7 +174,9 @@ run_chisq_y <- function(top_tes,other_tes) {
   list(contingency=x, tbl = broom::tidy(chisq.test(x)))
 }
 
-res_y <- run_chisq_y(filter(ins,GEP=='module 27'),filter(ins,GEP=='other'))
+ins2 <- ins %>% filter(prop.missing < 0.1)
+
+res_y <- run_chisq_y(filter(ins2,GEP=='module 27'),filter(ins2,GEP=='other'))
 
 # Export stats info -----------------------------------------------------------------------------------
 

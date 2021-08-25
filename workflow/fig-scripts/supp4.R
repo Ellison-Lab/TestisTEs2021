@@ -14,9 +14,11 @@ pie <- read_rds("results/figs/larval_tep_te_barchart/larval_tep_te_barchart.ggp.
   facet_wrap(~repClass, ncol = 1)
 
 heat1<- image_read("results/figs/larval_gep_corr_heatmap/larval_gep_corr.membership.png", density = 300) %>%
+  image_trim(fuzz=1) %>%
   image_ggplot()
 
 heat2<- image_read("results/figs/larval_gep_corr_heatmap/larval_gep_corr.usage.png", density = 300) %>%
+  image_trim(fuzz=1) %>%
   image_ggplot()
 
 
@@ -25,13 +27,12 @@ heat1 <- heat1 + theme(plot.margin = margin())
 heat2 <- heat2 + theme(plot.margin = margin())
 
 layout <-"
-AAC
-AAC
-BBC
-BBC
+AABB
+AABB
 "
 
-p <- heat2 + heat1  +  pie + plot_annotation(tag_levels = 'A') +  
+p <- heat2 + heat1  +  #pie + 
+  plot_annotation(tag_levels = 'A') +  
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

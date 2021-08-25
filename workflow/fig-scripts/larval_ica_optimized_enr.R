@@ -15,7 +15,7 @@ df <- w1118.gep_enr %>%
   mutate(is.unique = n()) %>%
   group_by(ont, cluster) %>%
   summarise(has.unique = any(is.unique==1),.groups = "drop_last") %>%
-  summarise(pct.unique = sum(has.unique)/n())
+  summarise(pct.unique = sum(has.unique)/n(), n.unique = sum(has.unique))
 
 g <- ggplot(df,aes(ont,pct.unique)) +
   geom_col() +

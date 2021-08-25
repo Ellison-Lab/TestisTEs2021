@@ -25,10 +25,18 @@ heats <- read_rds("results/figs/ica_reproducibility/ica_reproducibility.pval.ggp
   theme(aspect.ratio = 0.5, plot.caption = element_text(hjust=0))
 
 
-te_expr_scores <- read_rds("results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.ggp.rds") + 
-  theme(aspect.ratio = NULL, axis.title.x = element_markdown(size=rel(0.5)),strip.text = element_text(size=rel(0.7))) +
-  theme(plot.title = element_text(size=rel(0.5)))
+#te_expr_scores <- read_rds("results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.ggp.rds") + 
+#  theme(aspect.ratio = NULL, axis.title.x = element_markdown(size=rel(0.5)),strip.text = element_text(size=rel(0.7))) +
+#  theme(plot.title = element_text(size=rel(0.5)))
 
+
+#layout <-"
+#AAAAAA
+#BBBCCC
+#DDDDDD
+#DDDDDD
+#DDDDDD
+#"
 
 layout <-"
 AAAAAA
@@ -38,7 +46,8 @@ DDDDDD
 DDDDDD
 "
 
-p <- heats + sizes + enr + te_expr_scores + plot_annotation(tag_levels = 'A') + 
+p <- heats + sizes + enr + #te_expr_scores + 
+  plot_annotation(tag_levels = 'A') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

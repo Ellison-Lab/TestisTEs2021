@@ -114,6 +114,14 @@ sex_auto_ratio_df <- group_by(ins, TE, Chr) %>%
   complete(Chr,TE,fill=list(n=0)) %>%
   mutate_at(vars(Chr),as.character)
 
+
+# this spits out the number of TEP-TEs with at least 1 attributable insertion
+# note that
+left_join(sex_auto_ratio_df, lookup, by=c("TE"="Flybase_name")) %>%
+  filter(n > 0) %>%
+  {tep.members %in% .$merged_te} %>%
+  sum()
+
 # normalize to length
 sex_auto_ratio_df <- mutate(sex_auto_ratio_df, Chr_type = ifelse(!Chr %in% c("chrX",'chrY',"chr4"),'autosome',Chr)) %>%
   group_by(TE,Chr_type) %>%
@@ -123,6 +131,7 @@ sex_auto_ratio_df <- mutate(sex_auto_ratio_df, Chr_type = ifelse(!Chr %in% c("ch
   ungroup() %>%
   dplyr::select(-Chr_len,-n) %>%
   spread(Chr_type,ins_per_mb)
+
 
 sex_auto_ratio_df2 <- sex_auto_ratio_df %>%
   #filter(chrY > 0) %>%

@@ -29,15 +29,15 @@ corr_plot <- read_rds("results/figs/comparison_with_mahadevaraju/comparison_with
                   legend.justification = "center")
   
 
-polya_all <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.ggp.rds") + theme(aspect.ratio = NULL)+
-  theme(axis.title = element_text(size=rel(1)))
+#polya_all <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.ggp.rds") + theme(aspect.ratio = NULL)+
+#  theme(axis.title = element_text(size=rel(1)))
 
-polya_tes <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.tes.ggp.rds") + 
-  theme(aspect.ratio = NULL, axis.title = element_text(margin = margin())) +
-  theme(axis.title = element_text(size=rel(1)))
+#polya_tes <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.tes.ggp.rds") + 
+#  theme(aspect.ratio = NULL, axis.title = element_text(margin = margin())) +
+#  theme(axis.title = element_text(size=rel(1)))
 
-batch <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.batch.ggp.rds") + theme(aspect.ratio = NULL)+
-  theme(axis.title = element_text(size=rel(1)))
+#batch <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.batch.ggp.rds") + theme(aspect.ratio = NULL)+
+#  theme(axis.title = element_text(size=rel(1)))
 
 dubs <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.dubs.ggp.rds") + theme(aspect.ratio = NULL)+
   theme(axis.title = element_text(size=rel(1)),axis.title.y = element_text(margin = margin(r=-100, unit = "pt")))
@@ -48,9 +48,9 @@ umis <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc
 n_genes <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.n_genes.ggp.rds") + theme(aspect.ratio = NULL)+
   theme(axis.title = element_text(size=rel(1)),axis.title.y = element_text(margin = margin(r=-100,unit = "pt")))
 
-mito <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.percent_mito.ggp.rds") + theme(aspect.ratio = NULL) + 
-  ylab("% mitochondrial UMIs")+
-  theme(axis.title = element_text(size=rel(1)))
+#mito <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.percent_mito.ggp.rds") + theme(aspect.ratio = NULL) + 
+#  ylab("% mitochondrial UMIs")+
+#  theme(axis.title = element_text(size=rel(1)))
 
 phase <- read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.phase.ggp.rds") + theme(aspect.ratio = NULL)+
   theme(axis.title = element_text(size=rel(1)))
@@ -72,12 +72,10 @@ sperma_markers <- read_rds("results/figs/spermatogonia_marker_expr/spermatogonia
 # "
 
 layout <-"
-AABBCC
-AABBCC
-DDDEEE
-DDDEEE
-FFGG##
-FFGG##
+AABB
+AABB
+CC##
+CC##
 "
 
 
@@ -85,7 +83,8 @@ FFGG##
 #   plot_layout(design=layout) &
 #   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 
-p <- n_cells + corr_plot + sperma_markers + polya_all + polya_tes + batch + mito + plot_annotation(tag_levels = 'A') +  
+p <- n_cells + corr_plot + sperma_markers + #polya_all + polya_tes + #batch + mito + 
+   plot_annotation(tag_levels = 'A') +  
    plot_layout(design=layout) &
    theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

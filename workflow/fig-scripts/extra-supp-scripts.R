@@ -17,23 +17,23 @@ gep <- w1118.gep_membership %>% collect()
 
 te.lookup <- read_tsv('resources/te_id_lookup.curated.tsv.txt')
 
-geps %>%
+gep %>%
   filter(!str_detect(X1,"FBgn")) %>%
   filter(module == 27) %>%
   filter(qval < 0.005) %>%
   dplyr::rename(membership.score=weight) %>%
   left_join(te.lookup, by=c(X1='merged_te')) %>%
-  dplyr::select(X1,membership.score,qval,class=Class,family=repFamily) %>%
+  dplyr::select(X1,membership.score,membership.qval=qval,class=Class,family=repFamily) %>%
   distinct() %>%
   group_by(X1) %>% 
   slice_head(n = 1) %>%
   write_tsv("~/Downloads/supplement-mod27-tes.tsv")
 
-geps %>%
+gep %>%
   filter(str_detect(X1,"FBgn")) %>%
   filter(module == 27) %>%
   filter(qval < 0.005) %>%
-  dplyr::rename(membership.score=weight) %>%
+  dplyr::rename(membership.score=weight, membership.qval = qval) %>%
   write_tsv("~/Downloads/supplement-mod27-genes.tsv")
 
 

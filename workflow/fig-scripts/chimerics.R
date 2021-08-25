@@ -4,12 +4,41 @@ library(GenomicRanges)
 library(readxl)
 library(arrow)
 library(ragg)
+library(arrow)
+library(jsonlite)
 
 source("workflow/fig-scripts/theme.R")
 chimerics <- Sys.glob("subworkflows/gte21-chimeric-rnaseq/results/breakpoints/*.breakpoint-depths.csv") %>%
   map_df(read_csv)
 
 lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")
+
+te_lookup <- read_tsv("resources/te_id_lookup.curated.tsv.txt")%>%
+  dplyr::select(merged_te, te=gene_id) %>%
+  distinct()
+
+optimal_ica <- read_json('results/finalized/optimal-gep-params/larval-w1118-testes.json') %>% unlist()
+
+w1118.gep_membership <- open_dataset("results/finalized/larval-w1118-testes/optimal_gep_membership", format='arrow')
+
+tep.name <- w1118.gep_membership %>%
+  filter(qval < optimal_ica[['qval']]) %>%
+  collect() %>%
+  left_join(te_lookup, by=c(X1='merged_te')) %>%
+  filter(!str_detect(X1,'FBgn')) %>%
+  distinct() %>%
+  group_by(module) %>%
+  summarize(n_tes=n()) %>%
+  arrange(-n_tes) %>%
+  head(1) %>%
+  pull(module) %>% as.character()
+
+tep.members <- w1118.gep_membership %>%
+  filter(qval < optimal_ica[['qval']]) %>%
+  collect() %>%
+  filter(as.character(module)==tep.name) %>%
+  left_join(te_lookup, by =c("X1"="merged_te")) %>%
+  pull(te)
 
 gtf <- import("subworkflows/gte21-custom-genome/results/custom-genome/combined.fixed.gtf")
 
@@ -33,7 +62,11 @@ to_plot <- res %>%
   filter(length(unique(sample)) >=2) %>%
   filter(all(supporting_reads > 1)) %>%
   arrange(breakpoint_id) %>%
-  ungroup()
+  ungroup() #%>%
+  #filter(other_chr %in% tep.members)
+
+# tep TE fusions
+unique(to_plot$other_chr)[unique(to_plot$other_chr) %in% tep.members]
 
 g <- to_plot %>% dplyr::select(breakpoint_id, other_chr) %>%
   distinct() %>%

@@ -18,18 +18,32 @@ raw <- read_rds("results/figs/larval_raw_te_umis/larval_raw_te_umis.ggp.rds") + 
 
 normal <- read_rds("results/figs/larval_normalized_te_umis/larval_normalized_te_umis.ggp.rds") + theme(aspect.ratio = NULL)
 
+polya_all <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.ggp.rds") + theme(aspect.ratio = NULL)+
+  theme(axis.title = element_text(size=rel(1)))
+
+polya_tes <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.tes.ggp.rds") + 
+  theme(aspect.ratio = NULL, axis.title = element_text(margin = margin())) +
+  theme(axis.title = element_text(size=rel(1)))
+
+
 layout <-"
 AABB
 AABB
 CCDD
 CCDD
-CCEE
-CCEE
-CCFF
-CCFF
+CCDD
+CCDD
+EEFF
+EEFF
+EEGG
+EEGG
+EEHH
+EEHH
 "
 
-p <- raw + normal + full_length_heat + full_length_box + chimerics + chimerics_supporting_reads +  plot_annotation(tag_levels = 'A') +  
+p <- raw + normal + 
+  polya_all + polya_tes + 
+  full_length_heat + full_length_box + chimerics + chimerics_supporting_reads +  plot_annotation(tag_levels = 'A') +  
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

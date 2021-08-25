@@ -56,13 +56,11 @@ wgs_y_tep_tes <- read_tsv("results/figs/w1118_y_linked_copies/w1118_y_linked_cop
 
 # via larrac
 larrac_y_tep_tes <- read_tsv("results/figs/larracuente_y_ins_barchart/larracuente_y_ins_barchart.dat.tsv") %>%
-  filter(str_detect(chrom,"Y")) %>%
-  filter(prop.missing < 0.1) %>%
-  dplyr::select(te,GEP) %>%
-  arrange(te) %>%
+  filter(has.y.ins) %>%
+  dplyr::select(merged_te,module) %>%
+  arrange(merged_te) %>%
   distinct() %>%
-  left_join(lookup, by=c(te='gene_id')) %>%
-  filter(GEP=="TEP")
+  filter(module=="module 27")
 
 # via flam
 # cat dmel-all-chromosome-r6.22.fasta.out | rmsk2bed > dmel-all-chromosome-r6.22.fasta.out.bed
@@ -80,8 +78,15 @@ flam_tep_tes <- rpts %>% filter(chr == "X") %>% GRanges() %>%
   dplyr::select(merged_te) %>%
   distinct()
 
+ov.silenced <- read_tsv("results/finalized/pirna_kd_rnaseq/pirna_kd_vs_control.res.tsv") %>%
+  filter(!str_detect(gene_id,"FBgn")) %>%
+  filter(padj < 0.05 & log2FoldChange > 0) %>% 
+  left_join(lookup) %>%
+  filter(merged_te %in% tep_tes) %>%
+  pull(merged_te) %>% unique()
 
-unique(as.vector(unlist(c(flam_tep_tes, pull(larrac_y_tep_tes,merged_te), pull(wgs_y_tep_tes, merged_te)))))
+
+unique(as.vector(unlist(c(ov.silenced,flam_tep_tes, pull(larrac_y_tep_tes,merged_te)))))
 
 # -----------------------------------------------------------
 # pigment and epithelial cell tes
@@ -107,7 +112,7 @@ df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list
   left_join(collect(w1118.obs), by=c(index='X1')) %>%
   left_join(rename.table) %>%
   group_by(clusters.rename,gene_id) %>%
-  filter(sum(expression > 0) >= n()/2) %>% # TEs expressed in at least a third of the cluster
+  filter(sum(expression > 0) >= n()/2) %>% # TEs expressed in at least a half of the cluster
   summarise(expression = sum(expression)) %>%
   ungroup()
 
@@ -139,6 +144,19 @@ df %>%
   filter(str_detect(clusters.rename,"3/Spermatocyte")) %>%
   pull(gene_id) %>%
   unique()
+
+
+df %>% 
+  filter(str_detect(clusters.rename,"2/TransitionalSpermatocyte")) %>%
+  pull(gene_id) %>%
+  unique()
+
+df %>% 
+  filter(str_detect(clusters.rename,"2/Trans") | str_detect(clusters.rename,"3/Sperm")) %>%
+  mutate(clusters.rename=droplevels(clusters.rename)) %>% 
+  split(.,.$clusters.rename) %>% 
+  map(~pull(.,gene_id)) %>%
+  {.[["3/Spermatocyte"]][.[["3/Spermatocyte"]] %in% .[["2/TransitionalSpermatocyte"]]]}
 
 
 # -
