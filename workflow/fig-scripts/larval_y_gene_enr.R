@@ -69,7 +69,9 @@ non_tep <- geps %>%
   dplyr::select(X1, chrom, GEP) %>%
   distinct()
 
-df <- bind_rows(tep, non_tep) %>%
+df0 <- bind_rows(tep, non_tep)
+
+df <- df0 %>%
   group_by(chrom, GEP) %>%
   tally() %>%
   ungroup() %>%
@@ -106,7 +108,7 @@ print(g1)
 dev.off()
 
 saveRDS(list(g1,pval),snakemake@output[['ggp']])
-write_tsv(df,snakemake@output[['dat']])
+write_tsv(df0,snakemake@output[['dat']])
 
 # Export stats info -----------------------------------------------------------------------------------
 

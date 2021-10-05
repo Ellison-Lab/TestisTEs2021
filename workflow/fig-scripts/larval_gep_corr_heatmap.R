@@ -44,3 +44,15 @@ pheatmap::pheatmap(w1118.membership.cor,
                    cluster_cols = w1118.membership.hc.geps, treeheight_row = F,treeheight_col = 10,fontsize_col = 2,
                    border_color = NA, cellwidth = 3, cellheight = 3, show_rownames = F,show_colnames=F)
 dev.off()
+
+
+df <- bind_rows(`by.usage.score` = w1118.usage.cor %>% 
+  as_tibble(rownames = "module_from") %>%
+  pivot_longer(-module_from, names_to = "module_to",values_to = "pearson_r"),
+  `by.membership.score`= w1118.membership.cor %>% 
+  as_tibble(rownames = "module_from") %>%
+  pivot_longer(-module_from, names_to = "module_to",values_to = "pearson_r"),
+  .id = "calculated.from")
+
+
+write_tsv(df,snakemake@output[['dat']])

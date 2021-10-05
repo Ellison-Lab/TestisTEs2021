@@ -187,6 +187,7 @@ rule larval_gep_corr_heatmap:
     output:
         png1 = "results/figs/larval_gep_corr_heatmap/larval_gep_corr.usage.png",
         png2 = "results/figs/larval_gep_corr_heatmap/larval_gep_corr.membership.png",
+        dat = "results/figs/larval_gep_corr_heatmap/larval_gep_corr.dat.tsv",
     script:
         "../fig-scripts/larval_gep_corr_heatmap.R"
 

@@ -17,13 +17,13 @@ barch <- read_rds('results/figs/larval_all_gep_te_barchart/larval_all_gep_te_bar
         axis.title.y =  element_text(size=rel(0.5)), axis.text.y=element_text(size=rel(0.5)),
         axis.title.x = element_text(size=rel(0.5))) +
   theme(legend.position = c(0.1,0.75), legend.title = element_blank(), legend.margin = margin(1,1,1,1), legend.text = element_text(size=rel(0.5)), legend.background = element_rect(color = NA)) +
-  xlab("GEP")
+  xlab("Module")
 
 piech <- read_rds('results/figs/larval_tep_pie/larval_tep_pie.ggp.rds') +
   theme(legend.position = "bottom", legend.text = element_text(size=rel(0.7)), legend.key.size = unit(1,"line"), legend.margin = margin(t=0,unit="line")) +
   theme(plot.margin = margin(), plot.title = element_text(hjust=0.5, margin = margin(5,5,5,5))) +
   theme(legend.direction = "horizontal", legend.position = c(0.52,0)) +
-  ggtitle("GEP-27")
+  ggtitle("Module 27")
 
 
 layout <-"
