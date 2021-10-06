@@ -13,7 +13,7 @@ w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/scaled/", form
 
 markers2display <- c("AGO3", "vas", "bam", "aub", "p53","Dek","osa","e(y)3","can",'sa',"aly")
 
-dat <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
+dat <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.numeric() %>% as.list %>% set_names(.,.),
               ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers2display) %>% collect()}) %>%
   left_join(collect(w1118.obs), by=c(index='X1','cell_type'='cell_type')) %>%
   left_join(rename.table) %>%
@@ -37,9 +37,10 @@ dat2 <- dat %>%
 
 g <- ggplot(dat2, aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
-  scale_fill_gte21(palette = "diverging", discrete = F, name = "Mean expression") +
+  #scale_fill_gte21(palette = "diverging", discrete = F, name = "Mean expression") +
   scale_size(range=c(0, rel(5)), name='Proportion expressing') +
   theme_gte21() +
+  scale_fill_distiller(palette=7, direction=1, name="Mean expression") +
   theme(axis.text.x = element_text(angle=90, hjust=1), axis.text.y = element_text(face="italic")) +
   coord_flip() +
   xlab('') + ylab('')

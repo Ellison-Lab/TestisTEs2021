@@ -26,8 +26,8 @@ tep.name <- w1118.gep_membership %>%
 
 df <- w1118.gep_membership %>%
   filter(qval < optimal_ica[['qval']]) %>%
-  filter(module == tep.name) %>%
   collect() %>%
+  filter(module == tep.name) %>%
   left_join(te.lookup, by=c(X1='merged_te')) %>%
   filter(!str_detect(X1,'FBgn')) %>%
   dplyr::select(module, X1, repClass, repFamily) %>%

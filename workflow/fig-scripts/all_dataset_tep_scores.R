@@ -10,9 +10,11 @@ lookup <- read_tsv("results/figs/celltype_rename_table.tsv") %>%
   deframe()
 
 df <- read_csv("results/finalized/x-dataset-comparison/mod_scores.csv.gz", col_types = c("ccdddc")) %>%
-  mutate(clusters = ifelse(dataset=="larval",lookup[clusters],clusters))
+  mutate(clusters = ifelse(dataset=="larval",lookup[clusters],clusters))  %>%
+  dplyr::rename(X1='...1')
 
-expression <- read_csv("results/finalized/x-dataset-comparison/te_expression.csv.gz", col_types = c("ccdc"))
+expression <- read_csv("results/finalized/x-dataset-comparison/te_expression.csv.gz", col_types = c("ccdc")) %>%
+  dplyr::rename(X1='...1')
 
 top_corr <- df %>%
   dplyr::select(X1, clusters, dataset) %>%
@@ -40,7 +42,7 @@ expr_corr_df <- df %>%
 g2 <- ggplot(expr_corr_df, aes(ref, mean.expr,color=is_top_hit)) +
   geom_point(size=1) + 
   facet_wrap(~reorder(clusters,-corr), scales="free", strip.position = "left") +
-  ggpubr::stat_cor(color="black",method = "spearman",size=rel(1.5)) +
+  ggpubr::stat_cor(color="black",method = "spearman",size=7/.pt) +
   guides(color=F) +
   theme_gte21() + 
   theme(aspect.ratio = NULL, strip.placement = "outside") +

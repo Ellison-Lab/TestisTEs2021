@@ -31,11 +31,11 @@ g <- ggplot(df.per_cell, aes(clusters.rename,UMIs)) +
   theme_gte21() +
   xlab("") + ylab('TE-derived UMIs (raw)') +
   guides(fill=F) +
-  scale_fill_gte21() +
+  #scale_fill_gte21() +
   theme(plot.caption= element_text(hjust=0.5, face='italic'),
         axis.text.x = element_text(angle=90, hjust=1),
-        axis.title = element_text(size = rel(1))) +
-  stat_compare_means(label.y.npc = 0.9, label.x.npc = 0.1)
+        axis.title = element_text(size = 7/.pt)) +
+  stat_compare_means(label.y.npc = 0.9, label.x.npc = 0.1, size=7/.pt)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

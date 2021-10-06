@@ -40,13 +40,13 @@ tep.members <- w1118.gep_membership %>%
 
 tep.tes <- tep.members[!str_detect(tep.members,'FBgn')]
 
-tep_te_expr_df <- map_df(as.list(unique(pull(collect(w1118.obs),'clusters'))) %>% set_names(.,.),
+tep_te_expr_df <- map_df(as.list(as.numeric(unique(pull(collect(w1118.obs),'clusters')))) %>% set_names(.,.),
                          ~{filter(w1118.expr, (clusters == .) & (gene_id %in% tep.tes)) %>% collect()}) %>%
   dplyr::select(index, gene_id, expression, clusters) %>%
   mutate(clusters = as.character(clusters)) %>%
   mutate(umis = exp(expression) - 1)
 
-tep_gene_expr_df <- map_df(as.list(unique(pull(collect(w1118.obs),'clusters'))) %>% set_names(.,.),
+tep_gene_expr_df <- map_df(as.list(as.numeric(unique(pull(collect(w1118.obs),'clusters')))) %>% set_names(.,.),
                          ~{filter(w1118.expr, (clusters == .) & (gene_id %in% c("FBgn0036470"))) %>% collect()}) %>%
   dplyr::select(index, gene_id, expression, clusters) %>%
   mutate(clusters = as.character(clusters)) %>%
@@ -97,7 +97,7 @@ g <- tep_te_expr_df %>%
   scale_fill_gte21() +
   theme_gte21()  +
   theme(axis.text.x = element_text(angle=90, hjust=1)) +
-  theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5)), strip.text.x = element_markdown()) +
+  theme(legend.text = element_text(size=7/.pt), legend.title = element_text(size=7/.pt), strip.text.x = element_markdown()) +
   xlab('') + ylab('') +
   ylab('log-norm UMIs') + xlab('') +guides(fill=F) +
   facet_wrap(~gene_id, ncol=1)

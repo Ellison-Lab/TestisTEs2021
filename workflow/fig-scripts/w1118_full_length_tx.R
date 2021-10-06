@@ -106,7 +106,7 @@ g2 <- plot_df %>% group_by(replicate, gene_id, type) %>%
   summarise(`std. dev.` = sd(score),.groups = "drop") %>%
   ggplot(aes(type, `std. dev.`, fill=type)) +
   geom_boxplot(outlier.shape = NA) +
-  ggpubr::stat_compare_means(label.y = 17) +
+  ggpubr::stat_compare_means(label.y = 17, size=7/.pt) +
   coord_cartesian(ylim=c(0,20)) +
   theme_gte21() +
   scale_fill_gte21("binary",reverse = T) +

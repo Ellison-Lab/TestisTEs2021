@@ -9,7 +9,8 @@ source("workflow/fig-scripts/theme.R")
 umap <- read_rds('results/figs/larval_tep_usage_umap/larval_tep_usage_umap.ggp.rds') +
   theme(axis.text = element_text(size=rel(1)), axis.title = element_text(size=rel(1))) +
   theme(aspect.ratio = NULL) +
-  theme(legend.position = c(0.9,0.13)) + coord_fixed()
+  theme(legend.position = c(0.9,0.13)) + coord_fixed() +
+  scale_color_distiller(type="div",palette = 4)
 
 
 barch <- read_rds('results/figs/larval_all_gep_te_barchart/larval_all_gep_te_barchart.ggp.rds')  + theme(aspect.ratio = NULL) +

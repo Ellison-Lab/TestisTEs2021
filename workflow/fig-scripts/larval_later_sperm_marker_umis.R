@@ -30,7 +30,7 @@ late.sperm <- tibble(gene_symbol = post.mei, group = 'late spermatocyte')
 
 markers <- late.sperm
 
-df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
+df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.numeric() %>% as.list %>% set_names(.,.),
              ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers$gene_symbol) %>% collect()}) %>%
   dplyr::select(index, gene_symbol, expression) %>%
   left_join(collect(w1118.obs), by=c(index='X1')) %>%
@@ -48,9 +48,9 @@ g <- ggplot(df, aes(clusters.rename,expression)) +
   xlab("") + ylab('scaled expression') +
   guides(fill=F) +
   scale_fill_gte21() +
-  theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)),
-        axis.title = element_text(size = rel(1.2)), 
-        axis.text.x = element_text(size=rel(1), angle=90, hjust=1, vjust=0.5)) +
+  theme(plot.caption= element_text(hjust=0.5, face='italic', size=7/.pt),
+        axis.title = element_text(size = 7/.pt), 
+        axis.text.x = element_text(size=7/.pt, angle=90, hjust=1, vjust=0.5)) +
   facet_wrap(~gene_symbol, ncol = 2, scales='free_y')
 
 agg_png(snakemake@output[['png']], width=20, height =10, units = 'in', scaling = 1, bitsize = 16, res = 300, background = 'transparent')

@@ -10,7 +10,7 @@ theme_gte21 <- function(base_size=10) {
     theme(line = element_line(colour = "black"),
           rect = element_rect(fill = NA, colour = "black",
                               linetype = 1),
-          text = element_text(colour = "black",family = "Arial"),
+          text = element_text(colour = "black",family = "Arial", size=unit(7,"pt")),
           
           ## Axis
           axis.line = element_blank(),
@@ -21,7 +21,7 @@ theme_gte21 <- function(base_size=10) {
           axis.text.y = element_text(hjust = 1, margin = margin(r = base_size * 0.25,
                                                                 unit = "pt")),
           axis.ticks = element_line(lineend="round"),
-          axis.title = element_text(size = rel(2)),
+          #axis.title = element_text(size = rel(2)),
           axis.title.x = element_text(margin = margin(t=base_size*0.25)),
           axis.title.y = element_text(angle = 90),
           axis.ticks.length = unit( base_size * 0.3, "points"),
@@ -33,9 +33,9 @@ theme_gte21 <- function(base_size=10) {
           legend.key.size = unit(0.5, "lines"),
           legend.key.height = NULL,
           legend.key.width = NULL,
-          legend.text = element_text(size = rel(0.75)),
+          legend.text = element_text(size = unit(5,"pt")),
           legend.text.align = NULL,
-          legend.title = element_text(size = rel(1),  hjust = 0.5),
+          legend.title = element_text(size = unit(5,"pt"),  hjust = 0.5),
           legend.title.align = NULL,
           legend.position = "right",
           legend.direction = "vertical",
@@ -51,15 +51,14 @@ theme_gte21 <- function(base_size=10) {
           # strip
           strip.background = element_rect(fill = NA,
                                           colour = NA, linetype = 0),
-          strip.text = element_text(size = rel(1.25)),
+          #strip.text = element_text(size = rel(1.25)),
           strip.text.x = element_text(),
           strip.text.y = element_text(angle = -90),
           
           # overall/panel
           plot.background = element_rect(fill = NA,
                                          colour = NA),
-          plot.title = element_text(size = rel(2.5),
-                                    hjust = 0.5,margin = margin(b=base_size),
+          plot.title = element_text(hjust = 0.5,margin = margin(b=base_size),
                                     face = "bold"),
           plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
           aspect.ratio = NULL,

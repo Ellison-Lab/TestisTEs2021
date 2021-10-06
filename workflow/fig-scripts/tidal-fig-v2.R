@@ -150,7 +150,7 @@ g1 <- sex_auto_ratio_df2 %>%
   filter(comparison == "chrX_Auto_ratio") %>%
   ggplot(aes(is_top_mod,ratio), fill='white') +
   stat_boxplot(outlier.shape=NA, fill="darkgray") +
-  ggpubr::stat_compare_means(method = 'wilcox.test',paired = F, size=rel(4),label.y = 2.5, label.x=1) +
+  ggpubr::stat_compare_means(method = 'wilcox.test',paired = F, size=7/.pt,label.y = 2.5, label.x=1) +
   theme_gte21() + 
   theme(aspect.ratio = 1) +
   ylab('X/A ( per mappable MB)') +
@@ -162,7 +162,7 @@ g2 <- sex_auto_ratio_df2 %>%
   filter(comparison == "chr4_Auto_ratio") %>%
   ggplot(aes(is_top_mod,ratio), fill='white') +
   stat_boxplot(outlier.shape=NA, fill="darkgray") +
-  ggpubr::stat_compare_means(method = 'wilcox.test',paired = F, size=rel(4),label.y = 2.5, label.x=1) +
+  ggpubr::stat_compare_means(method = 'wilcox.test',paired = F, size=7/.pt,label.y = 2.5, label.x=1) +
   theme_gte21() + 
   theme(aspect.ratio = 1) +
   ylab('4/A (per mappable MB)') +

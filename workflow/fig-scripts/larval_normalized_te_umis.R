@@ -17,7 +17,7 @@ w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='a
 
 w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr", format='arrow')
 
-df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
+df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.numeric() %>% as.list %>% set_names(.,.),
        ~{filter(w1118.expr, clusters == . & gene_id %in% unique(te.lookup$merged_te)) %>% collect()}) %>%
   dplyr::select(index, gene_id, expression) %>%
   mutate(expression = exp(expression) - 1) %>%
@@ -35,13 +35,13 @@ g <- ggplot(df, aes(clusters.rename,expression)) +
   theme_gte21() +
   xlab("") + ylab('TE-derived UMIs (norm)') +
   guides(fill=F) +
-  scale_fill_gte21() +
+  #scale_fill_gte21() +
   theme(aspect.ratio = 0.3) +
-  theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)),
-        axis.title = element_text(size = rel(1)), 
-        axis.text.y = element_text(size=rel(1)),
+  theme(plot.caption= element_text(hjust=0.5, face='italic', size=7/.pt),
+        axis.title = element_text(size = 7/.pt), 
+        axis.text.y = element_text(size=7/.pt),
         axis.text.x = element_text(angle=90, hjust=1, vjust=0.5)) +
-  stat_compare_means(label.y.npc = 0.9, label.x.npc = 0.1)
+  stat_compare_means(label.y.npc = 0.9, label.x.npc = 0.1, size=7/.pt)
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

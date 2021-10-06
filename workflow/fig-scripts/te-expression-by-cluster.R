@@ -65,7 +65,7 @@ w1118.obs <- open_dataset("results/finalized/larval-w1118-testes/obs", format='a
 
 w1118.expr <- open_dataset("results/finalized/larval-w1118-testes/expr", format='arrow')
 
-df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
+df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.numeric %>% as.list %>% set_names(.,.),
              ~{filter(w1118.expr, clusters == . & gene_id %in% unique(te.lookup$merged_te)) %>% collect()}) %>%
   dplyr::select(index, gene_id, expression) %>%
   mutate(expression = exp(expression) - 1) %>%

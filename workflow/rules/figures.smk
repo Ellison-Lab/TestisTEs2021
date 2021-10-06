@@ -264,6 +264,7 @@ rule larracuente_y_intronic_ins:
         png2 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_ins_by_consensus.png",
         png3 = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_tep_ins.png",
         stats = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_tep_ins.stats.tsv",
+        dat = "results/figs/larracuente_y_intronic_ins/larracuente_y_intronic_ins.y_tep_ins.dat.tsv",
     script:
         "../fig-scripts/larracuente_y_intronic_ins.R"
 

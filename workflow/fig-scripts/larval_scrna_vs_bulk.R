@@ -78,23 +78,24 @@ df <- df %>%
 
 g1 <- ggplot(df,aes(scRNA,bulk)) +
   facet_wrap(~bulk.replicate, scales="free") +
-  geom_pointdensity()+
-  stat_cor(label.sep = "\n", method='spearman') +
+  geom_pointdensity(size=1/.pt)+
+  stat_cor(label.sep = "\n", method='spearman', size=5/.pt) +
   #guides(color=F) +
   theme_gte21() +
   theme(aspect.ratio = 1) +
-  scale_color_gte21("diverging", discrete = F, limits = c(0,500), oob=scales::squish, name="Density")
+  scale_color_viridis_c(name="Neighbors")
+  #scale_color_distiller(palette = 7, direction = 1, name="Neighbors")
+  #scale_color_gte21("diverging", discrete = F, limits = c(0,500), oob=scales::squish, name="Density")
 
 g2 <- df %>%
   filter(!str_detect(gene_id,"FBgn")) %>%
 ggplot(aes(scRNA,bulk)) +
   facet_wrap(~bulk.replicate, scales="free") +
-  geom_point(color='red') +
-  stat_cor(label.sep = "\n", method='spearman') +
+  geom_point(color='darkgray',size=1/.pt) +
+  stat_cor(label.sep = "\n", method='spearman', size=5/.pt) +
   #guides(color=F) +
   theme_gte21() +
-  theme(aspect.ratio = 1) +
-  scale_color_gte21("diverging", discrete = F, limits = c(0,500), oob=scales::squish, name="Density")
+  theme(aspect.ratio = 1)
 
 
 agg_png(snakemake@output[['png1']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')

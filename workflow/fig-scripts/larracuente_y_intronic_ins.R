@@ -223,6 +223,8 @@ gt::gtsave(gt_consensus, snakemake@output[["png2"]])
 
 gt::gtsave(gt_tep_ins, snakemake@output[["png3"]])
 
+write_tsv(as_tibble(ins_gr),snakemake@output[['dat']])
+
 # Export stats info -----------------------------------------------------------------------------------
 
 stats.raw <- list(`enr. in chrY TEP-gene introns`=y_tep_intron_test,

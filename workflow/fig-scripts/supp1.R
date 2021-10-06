@@ -86,7 +86,8 @@ CC##
 p <- n_cells + corr_plot + sperma_markers + #polya_all + polya_tes + #batch + mito + 
    plot_annotation(tag_levels = 'A') +  
    plot_layout(design=layout) &
-   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
+   theme(plot.tag = element_text(face = 'bold', size=rel(1.5))) &
+  theme(text=element_text(size=unit(7,"pt")))
 
 
 

@@ -107,7 +107,7 @@ g1 <- df2 %>%
   ggplot(aes(gep, ratio)) +
   geom_boxplot(fill="darkgray", outlier.shape = NA) +
   #geom_jitter() +
-  stat_compare_means(label.y.npc = 0.9) +
+  stat_compare_means(label.y.npc = 0.9, size=7/.pt) +
   #stat_compare_means(method.args = list(alternative = "greater")) +
   theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('')
@@ -116,7 +116,7 @@ g1 <- df2 %>%
 g2 <- ggplot(df2, aes(gep, ratio)) +
   geom_boxplot(aes(fill=sex)) +
   #geom_jitter() +
-  stat_compare_means(label.y.npc = 0.7) +
+  stat_compare_means(label.y.npc = 0.7,size=7/.pt) +
   theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +
   scale_fill_brewer(type='qual', name='Variant class') +
@@ -129,7 +129,7 @@ g3 <- df2 %>%
   ggplot(aes(gep, ratio)) +
   geom_boxplot(fill="darkgray", outlier.shape = NA) +
   #geom_jitter() +
-  stat_compare_means(label.y.npc = 0.7) +
+  stat_compare_means(label.y.npc = 0.7, size=7/.pt) +
   #stat_compare_means(method.args = list(alternative = "greater")) +
   theme_gte21() +
   theme(aspect.ratio = 1) + ylab("RNA/WGS") + xlab('') +

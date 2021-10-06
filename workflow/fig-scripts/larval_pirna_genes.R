@@ -49,7 +49,7 @@ markers <- c("piwi",
              "BoYb",
              "tej")
 
-df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.),
+df <- map_df(w1118.obs %>% collect() %>% pull(clusters) %>% unique() %>% as.numeric() %>% as.list %>% set_names(.,.),
              ~{filter(w1118.expr, clusters == . & gene_symbol %in% markers) %>% collect()}) %>%
   dplyr::select(index, gene_symbol, expression) %>%
   mutate(expression = exp(expression) - 1) %>%
@@ -68,10 +68,10 @@ g <- df %>%
   ggplot(aes(gene_symbol, clusters.rename)) +
   geom_point(aes(size=pct.expressing, fill=mean.expression), shape=21) +
   scale_fill_fermenter(palette = 8, direction = 1, name='mean(log-norm UMIs)', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
-  scale_size(range=c(0, rel(7)), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
+  scale_size(range=c(0, 10/.pt), name='Proportion expressing', guide=guide_legend(label.position = 'bottom', title.position = 'top')) +
   theme_gte21()  +
   theme(axis.text.x = element_text(angle=90, hjust=1)) +
-  theme(legend.text = element_text(size=rel(0.5)), legend.title = element_text(size=rel(0.5))) +
+  theme(legend.text = element_text(size=7/.pt), legend.title = element_text(size=7/.pt)) +
   theme(aspect.ratio = 2) +
   coord_flip() +
   xlab('') + ylab('') +

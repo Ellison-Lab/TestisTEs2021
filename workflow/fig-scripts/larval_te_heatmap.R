@@ -14,7 +14,7 @@ obstmp <- collect(w1118.obs) %>%
   left_join(rename.table) %>%
   mutate(clusters2 = clusters.rename)
 
-clusters.nums <- obstmp %>% pull(clusters) %>% unique() %>% as.list %>% set_names(.,.)
+clusters.nums <- obstmp %>% pull(clusters) %>% unique() %>% as.numeric %>% as.list %>% set_names(.,.)
 
 te_expr_df <- map_df(clusters.nums,
                      ~{filter(w1118.scaled, (clusters == .) & (gene_id %in% unique(te.lookup$merged_te))) %>% collect()}) %>%

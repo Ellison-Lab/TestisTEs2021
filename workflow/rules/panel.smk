@@ -128,7 +128,7 @@ rule supp5:
     script:
         "../fig-scripts/supp5.R"
 
-rule panels:
+rule supp_figs:
     input:
         rules.figure1.output,
         rules.figure2.output,
@@ -143,8 +143,42 @@ rule panels:
         rules.supp5.output,
         rules.larracuente_y_intronic_ins.output,
         rules.arriba_total_rna_fusions.output,
-        rules.collect_computed_statistics.output,
+        #rules.collect_computed_statistics.output,
     output:
-        "results/collected/collected.pdf"
+        "results/collected/supp.pdf"
     script:
         "../markdown/figures.Rmd"
+
+rule main_figs:
+    input:
+        rules.figure1.output,
+        rules.figure2.output,
+        rules.figure3.output,
+        rules.figure4.output,
+        rules.figure5.output,
+        rules.supp1.output,
+        rules.supp2.output,
+        rules.supp3.output,
+        rules.supp4.output,
+        rules.supp4_5.output,
+        rules.supp5.output,
+        rules.larracuente_y_intronic_ins.output,
+        rules.arriba_total_rna_fusions.output,
+        #rules.collect_computed_statistics.output,
+    output:
+        f1 = "results/collected/figure1.pdf",
+        f2 = "results/collected/figure2.pdf",
+        f3 = "results/collected/figure3.pdf",
+        f4 = "results/collected/figure4.pdf",
+        f5 = "results/collected/figure5.pdf"
+    script:
+        "../fig-scripts/figures-pg.R"
+
+rule get_source_data:
+    input:
+        rules.main_figs.output,
+        rules.supp_figs.output
+    output:
+        "results/collected/SourceData.xlsx"
+    script:
+        "../scripts/collect_source_data.R"

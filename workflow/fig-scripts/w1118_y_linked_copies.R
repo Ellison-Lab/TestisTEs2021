@@ -104,7 +104,7 @@ g1 <- dat %>%
   ggplot(aes(tep,est.copies.male/est.copies.female, label=sequence))+
   geom_boxplot(outlier.shape = NA, fill="darkgray") +
   #geom_jitter(width = 0.1, alpha = 0.5) +
-  stat_compare_means(label.y.npc = 0.9) +
+  stat_compare_means(label.y.npc = 0.9,size=7/.pt) +
   xlab('') +
   theme_gte21() +
   guides(fill=F) +

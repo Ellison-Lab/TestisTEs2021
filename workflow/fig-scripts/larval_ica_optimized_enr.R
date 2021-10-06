@@ -22,7 +22,7 @@ g <- ggplot(df,aes(ont,pct.unique)) +
   scale_y_continuous(labels = scales::percent) +
   ylab("Percent modules w/ unique enrichent") +
   theme_gte21() +
-  theme(axis.title.y = element_text(size=rel(0.5)), axis.title.x = element_blank())
+  theme(axis.title.y = element_text(size=7/.pt), axis.title.x = element_blank())
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 1.5, bitsize = 16, res = 300, background = 'transparent')
 print(g)

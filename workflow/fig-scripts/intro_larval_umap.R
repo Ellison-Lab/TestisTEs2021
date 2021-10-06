@@ -24,11 +24,9 @@ g <- collect(w1118.obs) %>%
   scale_color_gte21() +
   theme_gte21() +
   labs(color="") +
-  geom_text_repel(data=umap_labs, aes(x + sign(5-x) *2, y, label=clusters.rename), face='bold', size=rel(3)) +
+  geom_text_repel(data=umap_labs, aes(x + sign(5-x) *2, y, label=clusters.rename), face='bold', size=7/.pt) +
   xlab("UMAP1") + ylab("UMAP2") +
-  theme(plot.caption= element_text(hjust=0.5, face='italic', size=rel(1.2)), axis.title = element_text(size = rel(1.2)), axis.text = element_text(size=rel(1.5))) +
-  coord_fixed() +
-  guides(color=F)
+  coord_fixed()
 
 agg_png(snakemake@output[['png']], width=10, height =10, units = 'in', scaling = 2, bitsize = 16, res = 300, background = 'transparent')
 print(g)
