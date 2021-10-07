@@ -78,7 +78,7 @@ EE###
 
 p <- tpaf +  enr + y_gene_enr + tep_y_at_least_1 + #y_copies_2 + 
   y_linked_expr + #chr4 +
-  plot_annotation(tag_levels = 'A') + 
+  plot_annotation(tag_levels = 'a') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5))) &
   theme(text=element_text(size=unit(7,"pt")))

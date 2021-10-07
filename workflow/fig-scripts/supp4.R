@@ -32,7 +32,7 @@ AABB
 "
 
 p <- heat2 + heat1  +  #pie + 
-  plot_annotation(tag_levels = 'A') +  
+  plot_annotation(tag_levels = 'a') +  
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5)))
 

@@ -47,11 +47,11 @@ DDDDDD
 "
 
 p <- heats + sizes + enr + #te_expr_scores + 
-  plot_annotation(tag_levels = 'A') + 
+  plot_annotation(tag_levels = 'a') + 
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5))) &
   theme(text=element_text(size=unit(7,"pt")))
 
-ggsave(snakemake@output[[1]], p, width = 8, height = 10)
+ggsave(snakemake@output[[1]], p, width = 6, height = 6)
 
 saveRDS(p,file=snakemake@output[[2]])

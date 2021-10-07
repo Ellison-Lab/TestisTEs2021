@@ -18,7 +18,7 @@ AABB
 AABB
 "
 
-p <- flam + ovary + plot_annotation(tag_levels = 'A') +  
+p <- flam + ovary + plot_annotation(tag_levels = 'a') +  
   plot_layout(design=layout) &
   theme(plot.tag = element_text(face = 'bold', size=rel(1.5))) &
   theme(text=element_text(size=unit(7,"pt")))

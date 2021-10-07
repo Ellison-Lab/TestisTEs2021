@@ -56,7 +56,7 @@ knitr::include_graphics("/media/mlawlor/work/TestisTEs2021/results/panels/supp2.
 read_rds("results/panels/supp3.rds") & theme(text=element_text(size=unit(7,"pt")))
 ```
 
-***Supplementary Figure 3. Co-expression module detection via consensus approach to Independent Component Analysis (cICA).*** **b)** Final module gene membership scores were compared to modules identified in replicate cICA runs by Spearman correlation. For each module, the correlation p-values for the best correlated module from each cICA replicate are plotted. Modules (x axis) are ordered by the Spearman correlation with the best match across all three cICA replicates. **b)** Histogram shows distribution of the number of genes or TEs assigned to the set of modules used in main analysis.  **c)** Barplots show percentage of modules uniquely enriched for at least one Biological Process (BP), Cellular Component (CC), or Molecular Function (MF) Gene Ontology Term.Source data are provided as a Source Data file.
+***Supplementary Figure 3. Co-expression module detection via consensus approach to Independent Component Analysis (cICA).*** **a)** Final module gene membership scores were compared to modules identified in replicate cICA runs by Spearman correlation. For each module, the correlation p-values for the best correlated module from each cICA replicate are plotted. Modules (x axis) are ordered by the Spearman correlation with the best match across all three cICA replicates. Error band on the trendline represents fitted value +/- standard error. **b)** Histogram shows distribution of the number of genes or TEs assigned to the set of modules used in main analysis.  **c)** Barplots show percentage of modules uniquely enriched for at least one Biological Process (BP), Cellular Component (CC), or Molecular Function (MF) Gene Ontology Term.Source data are provided as a Source Data file.
 
 \newpage
 
@@ -115,7 +115,7 @@ read_rds("results/figs/all_dataset_tep_scores/all_dataset_tep_scores.tes.ggp.rds
 read_rds("results/panels/supp5.rds") & theme(text=element_text(size=unit(7,"pt")))
 ```
 
-***Supplementary Figure 8. Module 27 TEs are enriched on the Y-chromosome.*** **a)** Dot plot shows expression of selected effectors of spermatocyte transcriptional programs. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **b)** Bars show strength of top 10 enriched Gene Ontology Molecular Function terms for module 27. **c)** Bar plot shows proportion of Y chromosome genes or other genes used for module detection analysis that are assigned to module 27 (red) or other modules (gray). Fisher’s Exact test, two-sided P=1.7e-05. **d)** Barplot shows percentage of TEs assigned to module 27 or other TEs with at least one Y-linked insertion detected by RepeatMasker in the heterochromatin-enriched assembly described by Chang and Larracuente 2019. **e)** Allele specific analysis of TE expression (see Methods) shows that non-Y-linked copies of module 27 TEs are expressed proportionately to their DNA copy number. Wilcoxon rank-sum test, two-sided P=0.24. Source data are provided as a Source Data file.
+***Supplementary Figure 8. Module 27 TEs are enriched on the Y-chromosome.*** **a)** Dot plot shows expression of selected effectors of spermatocyte transcriptional programs. Color of each dot corresponds to mean normalized and log-transformed expression within cell clusters. Dot size corresponds to the proportion of cells in each cluster expressing the marker. **b)** Bars show strength of top 10 enriched Gene Ontology Molecular Function terms for module 27. **c)** Bar plot shows proportion of Y chromosome genes or other genes used for module detection analysis that are assigned to module 27 (red) or other modules (gray). Fisher’s Exact test, two-sided P=1.7e-05. **d)** Barplot shows percentage of TEs assigned to module 27 or other TEs with at least one Y-linked insertion detected by RepeatMasker in the heterochromatin-enriched assembly described by Chang and Larracuente 2019. **e)** Allele specific analysis of TE expression (see Methods) shows that non-Y-linked copies of module 27 TEs are expressed proportionately to their DNA copy number. Wilcoxon rank-sum test, two-sided P=0.24. For all boxplots, midline represents median, box represents interquartile range (IQR), and whiskers extend >1.5 IQR from the upper or lower quartile. Source data are provided as a Source Data file.
 
 \newpage
 
@@ -165,7 +165,7 @@ read_rds("results/figs/larval_scrna_basic_qc_stats/larval_scrna_basic_qc_stats.b
 
 ## Supplementary Figure 13
 
-```{r, fig.dim=c(8,8), out.height="7in", out.width="7in"}
+```{r, fig.dim=c(7,7), out.height="7in", out.width="7in"}
 read_rds("results/panels/supp4.rds") +
   theme(text=element_text(size=unit(7,"pt")))
 ```
