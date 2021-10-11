@@ -16,9 +16,12 @@ full_length_box <- read_rds("results/figs/w1118_full_length_tx/w1118_full_length
 
 full_length_heat <- read_rds("results/figs/w1118_full_length_tx/w1118_full_length_tx.line.ggp.rds") + theme(axis.title.x = element_blank())
 
-raw <- read_rds("results/figs/larval_raw_te_umis/larval_raw_te_umis.ggp.rds") + theme(aspect.ratio = NULL)
+raw <- read_rds("results/figs/larval_raw_te_umis/larval_raw_te_umis.ggp.rds") + theme(aspect.ratio = NULL) +
+scale_fill_manual(values = rep("darkgray",10))
 
-normal <- read_rds("results/figs/larval_normalized_te_umis/larval_normalized_te_umis.ggp.rds") + theme(aspect.ratio = NULL)
+normal <- read_rds("results/figs/larval_normalized_te_umis/larval_normalized_te_umis.ggp.rds") + 
+  theme(aspect.ratio = NULL) +
+  scale_fill_manual(values = rep("darkgray",10))
 
 polya_all <- read_rds("results/figs/larval_scrna_vs_bulk/larval_scrna_vs_bulk.all.ggp.rds") + theme(aspect.ratio = NULL)+
   theme(text=element_text(size=unit(7,"pt")))

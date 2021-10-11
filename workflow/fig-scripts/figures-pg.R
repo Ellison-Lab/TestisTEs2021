@@ -26,10 +26,12 @@ f5_fl <- snakemake@output[["f5"]]
 
 umap <- read_rds('results/figs/intro_larval_umap/intro_larval_umap.ggp.rds') +
   theme(axis.text = element_text(size=unit(7,"pt")), axis.title = element_text(size=unit(7,"pt"))) +
-  guides(color=F)
+  guides(color=guide_legend()) +
+  theme(legend.text = element_text(size=unit(5,"pt")))
 
 markers <- read_rds('results/figs/larval_marker_expression/larval_marker_expression.ggp.rds') +
-  theme(aspect.ratio = NULL, text = element_text(size=unit(6,"pt"))) + 
+  theme(aspect.ratio = NULL, text = element_text(size=unit(7,"pt")), 
+        axis.text.x = element_text(angle=90, hjust=1,size=unit(5,"pt"))) + 
   theme(axis.text.y = element_text(face="italic")) +
   scale_fill_distiller(palette = 7, direction = 1)
 
@@ -42,12 +44,12 @@ n_per_clust <- read_tsv('results/figs/larval_scrna_basic_qc_stats/larval_scrna_b
   ggplot(aes(clusters.rename,n, fill=clusters.rename)) +
   geom_col() +
   theme_gte21() +
-  scale_fill_gte21() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) + xlab("") +
+  theme(axis.text.x = element_text(angle=90, hjust=1,size=unit(5,"pt"))) + xlab("") +
   ylab("cells per cluster") +
   guides(fill=F) + 
   theme(aspect.ratio = NULL) + 
-  scale_y_continuous(breaks = seq(0,3000,by=500))
+  scale_y_continuous(breaks = seq(0,3000,by=500)) +
+  scale_fill_manual(values = rep("darkgray",10))
 
 cairo_pdf(f1_fl,width = 7.1, height = 3.95)
 
@@ -75,7 +77,8 @@ heat1_img <- image_read('results/figs/larval_te_heatmap/larval_te_heatmap.png', 
 heat1 <- image_ggplot(heat1_img)
 
 te_expression_by_clust <- read_rds("results/figs/te_expression_by_cluster/te_expression_by_cluster.ggp.rds") + 
-  theme(axis.title.x = element_blank())
+  theme(axis.title.x = element_blank()) +
+  ylab("Expressed TE Families")
 
 cairo_pdf(f2_fl,width = 7.1, height = 2.55,fallback_resolution = 300)
 
@@ -135,15 +138,21 @@ dev.off()
 
 y_genes <- read_rds('results/figs/larval_y_gene_dotplot/larval_y_gene_dotplot.ggp.rds') +
   theme(aspect.ratio = NULL, strip.text = element_blank()) +
-  theme(legend.text = element_text(size=unit(7,"pt")))
+  theme(legend.text = element_text(size=unit(7,"pt")), legend.title = element_text(size=unit(5,"pt")))
 
 fish_te_umis <- read_rds("results/figs/larval_fish_candidate_umis/larval_fish_candidate_umis.ggp.rds") +
-  theme(strip.text = element_text(face="italic"))
+  theme(strip.text = element_text(face="italic")) +
+    scale_fill_manual(values = rep("darkgray",10))
 
 #ph <- image_read("/media/mlawlor/T7/microscopy_figs/210215_accord2_calfluor610_eachm_quasar670_3p4-2.slices_1_1.representative.png") %>% image_ggplot()
 ph <- image_read("resources/210215_accord2_calfluor610_eachm_quasar670_3p4-2.slices_1_1.representative.png") %>% image_ggplot()
 
 ph <- ph + geom_ellipse(aes(x0=1650, y0=1950, a=1550,b=1950, angle=pi*0.9), linetype=2, color="white")
+
+ph <- ph +
+  annotate("text",300,3950, label="DAPI", color="blue") +
+  annotate("text",1700,3950, label="EAChm", color="red") +
+  annotate("text",3400,3950, label="ACCORD2", color="green")
 
 cairo_pdf(f4_fl,width = 7.1, height = 7.1)
 
@@ -179,7 +188,9 @@ male_expr <- read_rds('results/figs/w1118_pct_y_linked_rna_vs_wgs/w1118_pct_y_li
 
 pirna <- read_rds("results/figs/larval_pirna_expression/larval_pirna_expression.ggp.rds") +  
   theme(aspect.ratio = NULL) +
-  theme(axis.text.y = element_markdown())
+  theme(axis.text.y = element_markdown(),
+        legend.title = element_text(size=unit(5,"pt")),
+        legend.text = element_text(size=unit(5,"pt")))
 
 cairo_pdf(f5_fl,width = 7.1, height = 4.33)
 

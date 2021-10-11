@@ -19,8 +19,9 @@ umap_labs <- w1118.obs %>%
 
 g <- collect(w1118.obs) %>%
   left_join(rename.table) %>%
+  mutate(short_lab = str_extract(clusters.rename,"\\d+")) %>% 
   ggplot(aes(X_umap1, X_umap2)) +
-  geom_point(aes(color=reorder(clusters.rename, clusters.rename)), size=rel(0.75)) +
+  geom_point(aes(color=reorder(short_lab, as.numeric(short_lab))), size=rel(0.75)) +
   scale_color_gte21() +
   theme_gte21() +
   labs(color="") +
